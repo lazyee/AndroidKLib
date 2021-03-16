@@ -1,9 +1,8 @@
 package com.lazyee.klib.base
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.lazyee.klib.app.ActivityStack
+import com.lazyee.klib.app.ActivityManager
 import com.lazyee.klib.http.HttpManager
 
 /**
@@ -12,19 +11,16 @@ import com.lazyee.klib.http.HttpManager
  * @Description: activity base 类,手动实现了Dagger-Android 中DaggerActivity
  */
 open class BaseActivity: AppCompatActivity(){
-
-
     val TAG :String by lazy { this::class.java.simpleName }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ActivityStack.add(this)
+        ActivityManager.add(this)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        ActivityStack.remove(this)
+        ActivityManager.remove(this)
         HttpManager.cancel(this)
     }
 

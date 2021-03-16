@@ -3,6 +3,7 @@ package com.lazyee.klib.util
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -13,7 +14,7 @@ import com.lazyee.klib.BuildConfig
 /**
  * @Author leeorz
  * @Date 2020/11/5-10:59 AM
- * @Description:
+ * @Description:app工具类
  */
 
 object AppUtils {
@@ -30,13 +31,13 @@ object AppUtils {
      * @return Intent?
      */
     fun createIntent(
-        context: Context,
-        clazz: Class<out Activity>? = null,
-        action: String? = null,
-        data: Uri? = null,
-        setIntentExtraBlock: ((Intent) -> Unit)? = null,
-        setBundleBlock: ((Bundle) -> Unit)? = null,
-        flag: Int? = null
+            context: Context,
+            clazz: Class<out Activity>? = null,
+            action: String? = null,
+            data: Uri? = null,
+            setIntentExtraBlock: ((Intent) -> Unit)? = null,
+            setBundleBlock: ((Bundle) -> Unit)? = null,
+            flag: Int? = null
     ): Intent? {
         var intent: Intent? = null
 
@@ -118,5 +119,25 @@ object AppUtils {
         if (BuildConfig.DEBUG) {
             debugDeviceID = deviceID
         }
+    }
+
+    /**
+     * 从AndroidManifest中获取meta data
+     * @param context Context
+     * @param key String
+     * @return String?
+     */
+    fun getMetaDataFromManifest(context: Context, key: String): String? {
+        try {
+            val pm = context.packageManager
+            val appInfo = pm.getApplicationInfo(context.packageName, PackageManager.GET_META_DATA)
+            val channel = appInfo.metaData.getString(key)
+            if (!TextUtils.isEmpty(channel)) {
+                return channel
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+        }
+        return null
     }
 }

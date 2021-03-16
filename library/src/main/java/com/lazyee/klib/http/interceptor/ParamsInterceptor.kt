@@ -1,5 +1,6 @@
-package com.lazyee.klib.http
+package com.lazyee.klib.http.interceptor
 
+import com.lazyee.klib.http.HttpContentType
 import okhttp3.*
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.Buffer
@@ -13,7 +14,7 @@ import org.json.JSONObject
 
 class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpParamsAdapter>) :
     Interceptor {
-    private final val TAG = "[HttpParamsInterceptor]"
+    private val TAG = "[HttpParamsInterceptor]"
     override fun intercept(chain: Interceptor.Chain): Response {
         var originalRequest = chain.request()
         val originalUrl = originalRequest.url

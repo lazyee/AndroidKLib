@@ -1,29 +1,28 @@
 package com.lazyee.klib.app
 
 import android.app.Activity
+import java.util.*
 
 /**
  * @Author leeorz
  * @Date 2020/11/3-2:51 PM
  * @Description:手动管理的Activity Stack
  */
-object ActivityStack{
-    private val stack:MutableList<Activity> = mutableListOf()
+object ActivityManager{
+    private val activityList:MutableList<Activity> = mutableListOf()
 
     /**
      * 获取最后的activity实例
      * @return Activity?
      */
-    fun current(): Activity?{
-        if (stack.isEmpty())return null
-        return stack.last()
-    }
+    fun current(): Activity? = activityList.lastOrNull()
+
     /**
      * 添加activity
      * @param activity Activity
      */
     fun add(activity: Activity){
-        stack.add(activity)
+        activityList.add(activity)
     }
 
     /**
@@ -33,17 +32,17 @@ object ActivityStack{
      */
     fun byIndex(index:Int):Activity?{
         if(index < 0){
-            val newIndex = stack.size - 1 + index
-            if (newIndex < 0 || newIndex > stack.size - 1){
+            val newIndex = activityList.size - 1 + index
+            if (newIndex < 0 || newIndex > activityList.size - 1){
                 return null
             }
-            return stack[newIndex]
+            return activityList[newIndex]
         }
 
-        if(index > stack.size - 1){
+        if(index > activityList.size - 1){
             return null
         }
-        return stack[index]
+        return activityList[index]
     }
 
     /**
@@ -51,7 +50,7 @@ object ActivityStack{
      * @param activityArr Array<out Activity>
      */
     fun remove(vararg activityArr: Activity){
-        activityArr.forEach { stack.remove(it) }
+        activityArr.forEach { activityList.remove(it) }
     }
 
     /**
@@ -60,7 +59,7 @@ object ActivityStack{
      */
     fun removeByClassName(vararg classNameArr:String){
         classNameArr.forEach {className:String->
-            stack.removeAll { it::class.java.simpleName == className }
+            activityList.removeAll { it::class.java.simpleName == className }
         }
     }
 
@@ -69,9 +68,9 @@ object ActivityStack{
      * @param activity Activity
      */
     fun goBack(activity: Activity){
-        for (index in stack.count() - 1 downTo 0){
-            if (stack[index] != activity){
-                stack[index].finish()
+        for (index in activityList.count() - 1 downTo 0){
+            if (activityList[index] != activity){
+                activityList[index].finish()
             }else{
                 break
             }
@@ -92,7 +91,7 @@ object ActivityStack{
      * @param activity Activity
      */
     fun finishOtherActivity(activity: Activity?){
-        val iterator = stack.iterator()
+        val iterator = activityList.iterator()
         while (iterator.hasNext()){
             val act = iterator.next()
             if(act == activity){

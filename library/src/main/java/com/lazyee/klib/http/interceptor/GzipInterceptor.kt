@@ -1,4 +1,4 @@
-package com.lazyee.klib.http
+package com.lazyee.klib.http.interceptor
 
 import okhttp3.*
 import okio.BufferedSink

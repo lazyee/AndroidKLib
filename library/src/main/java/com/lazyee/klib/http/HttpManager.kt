@@ -2,6 +2,10 @@ package com.lazyee.klib.http
 
 import android.annotation.SuppressLint
 import android.text.TextUtils
+import com.lazyee.klib.http.interceptor.GzipInterceptor
+import com.lazyee.klib.http.interceptor.HttpParamsAdapter
+import com.lazyee.klib.http.interceptor.HttpParamsInterceptor
+import com.lazyee.klib.http.interceptor.HttpResultInterceptor
 import com.lazyee.klib.util.LogUtils
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -37,6 +41,7 @@ object HttpManager {
     private val paramsAdapterMap : HashMap<String, HttpParamsAdapter> = HashMap()
     private val tasks: HashMap<Any, Disposable> = HashMap()
 
+    private val httpResultInterceptors = mutableListOf<HttpResultInterceptor>()
 
     /**
      * 初始化Retrofit
@@ -76,7 +81,9 @@ object HttpManager {
 
             override fun onNext(data: T) {
                 removeTask(tag)
+
                 if(data is HttpResult<*>){
+                    if(isHttpResultIntercept(data))return
                     if(HttpCode.isSuccessful(data.getCode())){
                         callback?.onSuccess(data)
                     }else{
@@ -144,8 +151,6 @@ object HttpManager {
         return HttpLoggingInterceptor {
             LogUtils.d(TAG, it)
         }.setLevel(HttpLoggingInterceptor.Level.BODY)
-
-
     }
 
 
@@ -206,6 +211,34 @@ object HttpManager {
     fun cancelAllTask() {
         tasks.map { cancel(it.key) }
         tasks.clear()
+    }
+
+    /**
+     * 网络请求结果是否被拦截
+     * @param httpResult HttpResult<*>
+     * @return Boolean
+     */
+    fun isHttpResultIntercept(httpResult: HttpResult<*>): Boolean {
+        for(interceptor in httpResultInterceptors){
+            if(interceptor.intercept(httpResult))return true
+        }
+
+        return false
+    }
+
+    /**
+     * 添加网络请求拦截
+     * @param interceptor HttpResultInterceptor
+     */
+    fun addHttpResultInterceptor(interceptor: HttpResultInterceptor){
+        httpResultInterceptors.add(interceptor)
+    }
+
+    /**
+     * 清空所有的网络请求拦截
+     */
+    fun clearHttpResultInterceptor(){
+        httpResultInterceptors.clear()
     }
 }
 
