@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -60,6 +61,30 @@ object AppUtils {
 
 
         return intent
+    }
+
+    /**
+     * 横屏
+     *
+     * @param context
+     * @return
+     */
+    fun isLandscape(context: Context): Boolean {
+        val mConfiguration = context.resources.configuration //获取设置的配置信息
+        //获取屏幕方向
+        return mConfiguration.orientation == Configuration.ORIENTATION_LANDSCAPE
+    }
+
+    /**
+     * 竖屏
+     *
+     * @param context
+     * @return
+     */
+    fun isPortrait(context: Context): Boolean {
+        val mConfiguration = context.resources.configuration //获取设置的配置信息
+        //获取屏幕方向
+        return mConfiguration.orientation == Configuration.ORIENTATION_PORTRAIT
     }
 
     /**
