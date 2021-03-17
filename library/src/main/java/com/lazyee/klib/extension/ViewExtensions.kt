@@ -59,7 +59,7 @@ fun TextView.setTextOrGone(str:String?){
  *  在字符串中添加资源图片
  */
 fun TextView.addDrawable(startIndex:Int = 0, vararg resIds:Int){
-    val span:SpannableStringBuilder = SpannableStringBuilder(text)
+    val span = SpannableStringBuilder(text)
     for (index in resIds.count() - 1 downTo 0){
         span.insert(startIndex,getDrawablePlaceHolderText("${resIds[index]}_$index"))
     }
