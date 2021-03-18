@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
 import android.text.TextUtils
+import android.view.LayoutInflater
+import android.view.View
 import androidx.core.content.ContextCompat
 
 /**
@@ -12,6 +14,10 @@ import androidx.core.content.ContextCompat
  * @Date 2020/11/2-6:23 PM
  * @Description:Context类的拓展方法
  */
+
+fun Context.inflateLayoutById(layoutId:Int): View {
+    return LayoutInflater.from(this).inflate(layoutId,null)
+}
 
 /**
  * The absolute width of the available display size in pixels.

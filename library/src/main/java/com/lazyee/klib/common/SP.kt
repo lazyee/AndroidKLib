@@ -2,7 +2,6 @@ package com.lazyee.klib.common
 
 import android.content.Context
 import com.lazyee.klib.util.LogUtils
-import java.lang.ClassCastException
 
 /**
  * @Author leeorz
