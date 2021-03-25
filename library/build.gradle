@@ -72,4 +72,7 @@ dependencies {
 
     api "com.hjq:xxpermissions:${versions.xxpermissions}"
 
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.lifecycle}"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
+
 }
