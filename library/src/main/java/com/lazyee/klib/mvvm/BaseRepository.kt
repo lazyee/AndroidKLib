@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.lazyee.klib.http.HttpManager
 
 /**
  * @Author leeorz
@@ -39,5 +40,6 @@ open class BaseRepository:LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     open fun onDestroy(){
 //        Log.e("TAG","onDestroy")
+        HttpManager.cancel(this)
     }
 }

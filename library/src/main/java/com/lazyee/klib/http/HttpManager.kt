@@ -202,6 +202,8 @@ object HttpManager {
             return
         }
         tasks[tag]!!.dispose()
+
+        cancelAllDisposedTask()
     }
 
     private fun removeTask(tag: Any) {
@@ -211,6 +213,17 @@ object HttpManager {
     fun cancelAllTask() {
         tasks.map { cancel(it.key) }
         tasks.clear()
+    }
+
+    /**
+     * 清除所有Disposed的请求
+     */
+    private fun cancelAllDisposedTask(){
+        tasks.forEach{
+            if(it.value.isDisposed){
+                tasks.remove(it.key)
+            }
+        }
     }
 
     /**
