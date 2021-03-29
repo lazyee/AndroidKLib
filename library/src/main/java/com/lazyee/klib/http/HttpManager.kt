@@ -111,7 +111,7 @@ object HttpManager {
         val clientBuilder = OkHttpClient().newBuilder()
             .addInterceptor(HttpParamsInterceptor(paramsAdapterMap))
             .addInterceptor(getHttpLoggingInterceptor())
-            .addInterceptor(GzipInterceptor())
+//            .addInterceptor(GzipInterceptor())
             .sslSocketFactory(ssLSocketFactory, x509TrustManager)
             .hostnameVerifier(hostnameVerifier)
 
