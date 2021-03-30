@@ -50,7 +50,7 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
         val iterator = paramsAdapterMap.iterator()
         while (iterator.hasNext()) {
             val item = iterator.next()
-            if (url.toString().indexOf(item.key) != -1) {
+            if (url.toString().contains(item.key)) {
                 return item.value.provideParams()
             }
         }
@@ -61,7 +61,7 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
         val iterator = paramsAdapterMap.iterator()
         while (iterator.hasNext()) {
             val item = iterator.next()
-            if (url.toString().indexOf(item.key) != -1) {
+            if (url.toString().contains(item.key)) {
                 return item.value.provideHeader()
             }
         }
@@ -70,9 +70,7 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
 
     private fun addHeaderToRequest(request: Request,params: HashMap<String, String>):Request{
         val builder = request.newBuilder()
-        params.map {
-            builder.addHeader(it.key,it.value)
-        }
+        params.map { builder.addHeader(it.key,it.value) }
         return builder.build()
     }
 
@@ -84,18 +82,14 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
                 (0 until oldFormBody.size).forEach {
                     bodyBuilder.add(oldFormBody.name(it),oldFormBody.value(it))
                 }
-                params.map {
-                    bodyBuilder.add(it.key,it.value)
-                }
+                params.map { bodyBuilder.add(it.key,it.value) }
                 return bodyBuilder.build()
             }
             HttpContentType.APPLICATION_JSON ->{
                 val buffer = Buffer()
                 request.body?.writeTo(buffer)
                 val json = JSONObject(buffer.readUtf8())
-                params.map {
-                    json.put(it.key,it.value)
-                }
+                params.map { json.put(it.key,it.value) }
                 return json.toString().toRequestBody()
             }
         }
@@ -105,9 +99,7 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
 
     private fun setGETRequestParams(builder: HttpUrl.Builder, params: HashMap<String, String>){
         if(params.isEmpty())return
-        params.map {
-            builder.addQueryParameter(it.key, it.value)
-        }
+        params.map { builder.addQueryParameter(it.key, it.value) }
     }
 }
 
