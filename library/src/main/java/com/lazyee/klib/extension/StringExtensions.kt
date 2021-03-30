@@ -282,7 +282,7 @@ fun String?.isChinaPhoneLegal(): Boolean {
 //    val regExp = "^((13[0-9])|(15[^4])|(18[0,2,3,5-9])|(17[0-8])|(147))\\d{8}$"
     val regExp = "^(1[3-9])\\d{9}$"
     val p: Pattern = Pattern.compile(regExp)
-    val m: Matcher = p.matcher(this)
+    val m: Matcher = p.matcher(this!!)
     return m.matches()
 }
 
@@ -293,7 +293,7 @@ fun String?.isChinaPhoneLegal(): Boolean {
 fun String?.isHKPhoneLegal(): Boolean {
     val regExp = "^(5|6|8|9)\\d{7}$"
     val p: Pattern = Pattern.compile(regExp)
-    val m: Matcher = p.matcher(this)
+    val m: Matcher = p.matcher(this!!)
     return m.matches()
 }
 
