@@ -2,7 +2,6 @@ package com.lazyee.klib.base
 
 import android.app.Application
 
-
 /**
  * @Author leeorz
  * @Date 2020/11/3-11:49 AM

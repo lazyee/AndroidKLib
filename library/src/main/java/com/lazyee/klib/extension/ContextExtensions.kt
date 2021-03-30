@@ -15,7 +15,7 @@ import androidx.core.content.ContextCompat
  * @Description:Context类的拓展方法
  */
 
-fun Context.inflateLayoutById(layoutId:Int): View {
+fun Context.inflate(layoutId:Int): View {
     return LayoutInflater.from(this).inflate(layoutId,null)
 }
 

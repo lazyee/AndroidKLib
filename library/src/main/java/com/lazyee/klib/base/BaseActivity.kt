@@ -8,7 +8,7 @@ import com.lazyee.klib.http.HttpManager
 /**
  * @Author leeorz
  * @Date 2020/11/2-3:29 PM
- * @Description: activity base 类,手动实现了Dagger-Android 中DaggerActivity
+ * @Description: activity base 类
  */
 open class BaseActivity: AppCompatActivity(){
     val TAG :String by lazy { this::class.java.simpleName }
