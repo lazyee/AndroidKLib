@@ -217,7 +217,7 @@ object HttpManager {
     }
 
     fun cancelAllTask() {
-        tasks.map { cancel(it.key) }
+        tasks.forEach { cancel(it.key) }
         tasks.clear()
     }
 
@@ -225,9 +225,11 @@ object HttpManager {
      * 清除所有Disposed的请求
      */
     private fun cancelAllDisposedTask(){
-        tasks.forEach{
-            if(it.value.isDisposed){
-                tasks.remove(it.key)
+        val iterator = tasks.iterator()
+        while (iterator.hasNext()){
+            val task = iterator.next()
+            if(task.value.isDisposed){
+                iterator.remove()
             }
         }
     }
@@ -241,7 +243,6 @@ object HttpManager {
         for(interceptor in httpResultInterceptors){
             if(interceptor.intercept(httpResult))return true
         }
-
         return false
     }
 
