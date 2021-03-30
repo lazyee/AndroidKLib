@@ -11,7 +11,7 @@ import okio.buffer
  * @Date 3/10/21-10:36 AM
  * @Description:GZIP
  */
-class GzipInterceptor :Interceptor {
+class GZipInterceptor :Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val originalRequest: Request = chain.request()

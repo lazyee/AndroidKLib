@@ -5,8 +5,8 @@ package com.lazyee.klib.http
  * @Date 3/8/21-5:33 PM
  * @Description:
  */
-abstract class HttpResult<T> {
-    abstract fun getCode():String
-    abstract fun getData():T
-    abstract fun getMsg():String
+interface  HttpResult<T> {
+    fun getCode():String
+    fun getData():T
+    fun getMsg():String
 }

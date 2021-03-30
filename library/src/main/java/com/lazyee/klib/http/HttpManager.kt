@@ -2,8 +2,7 @@ package com.lazyee.klib.http
 
 import android.annotation.SuppressLint
 import android.text.TextUtils
-import com.lazyee.klib.http.interceptor.GzipInterceptor
-import com.lazyee.klib.http.interceptor.HttpParamsAdapter
+import com.lazyee.klib.http.interceptor.HttpParamsProvider
 import com.lazyee.klib.http.interceptor.HttpParamsInterceptor
 import com.lazyee.klib.http.interceptor.HttpResultInterceptor
 import com.lazyee.klib.util.LogUtils
@@ -38,7 +37,7 @@ object HttpManager {
     private const val TAG = "[HttpManager]"
     private lateinit var defaultRetrofit: Retrofit
     private val retrofits: HashMap<String, Retrofit> = HashMap()
-    private val paramsAdapterMap : HashMap<String, HttpParamsAdapter> = HashMap()
+    private val paramsAdapterMap : HashMap<String, HttpParamsProvider> = HashMap()
     private val tasks: HashMap<Any, Disposable> = HashMap()
 
     private val httpResultInterceptors = mutableListOf<HttpResultInterceptor>()
@@ -50,15 +49,26 @@ object HttpManager {
         defaultRetrofit = switch(baseUrl)
     }
 
-    fun setParamsAdapter(baseUrl: String, paramsCallback: HttpParamsAdapter){
-        paramsAdapterMap[baseUrl] = paramsCallback
+    /**
+     * 设置公共参数
+     * @param baseUrl String
+     * @param provider HttpParamsProvider
+     */
+    fun setParamsProvider(baseUrl: String, provider: HttpParamsProvider){
+        paramsAdapterMap[baseUrl] = provider
     }
-
 
     fun <T> create(clazz: Class<T>): T {
         return switch().create(clazz)
     }
 
+    /**
+     * 请求
+     * @param tag Any
+     * @param observable Observable<T>
+     * @param callback HttpCallback<T>?
+     * @return Observable<T>
+     */
     fun <T> request(
         tag: Any,
         observable: Observable<T>,
@@ -70,10 +80,7 @@ object HttpManager {
         return observable
     }
 
-    private fun <T> obtainObserver(
-        tag: Any,
-        callback: HttpCallback<T>? = null
-    ): Observer<T> {
+    private fun <T> obtainObserver(tag: Any, callback: HttpCallback<T>? = null): Observer<T> {
         return object : Observer<T> {
             override fun onSubscribe(disposable: Disposable) {
                 addTask(tag, disposable)
@@ -111,7 +118,7 @@ object HttpManager {
         val clientBuilder = OkHttpClient().newBuilder()
             .addInterceptor(HttpParamsInterceptor(paramsAdapterMap))
             .addInterceptor(getHttpLoggingInterceptor())
-//            .addInterceptor(GzipInterceptor())
+//            .addInterceptor(GZipInterceptor())
             .sslSocketFactory(ssLSocketFactory, x509TrustManager)
             .hostnameVerifier(hostnameVerifier)
 
@@ -136,7 +143,6 @@ object HttpManager {
             return retrofits[baseUrl]
                 ?: return createRetrofit(baseUrl!!)
         }
-
         return defaultRetrofit
     }
 

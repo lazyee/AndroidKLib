@@ -3,7 +3,7 @@ package com.lazyee.klib.http
 /**
  * @Author leeorz
  * @Date 3/8/21-5:32 PM
- * @Description:
+ * @Description:HttpCode
  */
 object HttpCode {
     private val apiSuccessCodeList:MutableList<String> = mutableListOf<String>().also {
