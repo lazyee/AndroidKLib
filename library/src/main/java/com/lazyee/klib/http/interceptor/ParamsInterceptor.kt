@@ -70,7 +70,7 @@ class HttpParamsInterceptor(private val paramsProviderMap: HashMap<String, HttpP
 
     private fun addHeaderToRequest(request: Request,params: HashMap<String, String>):Request{
         val builder = request.newBuilder()
-        params.map { builder.addHeader(it.key,it.value) }
+        params.forEach { builder.addHeader(it.key,it.value) }
         return builder.build()
     }
 
@@ -82,14 +82,14 @@ class HttpParamsInterceptor(private val paramsProviderMap: HashMap<String, HttpP
                 (0 until oldFormBody.size).forEach {
                     bodyBuilder.add(oldFormBody.name(it),oldFormBody.value(it))
                 }
-                params.map { bodyBuilder.add(it.key,it.value) }
+                params.forEach { bodyBuilder.add(it.key,it.value) }
                 return bodyBuilder.build()
             }
             HttpContentType.APPLICATION_JSON ->{
                 val buffer = Buffer()
                 request.body?.writeTo(buffer)
                 val json = JSONObject(buffer.readUtf8())
-                params.map { json.put(it.key,it.value) }
+                params.forEach { json.put(it.key,it.value) }
                 return json.toString().toRequestBody()
             }
         }
@@ -99,7 +99,7 @@ class HttpParamsInterceptor(private val paramsProviderMap: HashMap<String, HttpP
 
     private fun setGETRequestParams(builder: HttpUrl.Builder, params: HashMap<String, String>){
         if(params.isEmpty())return
-        params.map { builder.addQueryParameter(it.key, it.value) }
+        params.forEach { builder.addQueryParameter(it.key, it.value) }
     }
 }
 
