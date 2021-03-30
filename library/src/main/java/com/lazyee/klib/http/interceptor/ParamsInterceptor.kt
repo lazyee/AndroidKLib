@@ -11,7 +11,6 @@ import org.json.JSONObject
  * @Date 3/9/21-5:28 PM
  * @Description:设置公共参数拦截器
  */
-
 class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpParamsProvider>) :
     Interceptor {
     private val TAG = "[HttpParamsInterceptor]"
@@ -52,7 +51,7 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
         while (iterator.hasNext()) {
             val item = iterator.next()
             if (url.toString().indexOf(item.key) != -1) {
-                return item.value.providerParams()
+                return item.value.provideParams()
             }
         }
         return null
@@ -63,7 +62,7 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
         while (iterator.hasNext()) {
             val item = iterator.next()
             if (url.toString().indexOf(item.key) != -1) {
-                return item.value.providerHeader()
+                return item.value.provideHeader()
             }
         }
         return null
@@ -116,6 +115,6 @@ class HttpParamsInterceptor(private val paramsAdapterMap: HashMap<String, HttpPa
  * 公共参数的提供者
  */
 interface HttpParamsProvider {
-    fun providerParams(): HashMap<String, String>?
-    fun providerHeader():HashMap<String, String>?
+    fun provideParams(): HashMap<String, String>?
+    fun provideHeader():HashMap<String, String>?
 }
