@@ -12,6 +12,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import com.lazyee.klib.click.OnSingleClick
+import com.lazyee.klib.click.SingleClick
 
 /**
  * @Author leeorz
@@ -56,6 +58,10 @@ fun TextView.setTextOrGone(str:String?){
         visible()
         this.text = str
     }
+}
+
+fun View.setSingleClick(onSingleClick: OnSingleClick){
+    setOnClickListener { SingleClick.click(onSingleClick) }
 }
 
 /**
