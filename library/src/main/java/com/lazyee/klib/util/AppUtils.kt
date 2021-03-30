@@ -15,7 +15,7 @@ import com.lazyee.klib.BuildConfig
 /**
  * @Author leeorz
  * @Date 2020/11/5-10:59 AM
- * @Description:app工具类
+ * @Description:App工具类
  */
 
 object AppUtils {

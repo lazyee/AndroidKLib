@@ -5,7 +5,7 @@ import java.io.*
 /**
  * @Author leeorz
  * @Date 2020/10/30-12:11 PM
- * @Description:
+ * @Description:文件工具类
  */
 object FileUtils {
 

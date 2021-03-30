@@ -7,7 +7,7 @@ import com.lazyee.klib.BuildConfig
 /**
  * @Author leeorz
  * @Date 2020/11/2-6:54 PM
- * @Description:
+ * @Description:日志工具类
  */
 object LogUtils {
 

@@ -1,6 +1,5 @@
 package com.lazyee.klib.mvvm
 
-import android.util.Log
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
@@ -9,7 +8,7 @@ import com.lazyee.klib.http.HttpManager
 /**
  * @Author leeorz
  * @Date 3/25/21-3:44 PM
- * @Description:仓库
+ * @Description:数据仓库的基类
  */
 open class BaseRepository:LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)

@@ -3,7 +3,7 @@ package com.lazyee.klib.http
 /**
  * @Author leeorz
  * @Date 3/10/21-9:35 AM
- * @Description:
+ * @Description:contentType
  */
 class HttpContentType {
     companion object{
