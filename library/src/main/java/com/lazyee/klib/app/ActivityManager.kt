@@ -70,7 +70,7 @@ object ActivityManager{
     fun goBack(activity: Activity){
         for (index in activityList.count() - 1 downTo 0){
             if (activityList[index] != activity){
-                activityList[index].finish()
+                finishActivity(activityList[index])
             }else{
                 break
             }
@@ -82,7 +82,9 @@ object ActivityManager{
      * @param activity Activity
      */
     fun finishActivity(activity: Activity){
-        activity.finish()
+        if (!activity.isFinishing && !activity.isDestroyed) {
+            activity.finish()
+        }
         remove(activity)
     }
 
@@ -97,7 +99,7 @@ object ActivityManager{
             if(act == activity){
                 break
             }else{
-                act.finish()
+                finishActivity(act)
                 iterator.remove()
             }
         }
