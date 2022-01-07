@@ -17,30 +17,18 @@ import com.lazyee.klib.util.AppUtils
  * Fragment 打开一个Activity
  * @receiver Fragment
  * @param clazz Class<out Activity>?
- * @param action String?
- * @param data Uri?
- * @param setIntentExtraBlock Function1<Intent, Unit>?
- * @param setBundleBlock Function1<Bundle, Unit>?
  * @param flag Int?
  * @param requestCode Int?
  */
 fun Fragment.goto(clazz:Class<out Activity>? = null,
-                  action: String? = null,
-                  data: Uri? = null,
-                  setIntentExtraBlock:((Intent)->Unit)? = null,
-                  setBundleBlock: ((Bundle)->Unit)? = null,
+                  bundle: Bundle? = null,
                   flag:Int? = null,
                   requestCode:Int? = null){
 
     activity?:return
-    val intent = AppUtils.createIntent(activity!!,
-            clazz,
-            action,
-            data,
-            setIntentExtraBlock,
-            setBundleBlock,
-            flag)
-    intent?:return
+    val intent = Intent(activity,clazz)
+    if(flag != null) intent.flags = flag
+    if(bundle != null) intent.putExtras(bundle)
     if (requestCode == null){
         startActivity(intent)
     }else{

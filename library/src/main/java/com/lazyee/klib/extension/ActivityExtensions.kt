@@ -19,29 +19,18 @@ val Activity.extras:Bundle?
  * 打开一个Activity
  * @receiver Activity
  * @param clazz Class<out Activity>?
- * @param action String?
- * @param data Uri?
- * @param setIntentExtraBlock Function1<Intent, Unit>?
- * @param setBundleBlock Function1<Bundle, Unit>?
  * @param flag Int?
  * @param requestCode Int?
  */
 fun Activity.goto(clazz:Class<out Activity>? = null,
-                  action: String? = null,
-                  data: Uri? = null,
-                  setIntentExtraBlock:((Intent)->Unit)? = null,
-                  setBundleBlock: ((Bundle)->Unit)? = null,
+                  bundle: Bundle? = null,
                   flag:Int? = null,
                   requestCode:Int? = null){
 
-    val intent = AppUtils.createIntent(this,
-            clazz,
-            action,
-            data,
-            setIntentExtraBlock,
-            setBundleBlock,
-            flag)
-    intent?:return
+    val intent = Intent(this,clazz)
+    if(flag != null) intent.flags = flag
+    if(bundle != null) intent.putExtras(bundle)
+
     if (requestCode == null){
         startActivity(intent)
     }else{

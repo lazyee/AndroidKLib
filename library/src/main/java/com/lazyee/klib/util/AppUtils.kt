@@ -21,49 +21,6 @@ import com.lazyee.klib.BuildConfig
 object AppUtils {
 
     /**
-     * 创建跳转的Intent
-     * @param context Context
-     * @param clazz Class<out Activity>?
-     * @param action String?
-     * @param data Uri?
-     * @param setIntentExtraBlock Function1<Intent, Unit>?
-     * @param setBundleBlock Function1<Bundle, Bundle>?
-     * @param flag Int?
-     * @return Intent?
-     */
-    fun createIntent(
-            context: Context,
-            clazz: Class<out Activity>? = null,
-            action: String? = null,
-            data: Uri? = null,
-            setIntentExtraBlock: ((Intent) -> Unit)? = null,
-            setBundleBlock: ((Bundle) -> Unit)? = null,
-            flag: Int? = null
-    ): Intent? {
-        var intent: Intent? = null
-
-        if (clazz != null) {
-            intent = Intent(context, clazz)
-        } else {
-            action?.run { intent = Intent(action) }
-        }
-
-        intent ?: return intent
-
-        setIntentExtraBlock?.invoke(intent!!)
-        setBundleBlock?.run {
-            val bundle = Bundle()
-            invoke(bundle)
-            intent!!.putExtras(bundle)
-        }
-        data?.run { intent!!.data = data }
-        flag?.run { intent!!.flags = flag }
-
-
-        return intent
-    }
-
-    /**
      * 横屏
      *
      * @param context
