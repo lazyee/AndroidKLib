@@ -4,7 +4,6 @@ package com.lazyee.klib.extension
 
 import android.text.TextUtils
 import android.util.Base64
-import com.lazyee.klib.util.FileUtils
 import com.lazyee.klib.util.LogUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -26,81 +25,6 @@ import kotlin.system.measureTimeMillis
  * @Description:String 的拓展方法
  */
 
-/**
- * 根据URL返回String内容
- * @receiver String
- * @param method String default GET
- * @param connectTimeout Int seconds default 30s
- * @param readTimeout Int seconds default 30s
- * @param block Function1<[@kotlin.ParameterName] String?, Unit>
- */
-fun String.contentOfUrl(
-    method: String = "GET",
-    connectTimeout: Int = 30,
-    readTimeout: Int = 30, block: (content: String?) -> Unit
-) {
-
-    if (!startsWith("https://", true)
-            && !startsWith("http://", true)){
-        block(null)
-        return
-    }
-    GlobalScope.launch {
-        val url = URL(this@contentOfUrl)
-        val conn = url.openConnection() as HttpURLConnection
-        conn.connectTimeout = connectTimeout * 1000
-        conn.readTimeout = readTimeout * 1000
-        conn.requestMethod = method
-        if (conn.responseCode != 200) {
-            conn.disconnect()
-            runBlocking { block(null) }
-        }
-
-        try {
-            block(FileUtils.contentOfInputStream(conn.inputStream))
-        } catch (e: Exception) {
-            e.printStackTrace()
-            conn.disconnect()
-            block(null)
-        }
-    }
-}
-
-/**
- * 从文件中获取正文
- * @receiver String
- * @return String?
- */
-fun String.contentOfPath(): String? {
-    return FileUtils.contentOfPath(this)
-}
-
-/**
- * String 写入文件
- * @receiver String
- * @param path String 文件路径
- * @return Boolean 写入是否成功，true则为成功
- */
-fun String.contentWriteToFile(path: String): Boolean {
-    return FileUtils.contentWriteToFile(this, path)
-}
-
-/**
- * 文件是否存在
- * @receiver String
- * @return Boolean
- */
-fun String.fileIsExists(): Boolean {
-    return FileUtils.fileIsExists(this)
-}
-
-/**
- * 删除文件
- * @receiver String
- */
-fun String.deleteFile(): Boolean {
-    return FileUtils.delete(this)
-}
 
 /**
  * 字符串生成MD5
@@ -109,7 +33,7 @@ fun String.deleteFile(): Boolean {
  */
 fun String.md5(): String {
     val bytes = MessageDigest.getInstance("MD5").digest(this.toByteArray())
-    return bytes.hex()
+    return bytes.joinToString("") { "%02X".format(it) }
 }
 
 /**

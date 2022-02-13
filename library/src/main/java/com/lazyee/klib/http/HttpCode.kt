@@ -10,7 +10,7 @@ object HttpCode {
         it.add("200")//默认业务正确的
     }
 
-    fun isSuccessful(code:String):Boolean = apiSuccessCodeList.find { it == code } != null
+    fun isSuccessful(code:String?):Boolean = apiSuccessCodeList.find { it == code } != null
 
     /**
      * 添加成功状态码

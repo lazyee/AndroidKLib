@@ -51,6 +51,7 @@ dependencies {
     api "org.greenrobot:eventbus:${versions.event_bus}"
 
     api "com.squareup.moshi:moshi-kotlin:${versions.moshi_kotlin}"
+    kapt "com.squareup.moshi:moshi-kotlin-codegen:${versions.moshi_kotlin_codegen}"
     api "com.squareup.retrofit2:retrofit:${versions.retrofit}"
     implementation "com.squareup.retrofit2:converter-moshi:${versions.converter_moshi}"
     implementation "com.squareup.okhttp3:logging-interceptor:${versions.logging_interceptor}"

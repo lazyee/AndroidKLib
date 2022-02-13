@@ -2,18 +2,8 @@ package com.lazyee.klib.extension
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import com.lazyee.klib.util.AppUtils
 
-/**
- * @Author leeorz
- * @Date 2020/11/2-6:58 PM
- * @Description: BaseActivity 的拓展方法
- */
-
-val Activity.extras:Bundle?
-    get() = intent.extras
 
 /**
  * 打开一个Activity
