@@ -10,7 +10,7 @@ import com.lazyee.klib.http.HttpManager
  * @Date 3/25/21-3:44 PM
  * @Description:数据仓库的基类
  */
-open class BaseRepository:LifecycleObserver {
+open class MVVMBaseRepository:LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
     open fun onCreate(){
 //        Log.e("TAG","onCreate")

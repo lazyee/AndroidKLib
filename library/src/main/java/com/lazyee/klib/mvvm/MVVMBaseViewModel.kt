@@ -1,7 +1,5 @@
 package com.lazyee.klib.mvvm
 
-import androidx.lifecycle.LifecycleObserver
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
@@ -10,10 +8,10 @@ import androidx.lifecycle.ViewModel
  * @Date 3/25/21-3:05 PM
  * @Description:viewmodel
  */
-open class BaseViewModel :ViewModel() {
+open class MVVMBaseViewModel :ViewModel() {
     val loadingStateLiveData = MutableLiveData<LoadingState>()
 
-    open fun getRepositoryList():List<BaseRepository>{
+    open fun getRepositoryList():List<MVVMBaseRepository>{
         return listOf()
     }
 

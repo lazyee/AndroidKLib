@@ -23,10 +23,4 @@ open class BaseActivity: AppCompatActivity(){
         ActivityManager.remove(this)
         HttpManager.cancel(this)
     }
-
-    open fun getScreenName():String{
-        return javaClass.simpleName
-    }
-
-
 }

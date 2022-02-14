@@ -28,10 +28,6 @@ open class BaseFragment:Fragment() {
         activity?.runOnUiThread(action)
     }
 
-    open fun getScreenName():String{
-        return javaClass.simpleName
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         HttpManager.cancel(this)

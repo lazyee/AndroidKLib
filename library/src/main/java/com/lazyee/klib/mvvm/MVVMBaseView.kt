@@ -8,10 +8,10 @@ import androidx.lifecycle.Observer
  * @Date 3/25/21-3:12 PM
  * @Description:MVVM中的View层
  */
-interface IView {
+interface MVVMBaseView {
     fun onLoadingStateChanged(state: LoadingState)
 
-    fun initViewModel(owner: LifecycleOwner,viewModel: BaseViewModel){
+    fun initViewModel(owner: LifecycleOwner,viewModel: MVVMBaseViewModel){
         viewModel.getRepositoryList().forEach {
             owner.lifecycle.addObserver(it)
         }
