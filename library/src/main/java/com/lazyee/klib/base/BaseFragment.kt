@@ -2,15 +2,18 @@ package com.lazyee.klib.base
 
 import android.os.Bundle
 import android.view.View
+import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
 import com.lazyee.klib.http.HttpManager
+import com.lazyee.klib.mvvm.LoadingState
+import com.lazyee.klib.mvvm.MVVMBaseView
 
 /**
  * @Author leeorz
  * @Date 2020/11/2-3:31 PM
  * @Description: fragment base 类
  */
-open class BaseFragment:Fragment() {
+open class BaseFragment:Fragment(),MVVMBaseView {
     val TAG :String by lazy { this::class.java.simpleName }
 
     var isViewCreated:Boolean = false
@@ -18,6 +21,7 @@ open class BaseFragment:Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isViewCreated = true
+        initViewModel(this)
     }
 
     /**
@@ -31,5 +35,13 @@ open class BaseFragment:Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         HttpManager.cancel(this)
+    }
+
+    override fun onLoadingStateChanged(state: LoadingState) {
+
+    }
+
+    override fun onPageLoadingStateChanged(state: LoadingState) {
+
     }
 }
