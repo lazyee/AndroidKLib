@@ -49,26 +49,32 @@ open class MVVMBaseViewModel :ViewModel() {
     }
 
     fun onLoading(){
-        loadingStateLiveData.value = LoadingState.LOADING
+//        loadingStateLiveData.value = LoadingState.LOADING
+        loadingStateLiveData.postValue(LoadingState.LOADING)
     }
 
     fun onLoadSuccess(){
-        loadingStateLiveData.value = LoadingState.SUCCESS
+//        loadingStateLiveData.value = LoadingState.SUCCESS
+        loadingStateLiveData.postValue(LoadingState.SUCCESS)
     }
 
     fun onLoadFailure(){
-        loadingStateLiveData.value = LoadingState.FAILURE
+//        loadingStateLiveData.value = LoadingState.FAILURE
+        loadingStateLiveData.postValue(LoadingState.FAILURE)
     }
 
     fun onPageLoading(){
-        pageLoadingStateLiveData.value = LoadingState.LOADING
+//        pageLoadingStateLiveData.value = LoadingState.LOADING
+        pageLoadingStateLiveData.postValue(LoadingState.LOADING)
     }
 
     fun onPageLoadSuccess(){
-        pageLoadingStateLiveData.value = LoadingState.SUCCESS
+//        pageLoadingStateLiveData.value = LoadingState.SUCCESS
+        pageLoadingStateLiveData.postValue(LoadingState.SUCCESS)
     }
 
     fun onPageLoadFailure(){
-        pageLoadingStateLiveData.value = LoadingState.FAILURE
+//        pageLoadingStateLiveData.value = LoadingState.FAILURE
+        pageLoadingStateLiveData.postValue(LoadingState.FAILURE)
     }
 }

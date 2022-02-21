@@ -11,7 +11,7 @@ import org.json.JSONObject
  * @Date 3/9/21-5:28 PM
  * @Description:设置公共参数拦截器
  */
-class HttpParamsInterceptor(private val paramsProviderMap: HashMap<String, HttpParamsProvider>) :
+class HttpParamsInterceptor(private val paramsProvider: HttpParamsProvider) :
     Interceptor {
     private val TAG = "[HttpParamsInterceptor]"
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -19,12 +19,12 @@ class HttpParamsInterceptor(private val paramsProviderMap: HashMap<String, HttpP
         val originalUrl = originalRequest.url
         val builder = originalUrl.newBuilder()
 
-        val headers = getHeadersByUrl(originalUrl)
+        val headers = paramsProvider.provideHeader()
         if(headers != null && headers.isNotEmpty()){
             originalRequest = addHeaderToRequest(originalRequest,headers)
         }
 
-        val params = getParamsByUrl(originalUrl)
+        val params = paramsProvider.provideParams()
         if(params == null || params.isEmpty()){
             return chain.proceed(originalRequest)
         }
@@ -46,27 +46,7 @@ class HttpParamsInterceptor(private val paramsProviderMap: HashMap<String, HttpP
         return chain.proceed(newRequest)
     }
 
-    private fun getParamsByUrl(url: HttpUrl):HashMap<String, String>?{
-        val iterator = paramsProviderMap.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (url.toString().contains(item.key)) {
-                return item.value.provideParams()
-            }
-        }
-        return null
-    }
 
-    private fun getHeadersByUrl(url:HttpUrl):HashMap<String,String>?{
-        val iterator = paramsProviderMap.iterator()
-        while (iterator.hasNext()) {
-            val item = iterator.next()
-            if (url.toString().contains(item.key)) {
-                return item.value.provideHeader()
-            }
-        }
-        return null
-    }
 
     private fun addHeaderToRequest(request: Request,params: HashMap<String, String>):Request{
         val builder = request.newBuilder()

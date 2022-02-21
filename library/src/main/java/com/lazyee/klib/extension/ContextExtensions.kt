@@ -1,13 +1,62 @@
 package com.lazyee.klib.extension
+
+import android.app.Activity
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.drawable.Drawable
+import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+
+/**
+ * 打开一个Activity
+ * @receiver Activity
+ * @param clazz Class<out Activity>?
+ * @param flag Int?
+ * @param requestCode Int?
+ */
+fun Context.goto(
+    clazz: Class<out Activity>? = null,
+    bundle: Bundle? = null,
+    flag: Int? = null,
+    requestCode: Int? = null
+) {
+
+    val intent = Intent(this, clazz)
+    if (flag != null) intent.flags = flag
+    if (bundle != null) intent.putExtras(bundle)
+
+    if (this is Activity) {
+        if (requestCode == null) {
+            startActivity(intent)
+        } else {
+            startActivityForResult(intent, requestCode)
+        }
+
+    } else if (this is Fragment) {
+        if (requestCode == null) {
+            startActivity(intent)
+        } else {
+            startActivityForResult(intent, requestCode)
+        }
+    } else if (this is android.app.Fragment) {
+        if (requestCode == null) {
+            startActivity(intent)
+        } else {
+            startActivityForResult(intent, requestCode)
+        }
+    } else {
+        throw Exception("不支持的Context类型")
+    }
+
+}
+
 
 /**
  * @Author leeorz
@@ -15,20 +64,20 @@ import androidx.core.content.ContextCompat
  * @Description:Context类的拓展方法
  */
 
-fun Context.inflate(layoutId:Int): View {
-    return LayoutInflater.from(this).inflate(layoutId,null)
+fun Context.inflate(layoutId: Int): View {
+    return LayoutInflater.from(this).inflate(layoutId, null)
 }
 
 /**
  * The absolute width of the available display size in pixels.
  */
-val Context.screenWidth :Int
+val Context.screenWidth: Int
     get() = resources.displayMetrics.widthPixels
 
 /**
  * The absolute height of the available display size in pixels.
  */
-val Context.screenHeight :Int
+val Context.screenHeight: Int
     get() = resources.displayMetrics.heightPixels
 
 /**
@@ -78,10 +127,10 @@ fun Context.sp2px(sp: Float): Int {
 /**
  * 复制文本
  */
-fun Context.copy(content:String?):Boolean{
-    if(TextUtils.isEmpty(content))return false
+fun Context.copy(content: String?): Boolean {
+    if (TextUtils.isEmpty(content)) return false
     val manager = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-    val clipData = ClipData.newPlainText("label",content)
+    val clipData = ClipData.newPlainText("label", content)
     manager.setPrimaryClip(clipData)
     return true
 }
@@ -121,8 +170,8 @@ fun Context.isPortrait(): Boolean {
  * @param colorResId Int
  * @return Int
  */
-fun Context.ofColor(colorResId:Int): Int {
-    return ContextCompat.getColor(this,colorResId)
+fun Context.ofColor(colorResId: Int): Int {
+    return ContextCompat.getColor(this, colorResId)
 }
 
 /**
@@ -131,6 +180,6 @@ fun Context.ofColor(colorResId:Int): Int {
  * @param resId Int
  * @return Drawable?
  */
-fun Context.ofDrawable(resId:Int): Drawable? {
-    return ContextCompat.getDrawable(this,resId)
+fun Context.ofDrawable(resId: Int): Drawable? {
+    return ContextCompat.getDrawable(this, resId)
 }

@@ -6,8 +6,9 @@ package com.lazyee.klib.http
  * @Description:HttpCode
  */
 object HttpCode {
+    const val defaultSuccessCode = "200"//默认业务正确的
     private val apiSuccessCodeList:MutableList<String> = mutableListOf<String>().also {
-        it.add("200")//默认业务正确的
+        it.add(defaultSuccessCode)
     }
 
     fun isSuccessful(code:String?):Boolean = apiSuccessCodeList.find { it == code } != null

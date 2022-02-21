@@ -2,9 +2,8 @@ package com.lazyee.klib.base
 
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.CallSuper
 import androidx.fragment.app.Fragment
-import com.lazyee.klib.http.HttpManager
+import com.lazyee.klib.http.HttpUtil
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
 
@@ -34,7 +33,7 @@ open class BaseFragment:Fragment(),MVVMBaseView {
 
     override fun onDestroy() {
         super.onDestroy()
-        HttpManager.cancel(this)
+        HttpUtil.cancel(this)
     }
 
     override fun onLoadingStateChanged(state: LoadingState) {

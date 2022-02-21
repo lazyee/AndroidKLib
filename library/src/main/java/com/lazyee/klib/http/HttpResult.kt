@@ -6,7 +6,7 @@ package com.lazyee.klib.http
  * @Description:请求结果
  */
 interface  HttpResult<T> {
-    fun getCode():String?
+    fun getCode():String
     fun getData():T?
     fun getMsg():String?
 }
