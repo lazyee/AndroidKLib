@@ -1,14 +1,28 @@
 package com.lazyee.klib.app
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.Application
+import android.os.Bundle
 import java.util.*
 
 /**
  * @Author leeorz
  * @Date 2020/11/3-2:51 PM
- * @Description:手动管理的Activity Stack
+ * @Description:手动管理的Activity Stack,监听activity生命周期
  */
+@SuppressLint("StaticFieldLeak")
 object ActivityManager{
+    private val activityLifecycleCallbacks :ActivityLifecycleCallbacks = ActivityLifecycleCallbacks()
+
+    /**
+     * 注册生命周期监听
+     */
+    fun registerActivityLifecycleCallbacks(application: Application){
+        application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+    }
+    var foregroundActivity:Activity? = null
+
     private val activityList:MutableList<Activity> = mutableListOf()
 
     /**
@@ -111,5 +125,37 @@ object ActivityManager{
      */
     fun finishAllActivity(){
         finishOtherActivity(null)
+    }
+
+    private class ActivityLifecycleCallbacks : Application.ActivityLifecycleCallbacks{
+        override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+            add(activity)
+        }
+
+        override fun onActivityStarted(activity: Activity) {
+            foregroundActivity = activity
+        }
+
+        override fun onActivityResumed(activity: Activity) {
+
+        }
+
+        override fun onActivityPaused(activity: Activity) {
+
+        }
+
+        override fun onActivityStopped(activity: Activity) {
+            if(foregroundActivity == activity){
+                foregroundActivity = null
+            }
+        }
+
+        override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
+
+        }
+
+        override fun onActivityDestroyed(activity: Activity) {
+            remove(activity)
+        }
     }
 }

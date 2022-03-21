@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 
@@ -182,4 +183,20 @@ fun Context.ofColor(colorResId: Int): Int {
  */
 fun Context.ofDrawable(resId: Int): Drawable? {
     return ContextCompat.getDrawable(this, resId)
+}
+
+fun Context.toastShort(strResId:Int){
+    Toast.makeText(this,strResId,Toast.LENGTH_LONG).show()
+}
+
+fun Context.toastLong(strResId:Int){
+    Toast.makeText(this,strResId,Toast.LENGTH_SHORT).show()
+}
+
+fun Context.toastShort(msg:String){
+    Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()
+}
+
+fun Context.toastLong(msg:String){
+    Toast.makeText(this,msg,Toast.LENGTH_LONG).show()
 }

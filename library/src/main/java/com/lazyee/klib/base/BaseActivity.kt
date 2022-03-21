@@ -17,14 +17,12 @@ open class BaseActivity: AppCompatActivity(), MVVMBaseView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ActivityManager.add(this)
         initViewModel(this)
 
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        ActivityManager.remove(this)
         HttpUtil.cancel(this)
     }
 
