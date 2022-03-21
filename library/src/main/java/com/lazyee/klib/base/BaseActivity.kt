@@ -1,14 +1,12 @@
 package com.lazyee.klib.base
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewbinding.ViewBinding
-import com.lazyee.klib.app.ActivityManager
 import com.lazyee.klib.http.HttpUtil
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
-import kotlin.reflect.KClass
+import com.lazyee.klib.util.ViewBindingUtils
 
 /**
  * @Author leeorz
@@ -20,6 +18,9 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
+
         initViewModel(this)
     }
 
