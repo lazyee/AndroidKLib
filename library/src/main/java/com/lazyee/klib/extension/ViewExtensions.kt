@@ -20,7 +20,6 @@ import com.lazyee.klib.click.SingleClick
  * @Date 11/23/20-5:18 PM
  * @Description:View的拓展方法
  */
-
 fun View.disable(){
     if(this.isEnabled){
         this.isEnabled = false

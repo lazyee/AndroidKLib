@@ -5,6 +5,7 @@ plugins {
 }
 
 apply from: "../config.gradle"
+
 android {
     compileSdkVersion versions.compile_sdk
 
@@ -31,6 +32,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = versions.jvm_target
+    }
+    buildFeatures{
+        viewBinding true
     }
 }
 
