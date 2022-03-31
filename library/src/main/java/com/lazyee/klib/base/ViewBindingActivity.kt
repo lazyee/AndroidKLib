@@ -7,7 +7,7 @@ import com.lazyee.klib.util.ViewBindingUtils
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:
+ * Description:ViewBinding Activity
  * Date: 2022/3/21 4:05 下午
  */
 open  class ViewBindingActivity<VB: ViewBinding>:BaseActivity() {
@@ -17,10 +17,10 @@ open  class ViewBindingActivity<VB: ViewBinding>:BaseActivity() {
         mViewBinding =  ViewBindingUtils.getViewBinding(javaClass,layoutInflater)
         setContentView(mViewBinding.root)
 
-        initView(mViewBinding)
+        initView()
     }
 
-    open fun initView(viewBinding: VB){
+    open fun initView(){
 
     }
 }

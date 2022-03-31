@@ -10,7 +10,7 @@ import com.lazyee.klib.util.ViewBindingUtils
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:
+ * Description:ViewBinding Fragment
  * Date: 2022/3/21 4:05 下午
  */
 open class ViewBindingFragment<VB:ViewBinding> :BaseFragment(){
@@ -28,10 +28,10 @@ open class ViewBindingFragment<VB:ViewBinding> :BaseFragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView(mViewBinding);
+        initView()
     }
 
-    open fun initView(viewBinding:VB){
+    open fun initView(){
 
     }
 }

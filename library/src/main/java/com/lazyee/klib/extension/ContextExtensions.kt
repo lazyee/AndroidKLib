@@ -24,12 +24,21 @@ import androidx.fragment.app.Fragment
  */
 fun Context.goto(
     clazz: Class<out Activity>? = null,
+    action:String? = null,
     bundle: Bundle? = null,
     flag: Int? = null,
     requestCode: Int? = null
 ) {
 
-    val intent = Intent(this, clazz)
+    var intent:Intent? = null
+    if(clazz != null){
+        intent = Intent(this, clazz)
+    }else if(!TextUtils.isEmpty(action)){
+        intent = Intent(action)
+    }
+
+    intent?:return
+
     if (flag != null) intent.flags = flag
     if (bundle != null) intent.putExtras(bundle)
 
