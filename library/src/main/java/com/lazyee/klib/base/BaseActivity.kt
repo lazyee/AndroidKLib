@@ -1,5 +1,6 @@
 package com.lazyee.klib.base
 
+import android.app.Activity
 import android.graphics.Rect
 import android.os.Bundle
 import android.view.ViewTreeObserver
@@ -17,6 +18,9 @@ import com.lazyee.klib.mvvm.MVVMBaseView
 open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
     val TAG :String by lazy { this::class.java.simpleName }
     private var mDecorViewVisibleHeight = 0
+
+    val activity: Activity
+        get() = this
 
     /**
      * 键盘显示监听

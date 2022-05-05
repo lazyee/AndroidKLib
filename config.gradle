@@ -46,7 +46,9 @@ ext {
             immersionbar              : "3.0.0",
             xxpermissions             : "10.2",
 
-            lifecycle                 : "2.3.1"
+            lifecycle                 : "2.3.1",
+
+            gson                      : "2.9.0"
 
 
     ]
