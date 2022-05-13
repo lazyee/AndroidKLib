@@ -6,14 +6,18 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Rect
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewTreeObserver
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.lazyee.klib.constant.AppConstants
+import com.lazyee.klib.listener.OnKeyboardVisibleListener
 
 /**
  * 打开一个Activity
@@ -24,20 +28,20 @@ import androidx.fragment.app.Fragment
  */
 fun Context.goto(
     clazz: Class<out Activity>? = null,
-    action:String? = null,
+    action: String? = null,
     bundle: Bundle? = null,
     flag: Int? = null,
     requestCode: Int? = null
 ) {
 
-    var intent:Intent? = null
-    if(clazz != null){
+    var intent: Intent? = null
+    if (clazz != null) {
         intent = Intent(this, clazz)
-    }else if(!TextUtils.isEmpty(action)){
+    } else if (!TextUtils.isEmpty(action)) {
         intent = Intent(action)
     }
 
-    intent?:return
+    intent ?: return
 
     if (flag != null) intent.flags = flag
     if (bundle != null) intent.putExtras(bundle)
@@ -194,18 +198,65 @@ fun Context.ofDrawable(resId: Int): Drawable? {
     return ContextCompat.getDrawable(this, resId)
 }
 
-fun Context.toastShort(strResId:Int){
-    Toast.makeText(this,strResId,Toast.LENGTH_LONG).show()
+fun Context.toastShort(strResId: Int) {
+    Toast.makeText(this, strResId, Toast.LENGTH_LONG).show()
 }
 
-fun Context.toastLong(strResId:Int){
-    Toast.makeText(this,strResId,Toast.LENGTH_SHORT).show()
+fun Context.toastLong(strResId: Int) {
+    Toast.makeText(this, strResId, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.toastShort(msg:String){
-    Toast.makeText(this,msg,Toast.LENGTH_SHORT).show()
+fun Context.toastShort(msg: String) {
+    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
 }
 
-fun Context.toastLong(msg:String){
-    Toast.makeText(this,msg,Toast.LENGTH_LONG).show()
+fun Context.toastLong(msg: String) {
+    Toast.makeText(this, msg, Toast.LENGTH_LONG).show()
+}
+
+/**
+ * 设置键盘显示隐藏监听
+ */
+fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
+    if (this !is Activity) return null
+    var decorViewVisibleHeight = 0
+    val onGlobalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+        override fun onGlobalLayout() {
+            val rect = Rect()
+            window.decorView.getWindowVisibleDisplayFrame(rect)
+            val visibleHeight = rect.height()
+
+            if (decorViewVisibleHeight == 0) {
+                decorViewVisibleHeight = visibleHeight
+                return
+            }
+
+            if (decorViewVisibleHeight == visibleHeight) {
+                return
+            }
+
+            val keyboardHeight = decorViewVisibleHeight - visibleHeight
+            if (keyboardHeight > 200) {
+                AppConstants.SOFT_KEYBOARD_HEIGHT = keyboardHeight
+                listener?.onSoftKeyboardShow(keyboardHeight)
+                decorViewVisibleHeight = visibleHeight
+                return
+            }
+
+            if (visibleHeight - decorViewVisibleHeight > 200) {
+                listener?.onSoftKeyboardHide()
+                decorViewVisibleHeight = visibleHeight
+            }
+        }
+    }
+    window.decorView.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
+    return onGlobalLayoutListener
+}
+
+/**
+ * 移除键盘显示监听
+ */
+fun Context.removeKeyBoardVisibleListener(listener: ViewTreeObserver.OnGlobalLayoutListener){
+    if(this !is Activity)return
+    window.decorView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
 }
