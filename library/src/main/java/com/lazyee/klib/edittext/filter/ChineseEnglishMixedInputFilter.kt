@@ -1,12 +1,10 @@
-package com.lazyee.klib.filter.edittext
+package com.lazyee.klib.edittext.filter
 
 import android.text.InputFilter
 import android.text.Spanned
 import android.widget.EditText
 import java.lang.StringBuilder
-import java.util.regex.Matcher
 import java.util.regex.Pattern
-import kotlin.math.max
 
 /**
  * Author: leeorz

@@ -1,4 +1,4 @@
-package com.lazyee.klib.filter.edittext
+package com.lazyee.klib.edittext.filter
 
 import android.text.InputFilter
 import android.text.Spanned
@@ -7,7 +7,7 @@ import java.lang.StringBuilder
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:禁止输入指定字符,example: arrayListOf("<", ">", "&")
+ * Description:只能输入指定的字符
  * Date: 2022/5/11 3:02 下午
  */
 class LegalCharInputFilter(private val legalRule: String) :InputFilter {

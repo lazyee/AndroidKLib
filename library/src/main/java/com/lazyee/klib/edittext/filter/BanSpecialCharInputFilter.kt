@@ -1,4 +1,4 @@
-package com.lazyee.klib.filter.edittext
+package com.lazyee.klib.edittext.filter
 
 import android.text.InputFilter
 import android.text.Spanned
