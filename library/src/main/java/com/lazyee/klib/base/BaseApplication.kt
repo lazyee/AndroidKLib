@@ -12,6 +12,14 @@ import com.lazyee.klib.app.ActivityManager
 class BaseApplication :Application(){
     override fun onCreate() {
         super.onCreate()
+        application = this
         ActivityManager.registerActivityLifecycleCallbacks(this)
+    }
+
+    companion object{
+        private var application:Application? = null
+        fun getApplication(): Application? {
+            return application
+        }
     }
 }

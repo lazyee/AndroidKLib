@@ -6,7 +6,7 @@ package com.lazyee.klib.click
  * @Description:防止重复点击
  */
 object SingleClick {
-    private var intervalTime = 500L
+    private var intervalTime = 300L
     private var lastClickTime = 0L
 
     /**
@@ -19,7 +19,7 @@ object SingleClick {
 
     fun click(onClick:OnSingleClick){
         val currentTimeMillis = System.currentTimeMillis()
-        if(currentTimeMillis - lastClickTime < intervalTime)return
+        if(currentTimeMillis - lastClickTime < intervalTime) return
         lastClickTime = currentTimeMillis
         onClick()
     }

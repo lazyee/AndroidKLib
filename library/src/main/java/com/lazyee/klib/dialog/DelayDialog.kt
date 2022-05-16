@@ -1,4 +1,4 @@
-package com.lazyee.klib.widget
+package com.lazyee.klib.dialog
 
 import android.app.Dialog
 import android.content.Context
