@@ -6,16 +6,25 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.Rect
+import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
 import android.text.TextUtils
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewTreeObserver
+import android.util.Log
+import android.view.*
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleObserver
+import androidx.lifecycle.OnLifecycleEvent
 import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 
@@ -216,14 +225,61 @@ fun Context.toastLong(msg: String) {
 
 /**
  * 设置键盘显示隐藏监听
+ * activity softInputMode 为 adjustNothing的时候无法监听
  */
 fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
     if (this !is Activity) return null
+    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(window.decorView,listener)
+    window.decorView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
+    return keyboardGlobalLayoutListener
+}
+
+/**
+ * 设置键盘显示隐藏监听
+ * activity softInputMode 为 adjustNothing的时候使用
+ */
+fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
+    if (this !is Activity) return null
+    val popupView = LinearLayout(this)
+    popupView.layoutParams = LinearLayout.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.MATCH_PARENT
+    )
+    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(popupView, listener)
+    popupView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
+
+    val popupWindow = PopupWindow(this)
+    popupWindow.contentView = popupView
+
+    popupWindow.softInputMode =
+        WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE or WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE
+    popupWindow.inputMethodMode = PopupWindow.INPUT_METHOD_NEEDED
+
+    popupWindow.width = 0
+    popupWindow.height = ViewGroup.LayoutParams.MATCH_PARENT
+    popupWindow.setBackgroundDrawable(ColorDrawable(0))
+
+    window.decorView.run {
+        post { popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, 0, 0) }
+    }
+    if (this is AppCompatActivity) {
+        lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun onDestroy() {
+                popupWindow.dismiss()
+            }
+        })
+    }
+
+    return keyboardGlobalLayoutListener
+}
+
+private fun createKeyboardGlobalLayoutListener(view:View, listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener {
     var decorViewVisibleHeight = 0
-    val onGlobalLayoutListener = object : ViewTreeObserver.OnGlobalLayoutListener {
+    return object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             val rect = Rect()
-            window.decorView.getWindowVisibleDisplayFrame(rect)
+            view.getWindowVisibleDisplayFrame(rect)
             val visibleHeight = rect.height()
 
             if (decorViewVisibleHeight == 0) {
@@ -249,8 +305,6 @@ fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): 
             }
         }
     }
-    window.decorView.viewTreeObserver.addOnGlobalLayoutListener(onGlobalLayoutListener)
-    return onGlobalLayoutListener
 }
 
 /**
