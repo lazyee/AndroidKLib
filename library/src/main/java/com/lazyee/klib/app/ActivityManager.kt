@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import java.util.*
+import kotlin.reflect.KClass
 
 /**
  * @Author leeorz
@@ -42,26 +43,6 @@ object ActivityManager{
     }
 
     /**
-     * 根据索引返回activity 如果为负数，则从尾部开始获取，比如 -1 就是倒数第二个
-     * @param index
-     * * @return Activity?
-     */
-    fun byIndex(index:Int):Activity?{
-        if(index < 0){
-            val newIndex = activityList.size - 1 + index
-            if (newIndex < 0 || newIndex > activityList.size - 1){
-                return null
-            }
-            return activityList[newIndex]
-        }
-
-        if(index > activityList.size - 1){
-            return null
-        }
-        return activityList[index]
-    }
-
-    /**
      * 移除
      * @param activityArr Array<out Activity>
      */
@@ -83,13 +64,20 @@ object ActivityManager{
      * 返回指定页面
      * @param activity Activity
      */
-    fun goBack(activity: Activity){
-        for (index in activityList.count() - 1 downTo 0){
-            if (activityList[index] != activity){
-                finishActivity(activityList[index])
-            }else{
+    fun backTo(clazz:Class<Activity>){
+        backTo(clazz.simpleName)
+    }
+    /**
+     * 返回指定页面
+     * @param activitySimpleName Stirng
+     */
+    fun backTo(activitySimpleName:String){
+        val reversedList = activityList.reversed()
+        for(act in reversedList){
+            if(act.javaClass.simpleName == activitySimpleName){
                 break
             }
+            finish(act);
         }
     }
 
@@ -97,7 +85,7 @@ object ActivityManager{
      * 结束指定Activity
      * @param activity Activity
      */
-    fun finishActivity(activity: Activity){
+    fun finish(activity: Activity){
         if (!activity.isFinishing && !activity.isDestroyed) {
             activity.finish()
         }
@@ -105,28 +93,34 @@ object ActivityManager{
     }
 
     /**
-     * 结束其他所有的 Activity
-     * @param activity Activity
+     * 结束指定的Activity
+     * @param activitySimpleName String
      */
-    fun finishOtherActivity(activity: Activity?){
-        val iterator = activityList.iterator()
-        while (iterator.hasNext()){
-            val act = iterator.next()
-            if(act == activity){
-                break
+    fun finish(activitySimpleName: String){
+        val targetActivity = activityList.find { it.javaClass.simpleName == activitySimpleName } ?: return
+        finish(targetActivity)
+    }
+
+    /**
+     * 结束其他所有的 Activity
+     * @param acts Activity vararg
+     */
+    fun finishAllExcept(vararg activityArr: Class<Activity>?){
+        val newActList = ArrayList(activityList)
+        for (act in newActList){
+            if(activityArr.find { it?.simpleName == act.javaClass.simpleName } == null){
+                continue
             }else{
-                finishActivity(act)
-                iterator.remove()
+                finish(act)
             }
         }
     }
 
     /**
      * 结束所有的 Activity
-     * @param activity Activity
      */
-    fun finishAllActivity(){
-        finishOtherActivity(null)
+    fun finishAll(){
+        finishAllExcept()
     }
 
     private class ActivityLifecycleCallbacks : Application.ActivityLifecycleCallbacks{
