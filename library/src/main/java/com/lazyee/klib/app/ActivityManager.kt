@@ -29,7 +29,9 @@ object ActivityManager{
      * 获取最后的activity实例
      * @return Activity?
      */
-    fun current(): Activity? = activityList.lastOrNull()
+    fun lastActivity(): Activity? = activityList.lastOrNull()
+    val last:Activity?
+        get() = activityList.lastOrNull()
 
     /**
      * 添加activity

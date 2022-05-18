@@ -11,7 +11,7 @@ import com.lazyee.klib.base.BaseApplication
  * Date: 2022/5/16 4:51 下午
  */
 fun Float.dpToPx(): Int {
-    return BaseApplication.getApplication()?.dp2px(this)?:this.toInt()
+    return ActivityManager.last?.dp2px(this)?:this.toInt()
 }
 
 fun Int.dpToPx(context: Context): Int {
