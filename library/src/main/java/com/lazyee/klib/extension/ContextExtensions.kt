@@ -1,18 +1,19 @@
 package com.lazyee.klib.extension
 
 import android.app.Activity
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
-import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Message
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.lazyee.klib.R
 import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 
@@ -313,4 +315,41 @@ private fun createKeyboardGlobalLayoutListener(view:View, listener: OnKeyboardVi
 fun Context.removeKeyBoardVisibleListener(listener: ViewTreeObserver.OnGlobalLayoutListener){
     if(this !is Activity)return
     window.decorView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+}
+
+
+/**
+ * 显示通知
+ * 如果显示不出来，要去应用的通知管理中设置是否显示通知
+ */
+fun Context.showNotification(notificationId:Int,
+                             buildNotification: (builder:Notification.Builder)->Unit,
+                             channelId:String = "defaultChannelId",
+                             channelName:String = "defaultChannelName"){
+    val notificationBuilder: Notification.Builder
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val notificationChannel = NotificationChannel(
+            channelId,
+            channelName,
+            NotificationManager.IMPORTANCE_LOW
+        )
+        notificationManager.createNotificationChannel(notificationChannel)
+        notificationBuilder = Notification.Builder(this, channelId)
+        notificationBuilder.setCategory(Notification.CATEGORY_MESSAGE)
+        notificationBuilder.setAutoCancel(true)
+    } else {
+        notificationBuilder = Notification.Builder(this)
+    }
+
+    buildNotification(notificationBuilder)
+    notificationManager.notify(notificationId, notificationBuilder.build())
+}
+
+/**
+ * 移除通知
+ */
+fun Context.cancelNotification(notificationId:Int){
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.cancel(notificationId)
 }
