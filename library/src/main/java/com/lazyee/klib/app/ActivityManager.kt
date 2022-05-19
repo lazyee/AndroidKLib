@@ -69,7 +69,7 @@ object ActivityManager{
     }
     /**
      * 返回指定页面
-     * @param activitySimpleName Stirng
+     * @param activitySimpleName String
      */
     fun backTo(activitySimpleName:String){
         val reversedList = activityList.reversed()
