@@ -5,7 +5,6 @@ import android.app.Activity
 import android.app.Application
 import android.os.Bundle
 import java.util.*
-import kotlin.reflect.KClass
 
 /**
  * @Author leeorz
@@ -13,16 +12,49 @@ import kotlin.reflect.KClass
  * @Description:手动管理的Activity Stack,监听activity生命周期
  */
 @SuppressLint("StaticFieldLeak")
-object ActivityManager{
-    private val activityLifecycleCallbacks :ActivityLifecycleCallbacks = ActivityLifecycleCallbacks()
+object ContextManager{
+    private val mActivityLifecycleCallbacks :ActivityLifecycleCallbacks = ActivityLifecycleCallbacks()
+    private var mApplication:Application? = null
+    private var mForegroundActivity:Activity? = null
+    private var mCurrentActivity:Activity? = null
 
     /**
      * 注册生命周期监听
      */
-    fun registerActivityLifecycleCallbacks(application: Application){
-        application.registerActivityLifecycleCallbacks(activityLifecycleCallbacks)
+    fun  register(application: Application){
+        this.mApplication = application
+        application.registerActivityLifecycleCallbacks(mActivityLifecycleCallbacks)
     }
-    var foregroundActivity:Activity? = null
+
+    @JvmName("getTargetApplication")
+    fun <T:Application> getApplication(): T? {
+        if(mApplication == null) return null
+        return mApplication as T
+    }
+
+    fun getApplication(): Application? {
+        return mApplication
+    }
+
+    @JvmName("getTargetForegroundActivity")
+    fun <T:Activity> getForegroundActivity(): T? {
+        if(mForegroundActivity == null)return null
+        return mForegroundActivity as T
+    }
+
+    fun getForegroundActivity(): Activity? {
+        return mForegroundActivity
+    }
+
+    @JvmName("getTargetCurrentActivity")
+    fun <T:Activity> getCurrentActivity():T?{
+        if(mCurrentActivity == null)return null
+        return mCurrentActivity as T
+    }
+
+    fun getCurrentActivity():Activity?{
+        return mCurrentActivity
+    }
 
     private val activityList:MutableList<Activity> = mutableListOf()
 
@@ -129,7 +161,7 @@ object ActivityManager{
         }
 
         override fun onActivityStarted(activity: Activity) {
-            foregroundActivity = activity
+            mForegroundActivity = activity
         }
 
         override fun onActivityResumed(activity: Activity) {
@@ -141,8 +173,8 @@ object ActivityManager{
         }
 
         override fun onActivityStopped(activity: Activity) {
-            if(foregroundActivity == activity){
-                foregroundActivity = null
+            if(mForegroundActivity == activity){
+                mForegroundActivity = null
             }
         }
 

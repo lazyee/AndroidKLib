@@ -1,7 +1,7 @@
 package com.lazyee.klib.base
 
 import android.app.Application
-import com.lazyee.klib.app.ActivityManager
+import com.lazyee.klib.app.ContextManager
 
 /**
  * Author: leeorz
@@ -9,17 +9,9 @@ import com.lazyee.klib.app.ActivityManager
  * Description: 主要是做来监听activity的生命周期
  * Date: 2022/3/21 9:26 上午
  */
-class BaseApplication :Application(){
+open class BaseApplication :Application(){
     override fun onCreate() {
         super.onCreate()
-        application = this
-        ActivityManager.registerActivityLifecycleCallbacks(this)
-    }
-
-    companion object{
-        private var application:Application? = null
-        fun getApplication(): Application? {
-            return application
-        }
+        ContextManager.register(this)
     }
 }

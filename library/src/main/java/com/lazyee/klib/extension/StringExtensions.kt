@@ -7,9 +7,6 @@ import android.util.Base64
 import com.lazyee.klib.util.LogUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.net.HttpURLConnection
-import java.net.URL
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
@@ -237,3 +234,26 @@ fun String?.toTimeMillis(format:String = "yyyy-MM-dd hh:mm:ss",locale:Locale = L
     if(TextUtils.isEmpty(this))return null
     return toDate(format,locale)?.time
 }
+
+/**
+ * 分割词组
+ * 你好AAABCD生成如下数组
+ * [你好AAABCD, 你好AAABC, 好AAABCD, 你好AAAB, 好AAABC, AAABCD, 你好AAA, 好AAAB, AAABC, AABCD, 你好AA, 好AAA, AAAB, AABC, ABCD, 你好A, 好AA, AAA, AAB, ABC, BCD, 你好, 好A, AA, AB, BC, CD, 你, 好, A, B, C, D]
+ */
+fun String.split2Combo():List<String>{
+    val comboList = mutableListOf<String>()
+    repeat(length){
+        for (index in (length) downTo  it){
+            if(index == it)continue
+            val combo = substring(it,index)
+            if(comboList.contains(combo))continue
+            val lastCombo =  comboList.lastOrNull { it.length >= combo.length }
+            comboList.add( comboList.indexOf(lastCombo) + 1,combo)
+        }
+    }
+    return comboList
+}
+
+//fun main() {
+//    "你好AAABCD".split2Combo()
+//}
