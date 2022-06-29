@@ -14,6 +14,8 @@ import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.os.StatFs
 import android.text.TextUtils
 import android.util.Log
 import android.view.*
@@ -29,6 +31,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.lazyee.klib.R
 import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
+import com.lazyee.klib.util.FileUtils
 
 /**
  * 打开一个Activity
@@ -352,4 +355,32 @@ fun Context.showNotification(notificationId:Int,
 fun Context.cancelNotification(notificationId:Int){
     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     notificationManager.cancel(notificationId)
+}
+
+/**
+ * 获取内部存储空间大小
+ */
+fun Context.getInternalFsTotalSize(): Long {
+    return FileUtils.getFsTotalSize(cacheDir.absolutePath)
+}
+
+/**
+ * 获取内容存储空间可用大小
+ */
+fun Context.getInternalFsAvailableSize(): Long {
+    return FileUtils.getFsAvailableSize(cacheDir.absolutePath)
+}
+
+/**
+ * 获取外部存储空间大小
+ */
+fun Context.getExternalFsTotalSize(): Long {
+    return FileUtils.getFsTotalSize(externalCacheDir?.absolutePath?:"")
+}
+
+/**
+ * 获取外部存储空间可用大小
+ */
+fun Context.getExternalFsAvailableSize(): Long {
+    return FileUtils.getFsAvailableSize(externalCacheDir?.absolutePath?:"")
 }
