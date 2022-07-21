@@ -4,20 +4,15 @@ import android.app.Activity
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
+import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.os.StatFs
 import android.text.TextUtils
-import android.util.Log
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -28,7 +23,6 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import com.lazyee.klib.R
 import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 import com.lazyee.klib.util.FileUtils
@@ -384,3 +378,36 @@ fun Context.getExternalFsTotalSize(): Long {
 fun Context.getExternalFsAvailableSize(): Long {
     return FileUtils.getFsAvailableSize(externalCacheDir?.absolutePath?:"")
 }
+
+/**
+ * 添加网络状态回调
+ * @param lifecycle
+ * @param callback
+ */
+fun Context.registerNetworkStateCallback(lifecycle:Lifecycle, callback:(isAvailable:Boolean)->Unit){
+    val broadcastReceiver = object :BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            callback.invoke(isNetworkAvailable())
+        }
+    }
+    val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+    registerReceiver(broadcastReceiver,intentFilter)
+
+    lifecycle.addObserver(object :LifecycleObserver{
+        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        fun onDestroy(){
+            unregisterReceiver(broadcastReceiver)
+        }
+    })
+}
+
+/**
+ * 判断网络是否连接
+ * @param * @return
+ */
+fun Context.isNetworkAvailable(): Boolean {
+    val mConnectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val mNetworkInfo = mConnectivityManager.activeNetworkInfo
+    return mNetworkInfo?.isAvailable?:false
+}
+
