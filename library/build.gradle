@@ -22,7 +22,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled options.minify_enabled
+//            minifyEnabled options.minify_enabled
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -39,7 +40,7 @@ android {
 }
 
 dependencies {
-
+    implementation fileTree(dir: "libs", include: ["*.jar", '*.aar'])
     testImplementation "junit:junit:${versions.junit}"
     androidTestImplementation "androidx.test.ext:junit:${versions.android_junit}"
     androidTestImplementation "androidx.test.espresso:espresso-core:${versions.espresso_core}"
