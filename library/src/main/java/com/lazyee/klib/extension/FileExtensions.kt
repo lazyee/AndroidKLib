@@ -31,17 +31,17 @@ fun File.getAudioDuration(): Long {
 /**
  * 复制文件，增加文件复制监听
  */
-fun File.copy(destFilePath:String, listener:FileCopyListener){
+fun File.copy(destFilePath:String, listener:FileCopyListener? = null){
     if(!exists()){
-        listener.onCopyFiled("源文件不存在")
+        listener?.onCopyFailed("源文件不存在")
         return
     }
     if(!isFile){
-        listener.onCopyFiled("源文件不是一个文件")
+        listener?.onCopyFailed("源文件不是一个文件")
         return
     }
     if(!canRead()){
-        listener.onCopyFiled("源文件不可读")
+        listener?.onCopyFailed("源文件不可读")
         return
     }
 
@@ -54,21 +54,21 @@ fun File.copy(destFilePath:String, listener:FileCopyListener){
     val buffer = ByteArray(1024)
     var copyProgress = 0L
     var byteRead = 0
-    listener.onCopyStart()
+    listener?.onCopyStart()
     while (-1 != fis.read(buffer).also { byteRead = it }){
         copyProgress += byteRead
-        listener.onCopyProgress(copyProgress,length())
+        listener?.onCopyProgress(copyProgress,length())
         fos.write(buffer,0,byteRead)
     }
     fis.close()
     fos.flush()
     fos.close()
-    listener.onCopyComplete()
+    listener?.onCopyComplete()
 }
 
 interface FileCopyListener{
     fun onCopyStart()
     fun onCopyProgress(progress:Long,total:Long)
     fun onCopyComplete()
-    fun onCopyFiled(errorMessage:String)
+    fun onCopyFailed(errorMessage:String)
 }
