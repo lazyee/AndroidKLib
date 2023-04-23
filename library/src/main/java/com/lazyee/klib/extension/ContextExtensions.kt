@@ -228,7 +228,13 @@ fun Context.toastLong(msg: String) {
  */
 fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
     if (this !is Activity) return null
-    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(window.decorView,listener)
+
+    fun getVisibleHeight(view:View):Int{
+        val rect = Rect()
+        view.getWindowVisibleDisplayFrame(rect)
+        return rect.height()
+    }
+    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(window.decorView,::getVisibleHeight,listener)
     window.decorView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
     return keyboardGlobalLayoutListener
 }
@@ -238,13 +244,17 @@ fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): 
  * activity softInputMode 为 adjustNothing的时候使用
  */
 fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
-    if (this !is Activity) return null
+    if (this !is AppCompatActivity) return null
+
+    fun getVisibleHeight(view:View):Int{
+        return view.measuredHeight
+    }
     val popupView = LinearLayout(this)
     popupView.layoutParams = LinearLayout.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT
     )
-    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(popupView, listener)
+    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(popupView, ::getVisibleHeight,listener)
     popupView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
 
     val popupWindow = PopupWindow(this)
@@ -261,25 +271,22 @@ fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVi
     window.decorView.run {
         post { popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, 0, 0) }
     }
-    if (this is AppCompatActivity) {
-        lifecycle.addObserver(object : LifecycleObserver {
-            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-            fun onDestroy() {
-                popupWindow.dismiss()
-            }
-        })
-    }
+
+    lifecycle.addObserver(object : LifecycleObserver {
+        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        fun onDestroy() {
+            popupWindow.dismiss()
+        }
+    })
 
     return keyboardGlobalLayoutListener
 }
 
-private fun createKeyboardGlobalLayoutListener(view:View, listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener {
+private fun createKeyboardGlobalLayoutListener(view:View,getVisibleHeight:(view:View)->Int, listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener {
     var decorViewVisibleHeight = 0
     return object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
-            val rect = Rect()
-            view.getWindowVisibleDisplayFrame(rect)
-            val visibleHeight = rect.height()
+            val visibleHeight = getVisibleHeight(view)
 
             if (decorViewVisibleHeight == 0) {
                 decorViewVisibleHeight = visibleHeight
