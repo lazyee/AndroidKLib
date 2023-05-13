@@ -44,7 +44,7 @@ ext {
             glide_compiler            : "4.12.0",
 
             immersionbar              : "3.0.0",
-            xxpermissions             : "10.2",
+            xxpermissions             : "18.0",
 
             lifecycle                 : "2.3.1",
 

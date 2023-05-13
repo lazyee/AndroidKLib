@@ -75,7 +75,7 @@ dependencies {
     // kotlin扩展（可选）
     api "com.gyf.immersionbar:immersionbar-ktx:${versions.immersionbar}"
 
-    api "com.hjq:xxpermissions:${versions.xxpermissions}"
+    api "com.github.getActivity:XXPermissions:${versions.xxpermissions}"
 
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:${versions.lifecycle}"
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
