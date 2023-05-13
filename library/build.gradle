@@ -69,11 +69,9 @@ dependencies {
 
     //immersionbar
     // 基础依赖包，必须要依赖
-    api "com.gyf.immersionbar:immersionbar:${versions.immersionbar}"
-    // fragment快速实现（可选）
-    api "com.gyf.immersionbar:immersionbar-components:${versions.immersionbar}"
+    api "com.geyifeng.immersionbar:immersionbar:${versions.immersionbar}"
     // kotlin扩展（可选）
-    api "com.gyf.immersionbar:immersionbar-ktx:${versions.immersionbar}"
+    api "com.geyifeng.immersionbar:immersionbar-ktx:${versions.immersionbar}"
 
     api "com.github.getActivity:XXPermissions:${versions.xxpermissions}"
 
