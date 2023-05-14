@@ -2,29 +2,16 @@ package com.lazyee.klib.util
 
 import android.graphics.Bitmap
 import android.graphics.Color
-import android.os.Build
-import androidx.annotation.RequiresApi
 import kotlin.math.floor
 
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:墨水屏图像抖动算法工具类
+ * Description:
  * Date: 2023/5/11 11:55
  */
 
 object InkScreenImageDitherUtils {
-
-    val PALETTE_BWR = arrayOf<PixelColor>(
-        PixelColor(0, 0, 0, 255),
-        PixelColor(255, 255, 255, 255),
-        PixelColor(255, 0, 0, 255)
-    )
-
-    val PALETTE_BW = arrayOf<PixelColor>(
-        PixelColor(0, 0, 0, 255),
-        PixelColor(255, 255, 255, 255),
-    )
 
     /**
      * 获取颜色误差值
@@ -68,13 +55,12 @@ object InkScreenImageDitherUtils {
         return palette[bestIndex]
     }
 
-    private fun updatePixel(pixels: MutableList<PixelColor>, index:Int, color: PixelColor){
+    private fun updatePixel(pixels: MutableList<PixelColor>,index:Int,color:PixelColor){
         if(index >= pixels.size)return
         pixels[index] = color
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun updatePixelErr(pixels: MutableList<PixelColor>, index:Int, err: PixelColor, rate:Int) {
+    private fun updatePixelErr(pixels: MutableList<PixelColor>, index:Int, err:PixelColor, rate:Int) {
 
         if(index >= pixels.size)return
         val originColor = pixels[index]
@@ -86,11 +72,9 @@ object InkScreenImageDitherUtils {
         val errGreen = err.green
         val errBlue = err.blue
 
-        pixels[index] = PixelColor(
-            getAvailableColorValue(originRed + errRed * rate) ,
+        pixels[index] = PixelColor(getAvailableColorValue(originRed + errRed * rate) ,
             getAvailableColorValue(originGreen + errGreen * rate),
-            getAvailableColorValue(originBlue + errBlue * rate)
-        )
+            getAvailableColorValue(originBlue + errBlue * rate))
     }
 
     private fun getAvailableColorValue(colorVal:Int): Int {
@@ -114,9 +98,7 @@ object InkScreenImageDitherUtils {
         return pixels
     }
 
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun dithering(bitmap: Bitmap, threshold:Int, mode: BW): Bitmap {
+    fun dithering(bitmap: Bitmap, threshold:Int, filter:InkFilterMode): Bitmap {
         val bayerThresholdMap = arrayOf(
             intArrayOf(15, 135, 45, 165),
             intArrayOf(195, 75, 225, 105),
@@ -145,38 +127,43 @@ object InkScreenImageDitherUtils {
             var red = color.red
 //            var green = color.green
 //            var blue = color.blue
-            if(mode == BW.BINARY) {//none
-                red = if(red < threshold) 0 else 255
-            }else if(mode == BW.BAYER){//bayer
-                // 4x4 Bayer ordered dithering algorithm
-                var x = index % bitmapWidth
-                var y = floor(index.toDouble() / bitmapWidth).toInt()
-                var map = floor( (red + bayerThresholdMap[x % 4][y % 4]) / 2.0f );
-                red = if( map < threshold)  0 else 255
-            }else if(mode == BW.FLOYD_STEINBERG){//Floyda-Steinberg
-                // Floyda-Steinberg dithering algorithm
-                val newRed = if(red < 129) 0 else 255
-                val errRed = floor((red - newRed) / 16f).toInt()
-                red = newRed
+            when (filter) {
+                InkFilterMode.BINARY -> {//none
+                    red = if(red < threshold) 0 else 255
+                }
+                InkFilterMode.BAYER -> {//bayer
+                    // 4x4 Bayer ordered dithering algorithm
+                    val x = index % bitmapWidth
+                    val y = floor(index.toDouble() / bitmapWidth).toInt()
+                    val map = floor( (red + bayerThresholdMap[x % 4][y % 4]) / 2.0f );
+                    red = if( map < threshold)  0 else 255
+                }
+                InkFilterMode.FLOYD_STEINBERG -> {//Floyda-Steinberg
+                    // Floyda-Steinberg dithering algorithm
+                    val newRed = if(red < 129) 0 else 255
+                    val errRed = floor((red - newRed) / 16f).toInt()
+                    red = newRed
 
-                updatePixelsRedValue(pixels,index + 1,errRed * 7)
-                updatePixelsRedValue(pixels,index + bitmapWidth - 1, errRed * 3)
-                updatePixelsRedValue(pixels,index + bitmapWidth,errRed * 5)
-                updatePixelsRedValue(pixels,index + bitmapWidth + 1,errRed * 1)
+                    updatePixelsRedValue(pixels,index + 1,errRed * 7)
+                    updatePixelsRedValue(pixels,index + bitmapWidth - 1, errRed * 3)
+                    updatePixelsRedValue(pixels,index + bitmapWidth,errRed * 5)
+                    updatePixelsRedValue(pixels,index + bitmapWidth + 1,errRed * 1)
 
-            }else {
-                // Bill Atkinson's dithering algorithm
-                val newRed = if(red < threshold) 0 else 255
-                val errRed = floor((red - newRed) / 8f).toInt()
-                red = newRed
+                }
+                InkFilterMode.ATKINSON -> {
+                    // Bill Atkinson's dithering algorithm
+                    val newRed = if(red < threshold) 0 else 255
+                    val errRed = floor((red - newRed) / 8f).toInt()
+                    red = newRed
 
-                updatePixelsRedValue(pixels, index + 1,errRed)
-                updatePixelsRedValue(pixels, index + 2,errRed)
-                updatePixelsRedValue(pixels, index + bitmapWidth - 1,errRed)
-                updatePixelsRedValue(pixels, index + bitmapWidth,errRed)
-                updatePixelsRedValue(pixels, index + bitmapWidth + 1,errRed)
-                updatePixelsRedValue(pixels, index + 2 * bitmapWidth,errRed)
+                    updatePixelsRedValue(pixels, index + 1,errRed)
+                    updatePixelsRedValue(pixels, index + 2,errRed)
+                    updatePixelsRedValue(pixels, index + bitmapWidth - 1,errRed)
+                    updatePixelsRedValue(pixels, index + bitmapWidth,errRed)
+                    updatePixelsRedValue(pixels, index + bitmapWidth + 1,errRed)
+                    updatePixelsRedValue(pixels, index + 2 * bitmapWidth,errRed)
 
+                }
             }
 
             pixels[index] = PixelColor(red,red,red)
@@ -185,7 +172,7 @@ object InkScreenImageDitherUtils {
         return createDitherBitmap(pixels,bitmap)
     }
 
-    private fun updatePixelsRedValue(pixels: MutableList<PixelColor>, index:Int, errRedValue:Int){
+    private fun updatePixelsRedValue(pixels: MutableList<PixelColor>,index:Int,errRedValue:Int){
         if(index >= pixels.size)return
         val color = pixels[index]
         val red = color.red + errRedValue
@@ -194,32 +181,37 @@ object InkScreenImageDitherUtils {
         pixels[index] = PixelColor(red,green,blue)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun ditheringCanvasByPalette(bitmap: Bitmap, palette: Array<PixelColor>, mode: BWR): Bitmap? {
+    fun ditheringCanvasByPalette(bitmap: Bitmap, palette: Array<PixelColor>, filter:InkFilterMode): Bitmap {
         val bitmapWidth = bitmap.width
         val pixels = getBitmapPixels(bitmap)
         pixels.forEachIndexed { index,color ->
             val newColor = getNearColorV2(color,palette)
-            if(mode == BWR.FLOYD_STEINBERG){
-                //bwr_floydsteinberg
-                val errColor = getColorErr(color, newColor, 16)
+            when (filter) {
+                InkFilterMode.BINARY -> {
+                    updatePixel(pixels,index,newColor)
+                }
+                InkFilterMode.BAYER->{  }
+                InkFilterMode.FLOYD_STEINBERG -> {
+                    val errColor = getColorErr(color, newColor, 16)
 
-                updatePixel(pixels,index,newColor)
-                updatePixelErr(pixels,index + 1,errColor,7)
-                updatePixelErr(pixels,index + bitmapWidth - 1,errColor,3)
-                updatePixelErr(pixels,index + bitmapWidth,errColor,5)
-                updatePixelErr(pixels,index + bitmapWidth + 1,errColor,1)
+                    updatePixel(pixels,index,newColor)
+                    updatePixelErr(pixels,index + 1,errColor,7)
+                    updatePixelErr(pixels,index + bitmapWidth - 1,errColor,3)
+                    updatePixelErr(pixels,index + bitmapWidth,errColor,5)
+                    updatePixelErr(pixels,index + bitmapWidth + 1,errColor,1)
 
-            }else{//Atkinson
-                val errColor = getColorErr(color, newColor, 8);
+                }
+                InkFilterMode.ATKINSON -> {
+                    val errColor = getColorErr(color, newColor, 8);
 
-                updatePixel(pixels,index,newColor)
-                updatePixelErr(pixels,index + 1,errColor,1)
-                updatePixelErr(pixels,index + 2,errColor,1)
-                updatePixelErr(pixels,index + bitmapWidth - 1,errColor,1)
-                updatePixelErr(pixels,index + bitmapWidth ,errColor,1)
-                updatePixelErr(pixels,index + bitmapWidth + 1,errColor,1)
-                updatePixelErr(pixels,index + 2 * bitmapWidth,errColor,1)
+                    updatePixel(pixels,index,newColor)
+                    updatePixelErr(pixels,index + 1,errColor,1)
+                    updatePixelErr(pixels,index + 2,errColor,1)
+                    updatePixelErr(pixels,index + bitmapWidth - 1,errColor,1)
+                    updatePixelErr(pixels,index + bitmapWidth ,errColor,1)
+                    updatePixelErr(pixels,index + bitmapWidth + 1,errColor,1)
+                    updatePixelErr(pixels,index + 2 * bitmapWidth,errColor,1)
+                }
             }
         }
 
@@ -235,24 +227,34 @@ object InkScreenImageDitherUtils {
         mutableBitmap.setPixels(realPixels,0,bitmap.width,0,0, bitmap.width,bitmap.height)
         return mutableBitmap
     }
+
+
 }
 
 class PixelColor(var red:Int,var green:Int,var blue:Int,var alpha:Int = 255)
 
+object InkPalette{
+    val BWR = arrayOf<PixelColor>(
+        PixelColor(0, 0, 0, 255),
+        PixelColor(255, 255, 255, 255),
+        PixelColor(255, 0, 0, 255)
+    )
+
+    val BW = arrayOf<PixelColor>(
+        PixelColor(0, 0, 0, 255),
+        PixelColor(255, 255, 255, 255),
+    )
+}
+
+
 /**
- * 黑白
+ * 滤镜
  */
-enum class BW{
+enum class InkFilterMode{
     BINARY,
     BAYER,
     FLOYD_STEINBERG,
     ATKINSON
 }
 
-/**
- * 黑白红
- */
-enum class BWR{
-    FLOYD_STEINBERG,
-    ATKINSON
-}
+
