@@ -9,10 +9,10 @@ import com.lazyee.klib.app.ContextManager
  * Description:
  * Date: 2022/5/16 4:51 下午
  */
-fun Float.dpToPx(): Int {
-    return ContextManager.last?.dp2px(this)?:this.toInt()
+fun Number.dpToPx(): Number {
+    return ContextManager.last?.dp2px(this.toFloat())?:this
 }
 
-fun Int.dpToPx(context: Context): Int {
+fun Number.dpToPx(context: Context): Number {
     return this.toFloat().dpToPx()
 }

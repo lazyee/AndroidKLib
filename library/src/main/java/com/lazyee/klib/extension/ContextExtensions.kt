@@ -13,6 +13,7 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.TypedValue
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -102,15 +103,20 @@ val Context.screenWidth: Int
 val Context.screenHeight: Int
     get() = resources.displayMetrics.heightPixels
 
+
+fun Context.dp2pxIntVal(dp: Float): Int {
+    val density: Float = resources.displayMetrics.density
+    return (dp * density + 0.5f).toInt()
+}
+
 /**
  * dp转px
  * @receiver Context
  * @param dp Float
  * @return Int
  */
-fun Context.dp2px(dp: Float): Int {
-    val density: Float = resources.displayMetrics.density
-    return (dp * density + 0.5f).toInt()
+fun Context.dp2px(dp: Float): Float {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
 }
 
 /**
