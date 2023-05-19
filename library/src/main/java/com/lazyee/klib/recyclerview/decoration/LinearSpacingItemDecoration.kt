@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Description:
  * Date: 2022/7/20 15:28
  */
-class LinearSpaceItemDecoration(
+class LinearSpacingItemDecoration(
     private val top: Int = 0,
     private val bottom: Int = 0,
     private val left: Int = 0,
