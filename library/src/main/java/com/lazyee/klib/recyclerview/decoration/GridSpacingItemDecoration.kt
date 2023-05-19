@@ -15,10 +15,10 @@ import kotlin.math.ceil
  * Description:添加RecyclerView网格间距
  * Date: 2023/5/19 17:22
  */
-class GridSpacingItemDecoration(private val space:Float,private val color:Int = Color.TRANSPARENT) : RecyclerView.ItemDecoration(){
+class GridSpacingItemDecoration(private val space:Float,color:Int? = null) : RecyclerView.ItemDecoration(){
     private var paint : Paint = Paint()
     init {
-        paint.color = color
+        paint.color = color ?: Color.TRANSPARENT
     }
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
 //            super.getItemOffsets(outRect, view, parent, state)
