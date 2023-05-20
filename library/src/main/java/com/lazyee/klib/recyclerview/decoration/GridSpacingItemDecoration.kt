@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -17,28 +18,41 @@ import kotlin.math.ceil
  */
 class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
 
-    private var top:Float = 0f
-    private var left:Float = 0f
-    private var right:Float = 0f
-    private var bottom:Float = 0f
+    private var horizontalSpacing:Float = 0f
+    private var verticalSpacing:Float = 0f
     private val paint : Paint = Paint()
 
     constructor(spacing: Float):this(spacing,null)
     constructor(spacing:Float,color:Int? = null):this(spacing,spacing,color)
     constructor(horizontalSpacing:Float,verticalSpacing:Float):this(horizontalSpacing,verticalSpacing,null)
     constructor(horizontalSpacing:Float,verticalSpacing:Float, color: Int? = null){
-        right = horizontalSpacing
-        bottom = verticalSpacing
+        this.horizontalSpacing = horizontalSpacing
+        this.verticalSpacing = verticalSpacing
         paint.color = color ?: Color.TRANSPARENT
     }
 
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
-//            super.getItemOffsets(outRect, view, parent, state)
         if (parent.layoutManager !is GridLayoutManager) throw Exception("只支持GridLayoutManager")
         val gridLayoutManager = (parent.layoutManager as GridLayoutManager)
         val position = gridLayoutManager.getPosition(view)
-        outRect.bottom = if(isLastLine(position,gridLayoutManager,parent)) 0 else bottom.toInt()
-        outRect.right = if(isLineEnd(position,gridLayoutManager)) 0 else right.toInt()
+
+        /**
+         * 一行有5个Item, 假设间隔是10，在不设置外边距的情况下：
+         *  第1个Item :  left:0,right:8,第一个left取0
+         *  第2个Item :  left:2,right:6
+         *  第3个Item :  left:4,right:4
+         *  第4个Item :  left:6,right:2
+         *  第5个Item :  left:8,right:0,最后一个right取0
+         *
+         *  可以发现，right 和 left 相加都是10
+         *
+         */
+        val spanCount = gridLayoutManager.spanCount
+        val column: Int = position % gridLayoutManager.spanCount
+        outRect.left = (column * horizontalSpacing / spanCount).toInt()
+        outRect.right = (horizontalSpacing - (column + 1) * horizontalSpacing / spanCount).toInt()
+
+        outRect.bottom = if(isLastLine(position,gridLayoutManager, parent)) 0 else verticalSpacing.toInt()
     }
 
     private fun isLineEnd(position:Int,layoutManager: GridLayoutManager):Boolean{
@@ -60,13 +74,13 @@ class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
             childView.let {
                 c.drawRect(it.right.toFloat() ,
                     it.top.toFloat(),
-                    it.right.toFloat() + if(isLineEnd(position,gridLayoutManager)) 0f  else right,
+                    it.right.toFloat() + if(isLineEnd(position,gridLayoutManager)) 0f  else horizontalSpacing,
                     it.bottom.toFloat(),paint)
 
                 c.drawRect(it.left.toFloat() ,
                     it.bottom.toFloat(),
-                    it.right.toFloat() + right,
-                    it.bottom.toFloat() + if(isLastLine(position,gridLayoutManager,parent))0f else bottom,paint)
+                    it.right.toFloat() + horizontalSpacing,
+                    it.bottom.toFloat() + if(isLastLine(position,gridLayoutManager,parent))0f else verticalSpacing,paint)
             }
 
         }
