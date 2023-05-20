@@ -15,18 +15,30 @@ import kotlin.math.ceil
  * Description:添加RecyclerView网格间距
  * Date: 2023/5/19 17:22
  */
-class GridSpacingItemDecoration(private val space:Float,color:Int? = null) : RecyclerView.ItemDecoration(){
-    private var paint : Paint = Paint()
-    init {
+class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
+
+    private var top:Float = 0f
+    private var left:Float = 0f
+    private var right:Float = 0f
+    private var bottom:Float = 0f
+    private val paint : Paint = Paint()
+
+    constructor(spacing: Float):this(spacing,null)
+    constructor(spacing:Float,color:Int? = null):this(spacing,spacing,color)
+    constructor(horizontalSpacing:Float,verticalSpacing:Float):this(horizontalSpacing,verticalSpacing,null)
+    constructor(horizontalSpacing:Float,verticalSpacing:Float, color: Int? = null){
+        right = horizontalSpacing
+        bottom = verticalSpacing
         paint.color = color ?: Color.TRANSPARENT
     }
+
     override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
 //            super.getItemOffsets(outRect, view, parent, state)
         if (parent.layoutManager !is GridLayoutManager) throw Exception("只支持GridLayoutManager")
         val gridLayoutManager = (parent.layoutManager as GridLayoutManager)
         val position = gridLayoutManager.getPosition(view)
-        outRect.bottom = if(isLastLine(position,gridLayoutManager,parent)) 0 else space.toInt()
-        outRect.right = if(isLineEnd(position,gridLayoutManager)) 0 else space.toInt()
+        outRect.bottom = if(isLastLine(position,gridLayoutManager,parent)) 0 else bottom.toInt()
+        outRect.right = if(isLineEnd(position,gridLayoutManager)) 0 else right.toInt()
     }
 
     private fun isLineEnd(position:Int,layoutManager: GridLayoutManager):Boolean{
@@ -45,16 +57,16 @@ class GridSpacingItemDecoration(private val space:Float,color:Int? = null) : Rec
         (0 until childCount - 1).forEach { position ->
             val childView = parent.getChildAt(position)
 
-            childView.run {
-                c.drawRect(right.toFloat() ,
-                    top.toFloat(),
-                    right.toFloat() + if(isLineEnd(position,gridLayoutManager)) 0f  else space,
-                    bottom.toFloat(),paint)
+            childView.let {
+                c.drawRect(it.right.toFloat() ,
+                    it.top.toFloat(),
+                    it.right.toFloat() + if(isLineEnd(position,gridLayoutManager)) 0f  else right,
+                    it.bottom.toFloat(),paint)
 
-                c.drawRect(left.toFloat() ,
-                    bottom.toFloat(),
-                    right.toFloat() + space,
-                    bottom.toFloat() + if(isLastLine(position,gridLayoutManager,parent))0f else space,paint)
+                c.drawRect(it.left.toFloat() ,
+                    it.bottom.toFloat(),
+                    it.right.toFloat() + right,
+                    it.bottom.toFloat() + if(isLastLine(position,gridLayoutManager,parent))0f else bottom,paint)
             }
 
         }
