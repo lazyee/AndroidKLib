@@ -52,7 +52,7 @@ class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
         outRect.left = (column * horizontalSpacing / spanCount).toInt()
         outRect.right = (horizontalSpacing - (column + 1) * horizontalSpacing / spanCount).toInt()
 
-        outRect.bottom = if(isLastLine(position,gridLayoutManager, parent)) 0 else verticalSpacing.toInt()
+        outRect.bottom = if(isLastLine(position,gridLayoutManager,parent)) 0 else verticalSpacing.toInt()
     }
 
     private fun isLineEnd(position:Int,layoutManager: GridLayoutManager):Boolean{
@@ -60,7 +60,17 @@ class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
     }
 
     private fun isLastLine(position:Int, layoutManager: GridLayoutManager, recyclerView: RecyclerView):Boolean{
-        return  ceil(position / layoutManager.spanCount * 1.0) == ceil (recyclerView.adapter!!.itemCount / layoutManager.spanCount * 1.0)
+        Log.e("TAG","isLastLine:position:${position}")
+        Log.e("TAG","isLastLine:recyclerView.childCount:${recyclerView.childCount}")
+        Log.e("TAG","isLastLine:recyclerView.itemCount:${recyclerView.adapter?.itemCount}")
+//        return  ceil((position + 1) / (layoutManager.spanCount * 1.0)) == ceil (recyclerView.childCount / (layoutManager.spanCount * 1.0))
+//        return position + 1 >= (recyclerView.adapter?.itemCount?:0) - layoutManager.spanCount
+        var itemCount = recyclerView.adapter?.itemCount?:0
+        var lastLineCount = itemCount % layoutManager.spanCount
+        if(lastLineCount == 0){
+            lastLineCount = layoutManager.spanCount
+        }
+        return itemCount - position - 1 < lastLineCount
     }
 
     override fun onDraw(c: Canvas, parent: RecyclerView, state: RecyclerView.State) {
@@ -68,7 +78,7 @@ class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
         val gridLayoutManager = parent.layoutManager as GridLayoutManager
         val childCount = parent.childCount
         if(childCount - 1 == 0)return
-        (0 until childCount - 1).forEach { position ->
+        (0 until childCount).forEach { position ->
             val childView = parent.getChildAt(position)
 
             childView.let {
