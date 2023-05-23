@@ -5,7 +5,9 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.*
+import android.content.pm.ActivityInfo.WindowLayout
 import android.content.res.Configuration
+import android.graphics.Color
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -267,8 +269,6 @@ fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVi
     val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(popupWindow.contentView, ::getVisibleHeight,listener)
     popupWindow.contentView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
 
-
-
     window.decorView.run {
         post { popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, 0, 0) }
     }
@@ -288,9 +288,13 @@ fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVi
 /**
  * 设置键盘显示隐藏监听
  * window softInputMode 为 adjustNothing的时候使用
+ * Dialog在使用此方法的时候高度必须设置为全屏
  */
 fun Window.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
 
+    if(attributes.height != WindowManager.LayoutParams.MATCH_PARENT){
+        throw Exception("window height must be MATCH_PARENT!!!")
+    }
     fun getVisibleHeight(view: View): Int {
         return view.measuredHeight
     }
@@ -310,6 +314,7 @@ private fun createListenKeyboardVisiblePopupWindow(context:Context): PopupWindow
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT
     )
+    popupView.setBackgroundColor(Color.parseColor("#FF0000"))
 
     val popupWindow = PopupWindow(context)
     popupWindow.contentView = popupView
@@ -319,6 +324,7 @@ private fun createListenKeyboardVisiblePopupWindow(context:Context): PopupWindow
     popupWindow.inputMethodMode = PopupWindow.INPUT_METHOD_NEEDED
 
     popupWindow.width = 0
+//    popupWindow.width = ViewGroup.LayoutParams.MATCH_PARENT
     popupWindow.height = ViewGroup.LayoutParams.MATCH_PARENT
     popupWindow.setBackgroundDrawable(ColorDrawable(0))
     return popupWindow
