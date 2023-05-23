@@ -292,8 +292,8 @@ fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVi
  */
 fun Window.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
 
-    if(attributes.height != WindowManager.LayoutParams.MATCH_PARENT){
-        throw Exception("window height must be MATCH_PARENT!!!")
+    if(attributes.height != WindowManager.LayoutParams.MATCH_PARENT && attributes.height != decorView.context.screenHeight){
+        throw Exception("window height must be full the screen!!!")
     }
     fun getVisibleHeight(view: View): Int {
         return view.measuredHeight
