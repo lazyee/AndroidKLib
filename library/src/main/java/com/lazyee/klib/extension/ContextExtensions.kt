@@ -234,14 +234,21 @@ fun Context.toastLong(msg: String) {
  */
 fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
     if (this !is Activity) return null
+    return window.addOnKeyBoardVisibleListener(listener)
+}
 
+/**
+ * 设置键盘显示隐藏监听
+ * window softInputMode 为 adjustNothing的时候无法监听
+ */
+fun Window.addOnKeyBoardVisibleListener(listener:OnKeyboardVisibleListener?):ViewTreeObserver.OnGlobalLayoutListener?{
     fun getVisibleHeight(view:View):Int{
         val rect = Rect()
         view.getWindowVisibleDisplayFrame(rect)
         return rect.height()
     }
-    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(window.decorView,::getVisibleHeight,listener)
-    window.decorView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
+    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(decorView,::getVisibleHeight,listener)
+    decorView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
     return keyboardGlobalLayoutListener
 }
 
@@ -250,20 +257,61 @@ fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): 
  * activity softInputMode 为 adjustNothing的时候使用
  */
 fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
-    if (this !is AppCompatActivity) return null
+    if (this !is Activity) return null
 
     fun getVisibleHeight(view:View):Int{
         return view.measuredHeight
     }
-    val popupView = LinearLayout(this)
+
+    val popupWindow = createListenKeyboardVisiblePopupWindow(this)
+    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(popupWindow.contentView, ::getVisibleHeight,listener)
+    popupWindow.contentView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
+
+
+
+    window.decorView.run {
+        post { popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, 0, 0) }
+    }
+
+    if (this is AppCompatActivity) {
+        lifecycle.addObserver(object : LifecycleObserver {
+            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+            fun onDestroy() {
+                popupWindow.dismiss()
+            }
+        })
+    }
+
+    return keyboardGlobalLayoutListener
+}
+
+/**
+ * 设置键盘显示隐藏监听
+ * window softInputMode 为 adjustNothing的时候使用
+ */
+fun Window.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
+
+    fun getVisibleHeight(view: View): Int {
+        return view.measuredHeight
+    }
+    val popupWindow = createListenKeyboardVisiblePopupWindow(decorView.context)
+    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(popupWindow.contentView, ::getVisibleHeight, listener)
+    popupWindow.contentView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
+
+    decorView.run {
+        post { popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, 0, 0) }
+    }
+    return keyboardGlobalLayoutListener
+}
+
+private fun createListenKeyboardVisiblePopupWindow(context:Context): PopupWindow {
+    val popupView = LinearLayout(context)
     popupView.layoutParams = LinearLayout.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT
     )
-    val keyboardGlobalLayoutListener = createKeyboardGlobalLayoutListener(popupView, ::getVisibleHeight,listener)
-    popupView.viewTreeObserver.addOnGlobalLayoutListener(keyboardGlobalLayoutListener)
 
-    val popupWindow = PopupWindow(this)
+    val popupWindow = PopupWindow(context)
     popupWindow.contentView = popupView
 
     popupWindow.softInputMode =
@@ -273,19 +321,7 @@ fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVi
     popupWindow.width = 0
     popupWindow.height = ViewGroup.LayoutParams.MATCH_PARENT
     popupWindow.setBackgroundDrawable(ColorDrawable(0))
-
-    window.decorView.run {
-        post { popupWindow.showAtLocation(this, Gravity.NO_GRAVITY, 0, 0) }
-    }
-
-    lifecycle.addObserver(object : LifecycleObserver {
-        @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        fun onDestroy() {
-            popupWindow.dismiss()
-        }
-    })
-
-    return keyboardGlobalLayoutListener
+    return popupWindow
 }
 
 private fun createKeyboardGlobalLayoutListener(view:View,getVisibleHeight:(view:View)->Int, listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener {
@@ -325,6 +361,13 @@ private fun createKeyboardGlobalLayoutListener(view:View,getVisibleHeight:(view:
 fun Context.removeKeyBoardVisibleListener(listener: ViewTreeObserver.OnGlobalLayoutListener){
     if(this !is Activity)return
     window.decorView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
+}
+
+/**
+ * 移除键盘显示监听
+ */
+fun Window.removeKeyBoardVisibleListener(listener: ViewTreeObserver.OnGlobalLayoutListener){
+    decorView.viewTreeObserver.removeOnGlobalLayoutListener(listener)
 }
 
 
