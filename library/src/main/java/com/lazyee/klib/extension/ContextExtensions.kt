@@ -8,6 +8,7 @@ import android.content.*
 import android.content.pm.ActivityInfo.WindowLayout
 import android.content.res.Configuration
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
@@ -15,11 +16,14 @@ import android.net.ConnectivityManager
 import android.os.Build
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Size
+import android.util.SizeF
 import android.util.TypedValue
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -105,6 +109,16 @@ val Context.screenWidth: Int
 val Context.screenHeight: Int
     get() = resources.displayMetrics.heightPixels
 
+/**
+ * 测量文本宽高
+ */
+fun Context.measureText(measureText:String, textSize:Float): FloatArray {
+    val paint = Paint()
+    paint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,textSize,resources.displayMetrics)
+    val width = paint.measureText(measureText)
+    val height = paint.fontMetrics.bottom - paint.fontMetrics.top
+    return floatArrayOf(width,height)
+}
 
 fun Context.dp2pxIntVal(dp: Float): Int {
     val density: Float = resources.displayMetrics.density
