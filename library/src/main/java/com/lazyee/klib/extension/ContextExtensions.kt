@@ -10,6 +10,7 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
+import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
@@ -112,8 +113,11 @@ val Context.screenHeight: Int
 /**
  * 测量文本宽高
  */
-fun Context.measureText(measureText:String, textSize:Float): FloatArray {
+fun Context.measureText(measureText:String, textSize:Float,typeface: Typeface? = null): FloatArray {
     val paint = Paint()
+    if(typeface != null){
+        paint.typeface = typeface
+    }
     paint.textSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP,textSize,resources.displayMetrics)
     val width = paint.measureText(measureText)
     val height = paint.fontMetrics.bottom - paint.fontMetrics.top
