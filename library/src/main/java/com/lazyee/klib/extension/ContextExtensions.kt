@@ -121,8 +121,10 @@ fun Context.measureText(measureText:String, textSize:Float): FloatArray {
 }
 
 fun Context.dp2pxIntVal(dp: Float): Int {
-    val density: Float = resources.displayMetrics.density
-    return (dp * density + 0.5f).toInt()
+//    val density: Float = resources.displayMetrics.density
+//    return (dp * density + 0.5f).toInt()
+    val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
+    return (px + 0.5f).toInt()
 }
 
 /**
@@ -141,9 +143,20 @@ fun Context.dp2px(dp: Float): Float {
  * @param px Float
  * @return Int
  */
-fun Context.px2dp(px: Float): Int {
+fun Context.px2dpIntVal(px: Float): Int {
     val density = resources.displayMetrics.density
     return (px / density + 0.5f).toInt()
+}
+
+/**
+ * px转dp
+ * @receiver Context
+ * @param px Float
+ * @return Float
+ */
+fun Context.px2dp(px:Float):Float{
+    val density = resources.displayMetrics.density
+    return px / density
 }
 
 /**
@@ -152,9 +165,20 @@ fun Context.px2dp(px: Float): Int {
  * @param px Float
  * @return Int
  */
-fun Context.px2sp(px: Float): Int {
+fun Context.px2spIntVal(px: Float): Int {
     val scaledDensity = resources.displayMetrics.scaledDensity
     return (px / scaledDensity + 0.5f).toInt()
+}
+
+/**
+ * px转sp
+ * @receiver Context
+ * @param px Float
+ * @return Float
+ */
+fun Context.px2sp(px: Float): Float {
+    val scaledDensity = resources.displayMetrics.scaledDensity
+    return px / scaledDensity
 }
 
 /**
@@ -163,9 +187,20 @@ fun Context.px2sp(px: Float): Int {
  * @param sp Float
  * @return Int
  */
-fun Context.sp2px(sp: Float): Int {
+fun Context.sp2pxIntVal(sp: Float): Int {
     val scaledDensity = resources.displayMetrics.scaledDensity
     return (sp * scaledDensity + 0.5f).toInt()
+}
+
+/**
+ * sp转px
+ * @receiver Context
+ * @param sp Float
+ * @return Float
+ */
+fun Context.sp2px(sp: Float): Float {
+    val scaledDensity = resources.displayMetrics.scaledDensity
+    return sp * scaledDensity
 }
 
 /**
