@@ -48,10 +48,20 @@ fun View.setSingleClick(onSingleClick: OnSingleClick){
 }
 
 /**
+ * 设置控件大小
+ */
+fun View.setSize(w:Number ?= null,h:Number? = null){
+    val lp = layoutParams
+    w?.run { lp.width = w.toInt() }
+    h?.run { lp.width = h.toInt() }
+    requestLayout()
+}
+
+/**
  * 设置margin
  */
-fun View.setMargins(size:Int){
-    setMargins(size,size,size,size)
+fun View.setMargins(margin:Int){
+    setMargins(margin,margin,margin,margin)
 }
 
 /**
