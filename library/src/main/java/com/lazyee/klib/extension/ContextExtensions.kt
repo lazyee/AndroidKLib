@@ -7,6 +7,7 @@ import android.app.NotificationManager
 import android.content.*
 import android.content.pm.ActivityInfo.WindowLayout
 import android.content.res.Configuration
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
@@ -99,18 +100,6 @@ fun Context.inflate(layoutId: Int): View {
 }
 
 /**
- * The absolute width of the available display size in pixels.
- */
-val Context.screenWidth: Int
-    get() = resources.displayMetrics.widthPixels
-
-/**
- * The absolute height of the available display size in pixels.
- */
-val Context.screenHeight: Int
-    get() = resources.displayMetrics.heightPixels
-
-/**
  * 测量文本宽高
  */
 fun Context.measureText(measureText:String, textSize:Float,typeface: Typeface? = null): FloatArray {
@@ -122,89 +111,6 @@ fun Context.measureText(measureText:String, textSize:Float,typeface: Typeface? =
     val width = paint.measureText(measureText)
     val height = paint.fontMetrics.bottom - paint.fontMetrics.top
     return floatArrayOf(width,height)
-}
-
-fun Context.dp2pxIntVal(dp: Float): Int {
-//    val density: Float = resources.displayMetrics.density
-//    return (dp * density + 0.5f).toInt()
-    val px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
-    return (px + 0.5f).toInt()
-}
-
-/**
- * dp转px
- * @receiver Context
- * @param dp Float
- * @return Int
- */
-fun Context.dp2px(dp: Float): Float {
-    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, resources.displayMetrics)
-}
-
-/**
- * px转dp
- * @receiver Context
- * @param px Float
- * @return Int
- */
-fun Context.px2dpIntVal(px: Float): Int {
-    val density = resources.displayMetrics.density
-    return (px / density + 0.5f).toInt()
-}
-
-/**
- * px转dp
- * @receiver Context
- * @param px Float
- * @return Float
- */
-fun Context.px2dp(px:Float):Float{
-    val density = resources.displayMetrics.density
-    return px / density
-}
-
-/**
- * px转sp
- * @receiver Context
- * @param px Float
- * @return Int
- */
-fun Context.px2spIntVal(px: Float): Int {
-    val scaledDensity = resources.displayMetrics.scaledDensity
-    return (px / scaledDensity + 0.5f).toInt()
-}
-
-/**
- * px转sp
- * @receiver Context
- * @param px Float
- * @return Float
- */
-fun Context.px2sp(px: Float): Float {
-    val scaledDensity = resources.displayMetrics.scaledDensity
-    return px / scaledDensity
-}
-
-/**
- * sp转px
- * @receiver Context
- * @param sp Float
- * @return Int
- */
-fun Context.sp2pxIntVal(sp: Float): Int {
-    val scaledDensity = resources.displayMetrics.scaledDensity
-    return (sp * scaledDensity + 0.5f).toInt()
-}
-
-/**
- * sp转px
- * @receiver Context
- * @param sp Float
- * @return Float
- */
-fun Context.sp2px(sp: Float): Float {
-    val scaledDensity = resources.displayMetrics.scaledDensity
-    return sp * scaledDensity
 }
 
 /**

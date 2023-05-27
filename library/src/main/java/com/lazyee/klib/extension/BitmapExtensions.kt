@@ -11,16 +11,24 @@ import java.io.FileOutputStream
  * Description:Bitmap拓展方法
  * Date: 2022/12/1 09:27
  */
-fun Bitmap.toPNGFile(file: File){
+fun Bitmap.savePNGFile(file: File,quality: Int = 100){
     val fos = FileOutputStream(file)
-    compress(Bitmap.CompressFormat.PNG,100,fos)
+    compress(Bitmap.CompressFormat.PNG,quality,fos)
     fos.flush()
     fos.close()
 }
 
-fun Bitmap.toJPEGFile(file: File){
+fun Bitmap.saveJPEGFile(file: File,quality: Int = 100){
     val fos = FileOutputStream(file)
-    compress(Bitmap.CompressFormat.JPEG,100,fos)
+    compress(Bitmap.CompressFormat.JPEG,quality,fos)
     fos.flush()
     fos.close()
 }
+
+fun Bitmap.save(file:File,format:Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,quality:Int = 100){
+    val fos = FileOutputStream(file)
+    compress(format,quality,fos)
+    fos.flush()
+    fos.close()
+}
+

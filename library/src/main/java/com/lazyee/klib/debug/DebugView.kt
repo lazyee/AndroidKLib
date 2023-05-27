@@ -15,7 +15,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.lazyee.klib.common.SP
 import com.lazyee.klib.databinding.ItemDebugConfigBinding
 import com.lazyee.klib.databinding.WidgetDebugViewBinding
-import com.lazyee.klib.extension.dpToPx
 import com.lazyee.klib.extension.gone
 import com.lazyee.klib.extension.visible
 
