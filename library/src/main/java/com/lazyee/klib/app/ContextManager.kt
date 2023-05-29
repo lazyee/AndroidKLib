@@ -9,7 +9,7 @@ import java.util.*
 /**
  * @Author leeorz
  * @Date 2020/11/3-2:51 PM
- * @Description:手动管理的Activity Stack,监听activity生命周期
+ * @Description:监听activity生命周期
  */
 @SuppressLint("StaticFieldLeak")
 object ContextManager{
@@ -96,7 +96,7 @@ object ContextManager{
      * 返回指定页面
      * @param activity Activity
      */
-    fun backTo(clazz:Class<Activity>){
+    fun backTo(clazz:Class<out Activity>){
         backTo(clazz.simpleName)
     }
     /**
@@ -117,11 +117,19 @@ object ContextManager{
      * 结束指定Activity
      * @param activity Activity
      */
-    fun finish(activity: Activity){
+    fun finish(activity:Activity){
         if (!activity.isFinishing && !activity.isDestroyed) {
             activity.finish()
         }
         remove(activity)
+    }
+
+    /**
+     * 结束Activity
+     * @param clazz Class
+     */
+    fun finish(clazz:Class<out Activity>){
+        finish(clazz.simpleName)
     }
 
     /**
@@ -137,7 +145,7 @@ object ContextManager{
      * 结束其他所有的 Activity
      * @param acts Activity vararg
      */
-    fun finishAllExcept(vararg activityArr: Class<Activity>?){
+    fun finishAllExcept(vararg activityArr: Class<out Activity>?){
         val newActList = ArrayList(activityList)
         for (act in newActList){
             if(activityArr.find { it?.simpleName == act.javaClass.simpleName } == null){
@@ -153,6 +161,15 @@ object ContextManager{
      */
     fun finishAll(){
         finishAllExcept()
+    }
+
+    /**
+     * 结束所有相同的activity
+     */
+    fun finishAll(clazz:Class<out Activity>){
+        val activityList = activityList.filter { it.javaClass.simpleName == clazz.simpleName }
+        if(activityList.isEmpty())return
+        activityList.forEach { finish(it) }
     }
 
     private class ActivityLifecycleCallbacks : Application.ActivityLifecycleCallbacks{
