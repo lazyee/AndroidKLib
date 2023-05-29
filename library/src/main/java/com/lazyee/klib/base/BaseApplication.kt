@@ -1,7 +1,7 @@
 package com.lazyee.klib.base
 
 import android.app.Application
-import com.lazyee.klib.app.ContextManager
+import com.lazyee.klib.app.AppManager
 
 /**
  * Author: leeorz
@@ -12,6 +12,6 @@ import com.lazyee.klib.app.ContextManager
 open class BaseApplication :Application(){
     override fun onCreate() {
         super.onCreate()
-        ContextManager.register(this)
+        AppManager.register(this)
     }
 }

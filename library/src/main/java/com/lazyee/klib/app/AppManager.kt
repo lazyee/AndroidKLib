@@ -12,7 +12,7 @@ import java.util.*
  * @Description:监听activity生命周期
  */
 @SuppressLint("StaticFieldLeak")
-object ContextManager{
+object AppManager{
     private val mActivityLifecycleCallbacks :ActivityLifecycleCallbacks = ActivityLifecycleCallbacks()
     private var mApplication:Application? = null
     private var mForegroundActivity:Activity? = null
