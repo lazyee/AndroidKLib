@@ -16,7 +16,6 @@ object AppManager{
     private val mActivityLifecycleCallbacks :ActivityLifecycleCallbacks = ActivityLifecycleCallbacks()
     private var mApplication:Application? = null
     private var mForegroundActivity:Activity? = null
-    private var mCurrentActivity:Activity? = null
 
     /**
      * 注册生命周期监听
@@ -48,12 +47,16 @@ object AppManager{
 
     @JvmName("getTargetCurrentActivity")
     fun <T:Activity> getCurrentActivity():T?{
-        if(mCurrentActivity == null)return null
-        return mCurrentActivity as T
+        try {
+            return activityList.lastOrNull() as T?
+        }catch (e: Exception){
+
+        }
+        return null
     }
 
     fun getCurrentActivity():Activity?{
-        return mCurrentActivity
+        return activityList.lastOrNull()
     }
 
     private val activityList:MutableList<Activity> = mutableListOf()
@@ -148,7 +151,7 @@ object AppManager{
     fun finishAllExcept(vararg activityArr: Class<out Activity>?){
         val newActList = ArrayList(activityList)
         for (act in newActList){
-            if(activityArr.find { it?.simpleName == act.javaClass.simpleName } == null){
+            if(activityArr.find { it?.simpleName == act.javaClass.simpleName } != null){
                 continue
             }else{
                 finish(act)
@@ -200,6 +203,7 @@ object AppManager{
         }
 
         override fun onActivityDestroyed(activity: Activity) {
+
             remove(activity)
         }
     }
