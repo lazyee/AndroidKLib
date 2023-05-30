@@ -77,36 +77,36 @@ class HttpUtil private constructor(
      * @param observable Observable<T>
      * @param callback HttpCallback<T>?
      */
-    fun <T> request(
-        tag: Any, observable: Observable<T>, callback: HttpCallback<T>? = null
-    ) {
-        lateinit var task: RxJavaHttpTask
+    fun <T> request(tag: Any, observable: Observable<T>, callback: HttpCallback<T>? = null) {
         observable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                object : Observer<T> {
-                    override fun onSubscribe(disposable: Disposable) {
-                        task = RxJavaHttpTask(disposable)
-                        addTask(tag, task)
-                    }
+            .subscribe(createHttpObserver(tag,callback))
+    }
 
-                    override fun onNext(data: T) {
-                        removeTask(tag, task)
-                        handleHttpResult(data, callback)
+    fun <T> createHttpObserver(tag: Any,callback:HttpCallback<T>? = null): Observer<T> {
+        lateinit var task: RxJavaHttpTask
+        val observer = object : Observer<T> {
+            override fun onSubscribe(disposable: Disposable) {
+                task = RxJavaHttpTask(disposable)
+                addTask(tag, task)
+            }
 
-                    }
+            override fun onNext(data: T) {
+                removeTask(tag, task)
+                handleHttpResult(data, callback)
+            }
 
-                    override fun onError(e: Throwable) {
-                        e.printStackTrace()
-                        removeTask(tag, task)
-                        callback?.onFailure(throwable = e)
-                    }
+            override fun onError(e: Throwable) {
+                e.printStackTrace()
+                removeTask(tag, task)
+                callback?.onFailure(throwable = e)
+            }
 
-                    override fun onComplete() {
-                        removeTask(tag, task)
-                    }
-                }
-            )
+            override fun onComplete() {
+                removeTask(tag, task)
+            }
+        }
+        return observer
     }
 
     fun <T> create(clazz: Class<T>): T {
@@ -130,7 +130,7 @@ class HttpUtil private constructor(
         })
     }
 
-    private fun <T> handleHttpResult(result: T?, callback: HttpCallback<T>?) {
+    fun <T> handleHttpResult(result: T?, callback: HttpCallback<T>?) {
         if (result == null) {
             callback?.onSuccess(null)
             return;
