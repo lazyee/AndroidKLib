@@ -270,7 +270,7 @@ class HttpUtil private constructor(
 
 
         fun setParamsProvider(provider: HttpParamsProvider): Builder {
-            this.paramsProvider = paramsProvider
+            this.paramsProvider = provider
             return this
         }
 
