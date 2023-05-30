@@ -6,6 +6,6 @@ package com.lazyee.klib.http
  * @Description:请求回调
  */
 interface HttpCallback<T> {
-    fun onSuccess(data:T?)
-    fun onFailure(data:T? = null,throwable:Throwable? = null)
+    fun onSuccess(result:T?)
+    fun onFailure(result:T? = null,throwable:Throwable? = null)
 }
