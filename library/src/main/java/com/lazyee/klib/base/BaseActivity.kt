@@ -55,6 +55,14 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
 
     }
 
+    override fun onShowLongToast(msg: String) {
+
+    }
+
+    override fun onShowShortToast(msg: String) {
+
+    }
+
     /**
      * 设置键盘显示监听
      */

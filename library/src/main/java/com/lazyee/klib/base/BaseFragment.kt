@@ -43,4 +43,12 @@ open class BaseFragment:Fragment(),MVVMBaseView {
     override fun onPageLoadingStateChanged(state: LoadingState) {
 
     }
+
+    override fun onShowLongToast(msg: String) {
+
+    }
+
+    override fun onShowShortToast(msg: String) {
+
+    }
 }
