@@ -1,13 +1,9 @@
 package com.lazyee.klib.base
 
 import android.app.Activity
-import android.graphics.Rect
 import android.os.Bundle
 import android.view.ViewTreeObserver
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.internal.ViewUtils.removeOnGlobalLayoutListener
-import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.removeKeyBoardVisibleListener
 import com.lazyee.klib.http.HttpUtil
