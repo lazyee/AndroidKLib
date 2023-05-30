@@ -6,6 +6,8 @@ import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.removeKeyBoardVisibleListener
+import com.lazyee.klib.extension.toastLong
+import com.lazyee.klib.extension.toastShort
 import com.lazyee.klib.http.HttpUtil
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 import com.lazyee.klib.mvvm.LoadingState
@@ -52,11 +54,11 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
     }
 
     override fun onShowLongToast(msg: String) {
-
+        toastLong(msg)
     }
 
     override fun onShowShortToast(msg: String) {
-
+        toastShort(msg)
     }
 
     /**

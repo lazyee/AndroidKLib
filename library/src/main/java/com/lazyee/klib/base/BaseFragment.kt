@@ -3,6 +3,8 @@ package com.lazyee.klib.base
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
+import com.lazyee.klib.extension.toastLong
+import com.lazyee.klib.extension.toastShort
 import com.lazyee.klib.http.HttpUtil
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
@@ -45,10 +47,10 @@ open class BaseFragment:Fragment(),MVVMBaseView {
     }
 
     override fun onShowLongToast(msg: String) {
-
+        activity?.toastLong(msg)
     }
 
     override fun onShowShortToast(msg: String) {
-
+        activity?.toastShort(msg)
     }
 }
