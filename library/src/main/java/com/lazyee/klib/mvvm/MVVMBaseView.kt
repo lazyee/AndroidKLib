@@ -15,8 +15,8 @@ interface MVVMBaseView {
 
     fun onLoadingStateChanged(state: LoadingState)
     fun onPageLoadingStateChanged(state: LoadingState)
-    fun onShowLongToast(msg:String)
-    fun onShowShortToast(msg:String)
+    fun onShowLongToast(msg:String?)
+    fun onShowShortToast(msg:String?)
 
     fun initViewModel(owner: LifecycleOwner) {
         javaClass.declaredFields.forEach { field ->
@@ -68,12 +68,12 @@ interface MVVMBaseView {
             }
         })
 
-        viewModel.toastLongMsgLiveData.observe(owner, Observer<String> {
+        viewModel.toastLongMsgLiveData.observe(owner, Observer<String?> {
             it?: return@Observer
             onShowLongToast(it)
         })
 
-        viewModel.toastShortMsgLiveData.observe(owner,Observer<String>{
+        viewModel.toastShortMsgLiveData.observe(owner,Observer<String?>{
             it?: return@Observer
             onShowShortToast(it)
         })

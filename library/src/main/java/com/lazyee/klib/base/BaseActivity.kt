@@ -2,6 +2,7 @@ package com.lazyee.klib.base
 
 import android.app.Activity
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.ViewTreeObserver
 import androidx.appcompat.app.AppCompatActivity
 import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
@@ -53,12 +54,14 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
 
     }
 
-    override fun onShowLongToast(msg: String) {
-        toastLong(msg)
+    override fun onShowLongToast(msg: String?) {
+        if(TextUtils.isEmpty(msg))return
+        toastLong(msg!!)
     }
 
-    override fun onShowShortToast(msg: String) {
-        toastShort(msg)
+    override fun onShowShortToast(msg: String?) {
+        if(TextUtils.isEmpty(msg))return
+        toastShort(msg!!)
     }
 
     /**

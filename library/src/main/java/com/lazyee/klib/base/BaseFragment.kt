@@ -1,6 +1,7 @@
 package com.lazyee.klib.base
 
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import androidx.fragment.app.Fragment
 import com.lazyee.klib.extension.toastLong
@@ -46,11 +47,13 @@ open class BaseFragment:Fragment(),MVVMBaseView {
 
     }
 
-    override fun onShowLongToast(msg: String) {
-        activity?.toastLong(msg)
+    override fun onShowLongToast(msg: String?) {
+        if(TextUtils.isEmpty(msg))return
+        activity?.toastLong(msg!!)
     }
 
-    override fun onShowShortToast(msg: String) {
-        activity?.toastShort(msg)
+    override fun onShowShortToast(msg: String?) {
+        if(TextUtils.isEmpty(msg))return
+        activity?.toastShort(msg!!)
     }
 }

@@ -11,8 +11,8 @@ import androidx.lifecycle.ViewModel
 open class MVVMBaseViewModel :ViewModel() {
     val loadingStateLiveData = MutableLiveData<LoadingState>()
     val pageLoadingStateLiveData = MutableLiveData<LoadingState>()
-    val toastLongMsgLiveData = MutableLiveData<String>()
-    val toastShortMsgLiveData = MutableLiveData<String>()
+    val toastLongMsgLiveData = MutableLiveData<String?>()
+    val toastShortMsgLiveData = MutableLiveData<String?>()
     private val mRepositoryList = mutableListOf<MVVMBaseRepository>()
 
     fun getRepositoryList():List<MVVMBaseRepository>{
@@ -74,11 +74,11 @@ open class MVVMBaseViewModel :ViewModel() {
         pageLoadingStateLiveData.postValue(LoadingState.FAILURE)
     }
 
-    fun toastLong(msg:String){
+    fun toastLong(msg:String?){
         toastLongMsgLiveData.postValue(msg)
     }
 
-    fun toastShort(msg:String){
+    fun toastShort(msg:String?){
         toastShortMsgLiveData.postValue(msg)
     }
 }
