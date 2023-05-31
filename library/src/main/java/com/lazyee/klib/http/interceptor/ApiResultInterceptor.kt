@@ -1,6 +1,6 @@
 package com.lazyee.klib.http.interceptor
 
-import com.lazyee.klib.http.ApiResult
+import com.lazyee.klib.http.IApiResult
 
 /**
  * @Author leeorz
@@ -8,5 +8,5 @@ import com.lazyee.klib.http.ApiResult
  * @Description:请求数据拦截
  */
 interface ApiResultInterceptor {
-    fun intercept(result: ApiResult<*>):Boolean
+    fun intercept(result: IApiResult<*>):Boolean
 }

@@ -31,7 +31,7 @@ import javax.net.ssl.*
  * @Date 3/8/21-4:08 PM
  * @Description:网络请求
  */
-private const val TAG = "[HttpUtil]"
+private const val TAG = "[ApiManager]"
 private val defaultHostnameVerifier = HostnameVerifier { _, _ -> true }
 private val defaultX509TrustManager = object : X509TrustManager {
     @SuppressLint("TrustAllX509TrustManager")
@@ -54,7 +54,7 @@ private val defaultSSLSocketFactory = SSLContext.getInstance("SSL").let {
     it.socketFactory
 }
 
-class HttpUtil private constructor(
+class ApiManager private constructor(
     private val baseUrl: String,
     private var paramsProvider: HttpParamsProvider? = null,
     private val apiResultInterceptors: MutableList<ApiResultInterceptor>,
@@ -152,7 +152,7 @@ class HttpUtil private constructor(
             callback?.onSuccess(null)
             return
         }
-        if (result !is ApiResult<*>) {
+        if (result !is IApiResult<*>) {
             callback?.onSuccess(result)
             return
         }
@@ -209,7 +209,7 @@ class HttpUtil private constructor(
      * @param result ApiResult<*>
      * @return Boolean
      */
-    private fun isApiResultIntercept(result: ApiResult<*>): Boolean {
+    private fun isApiResultIntercept(result: IApiResult<*>): Boolean {
         for (interceptor in apiResultInterceptors) {
             if (interceptor.intercept(result)) return true
         }
@@ -311,8 +311,8 @@ class HttpUtil private constructor(
             return this
         }
 
-        fun build(): HttpUtil {
-            return HttpUtil(
+        fun build(): ApiManager {
+            return ApiManager(
                 baseUrl, paramsProvider, httpResultInterceptors,
                 hostnameVerifier = hostnameVerifier ?: defaultHostnameVerifier,
                 sslSocketFactory = sslSocketFactory ?: defaultSSLSocketFactory,

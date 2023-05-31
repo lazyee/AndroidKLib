@@ -9,7 +9,7 @@ import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.removeKeyBoardVisibleListener
 import com.lazyee.klib.extension.toastLong
 import com.lazyee.klib.extension.toastShort
-import com.lazyee.klib.http.HttpUtil
+import com.lazyee.klib.http.ApiManager
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
@@ -43,7 +43,7 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
 
     override fun onDestroy() {
         super.onDestroy()
-        HttpUtil.cancel(this)
+        ApiManager.cancel(this)
     }
 
     override fun onLoadingStateChanged(state: LoadingState) {

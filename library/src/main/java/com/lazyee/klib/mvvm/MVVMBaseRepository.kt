@@ -3,7 +3,7 @@ package com.lazyee.klib.mvvm
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
-import com.lazyee.klib.http.HttpUtil
+import com.lazyee.klib.http.ApiManager
 
 /**
  * @Author leeorz
@@ -39,6 +39,6 @@ open class MVVMBaseRepository:LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
     open fun onDestroy(){
 //        Log.e("TAG","onDestroy")
-        HttpUtil.cancel(this)
+        ApiManager.cancel(this)
     }
 }
