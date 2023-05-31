@@ -5,7 +5,8 @@ package com.lazyee.klib.http
  * @Date 3/9/21-4:20 PM
  * @Description:请求回调
  */
-interface HttpCallback<T> {
-    fun onSuccess(result:T?)
-    fun onFailure(result:T? = null,throwable:Throwable? = null)
+abstract class HttpCallback<T> {
+    abstract fun onSuccess(result:T?)
+    abstract fun onFailure(result:T?)
+    abstract fun onRequestFailure(throwable:Throwable)
 }

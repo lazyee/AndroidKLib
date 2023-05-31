@@ -69,8 +69,6 @@ class HttpUtil private constructor(
     }
 
 
-
-
     /**
      * 请求
      * @param tag Any
@@ -99,7 +97,7 @@ class HttpUtil private constructor(
             override fun onError(e: Throwable) {
                 e.printStackTrace()
                 removeTask(tag, task)
-                callback?.onFailure(throwable = e)
+                callback?.onRequestFailure(e)
             }
 
             override fun onComplete() {
@@ -125,21 +123,36 @@ class HttpUtil private constructor(
             override fun onFailure(call: Call<T>?, t: Throwable) {
                 t.printStackTrace()
                 removeTask(tag, task)
-                callback?.onFailure(throwable = t)
+                callback?.onRequestFailure(t)
             }
         })
     }
 
+    /**
+     * 协程请求
+     */
+    suspend fun <T> request(tag: Any,call:Call<T>): T? {
+        val task = RetrofitCallHttpTask(call)
+        try {
+            val response = call.execute()
+            return response.body()
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+        removeTask(tag,task)
+        return null
+    }
+
     fun <T> handleHttpResult(result: T?, callback: HttpCallback<T>?) {
-        if (result == null) {
+        if(result == null){
             callback?.onSuccess(null)
-            return;
+            return
         }
         if (result !is HttpResult<*>) {
             callback?.onSuccess(result)
             return
-
         }
+
         if (isHttpResultIntercept(result)) return
 
         if (HttpCode.isSuccessful(result.getCode())) {
@@ -150,11 +163,8 @@ class HttpUtil private constructor(
     }
 
     private fun createRetrofit() {
-
-
         val clientBuilder = OkHttpClient().newBuilder()
             .addInterceptor(getHttpLoggingInterceptor())
-
 
         if (sslSocketFactory != null && x509TrustManager != null) {
             clientBuilder.sslSocketFactory(sslSocketFactory, x509TrustManager)
@@ -162,8 +172,6 @@ class HttpUtil private constructor(
         if (hostnameVerifier != null) {
             clientBuilder.hostnameVerifier(hostnameVerifier)
         }
-
-
 
         if (paramsProvider != null) {
             clientBuilder.addInterceptor(HttpParamsInterceptor(paramsProvider!!))

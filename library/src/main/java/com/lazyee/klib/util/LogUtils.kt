@@ -2,7 +2,6 @@ package com.lazyee.klib.util
 
 import android.text.TextUtils
 import android.util.Log
-import com.lazyee.klib.BuildConfig
 
 /**
  * @Author leeorz
@@ -11,8 +10,13 @@ import com.lazyee.klib.BuildConfig
  */
 object LogUtils {
 
+    private var isDebug = true
+    private fun init(isDebug:Boolean){
+        this.isDebug = isDebug
+    }
+
     fun d(tag: String?, any: Any?) {
-        if (!BuildConfig.DEBUG) return
+        if (!isDebug) return
         Log.d(getTag(tag), getMsg(any))
     }
 
@@ -21,17 +25,17 @@ object LogUtils {
     }
 
     fun i(tag: String?, any: Any?) {
-        if (!BuildConfig.DEBUG) return
+        if (!isDebug) return
         Log.i(getTag(tag), getMsg(any))
     }
 
     fun w(tag: String?,any: Any?){
-        if (!BuildConfig.DEBUG)return
+        if (!isDebug)return
         Log.w(getTag(tag), getMsg(any))
     }
 
     fun v(tag: String?,any: Any?){
-        if (!BuildConfig.DEBUG)return
+        if (!isDebug)return
         Log.v(getTag(tag), getMsg(any))
     }
 
