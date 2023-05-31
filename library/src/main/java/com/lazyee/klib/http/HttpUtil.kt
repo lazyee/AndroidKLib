@@ -3,7 +3,7 @@ package com.lazyee.klib.http
 import android.annotation.SuppressLint
 import com.lazyee.klib.http.interceptor.HttpParamsProvider
 import com.lazyee.klib.http.interceptor.HttpParamsInterceptor
-import com.lazyee.klib.http.interceptor.HttpResultInterceptor
+import com.lazyee.klib.http.interceptor.ApiResultInterceptor
 import com.lazyee.klib.util.LogUtils
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -57,7 +57,7 @@ private val defaultSSLSocketFactory = SSLContext.getInstance("SSL").let {
 class HttpUtil private constructor(
     private val baseUrl: String,
     private var paramsProvider: HttpParamsProvider? = null,
-    private val httpResultInterceptors: MutableList<HttpResultInterceptor>,
+    private val apiResultInterceptors: MutableList<ApiResultInterceptor>,
     private val sslSocketFactory: SSLSocketFactory? = null,
     private val x509TrustManager: X509TrustManager? = null,
     private val hostnameVerifier: HostnameVerifier? = null
@@ -157,7 +157,7 @@ class HttpUtil private constructor(
             return
         }
 
-        if (isHttpResultIntercept(result)) return
+        if (isApiResultIntercept(result)) return
 
         if (ApiCode.isSuccessful(result.getCode())) {
             callback?.onSuccess(result)
@@ -205,30 +205,30 @@ class HttpUtil private constructor(
 
 
     /**
-     * 网络请求结果是否被拦截
-     * @param httpResult HttpResult<*>
+     * api请求结果是否被拦截
+     * @param result ApiResult<*>
      * @return Boolean
      */
-    private fun isHttpResultIntercept(httpResult: ApiResult<*>): Boolean {
-        for (interceptor in httpResultInterceptors) {
-            if (interceptor.intercept(httpResult)) return true
+    private fun isApiResultIntercept(result: ApiResult<*>): Boolean {
+        for (interceptor in apiResultInterceptors) {
+            if (interceptor.intercept(result)) return true
         }
         return false
     }
 
     /**
-     * 添加网络请求拦截
-     * @param interceptor HttpResultInterceptor
+     * 添加api请求结果拦截
+     * @param interceptor ApiResultInterceptor
      */
-    fun addHttpResultInterceptor(interceptor: HttpResultInterceptor) {
-        httpResultInterceptors.add(interceptor)
+    fun addApiResultInterceptor(interceptor: ApiResultInterceptor) {
+        apiResultInterceptors.add(interceptor)
     }
 
     /**
      * 清空所有的网络请求拦截
      */
-    fun clearHttpResultInterceptor() {
-        httpResultInterceptors.clear()
+    fun clearApiResultInterceptor() {
+        apiResultInterceptors.clear()
     }
 
     companion object {
@@ -274,7 +274,7 @@ class HttpUtil private constructor(
 
     class Builder {
         private var baseUrl: String = ""
-        private val httpResultInterceptors = mutableListOf<HttpResultInterceptor>()
+        private val httpResultInterceptors = mutableListOf<ApiResultInterceptor>()
         private var paramsProvider: HttpParamsProvider? = null
         private var hostnameVerifier: HostnameVerifier? = null
         private var x509TrustManager: X509TrustManager? = null
@@ -286,7 +286,7 @@ class HttpUtil private constructor(
             return this
         }
 
-        fun addHttpResultInterceptor(interceptor: HttpResultInterceptor): Builder {
+        fun addHttpResultInterceptor(interceptor: ApiResultInterceptor): Builder {
             httpResultInterceptors.add(interceptor)
             return this
         }

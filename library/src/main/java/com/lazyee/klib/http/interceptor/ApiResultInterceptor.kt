@@ -7,6 +7,6 @@ import com.lazyee.klib.http.ApiResult
  * @Date 3/16/21-12:59 PM
  * @Description:请求数据拦截
  */
-interface HttpResultInterceptor {
+interface ApiResultInterceptor {
     fun intercept(result: ApiResult<*>):Boolean
 }
