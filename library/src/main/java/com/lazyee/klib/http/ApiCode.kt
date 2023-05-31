@@ -5,7 +5,7 @@ package com.lazyee.klib.http
  * @Date 3/8/21-5:32 PM
  * @Description:HttpCode
  */
-object HttpCode {
+object ApiCode {
     const val defaultSuccessCode = "200"//默认业务正确的
     private val apiSuccessCodeList:MutableList<String> = mutableListOf<String>().also {
         it.add(defaultSuccessCode)
@@ -19,6 +19,11 @@ object HttpCode {
      */
     fun addSuccessCode(code:String){
         apiSuccessCodeList.add(code)
+    }
+
+    fun clearSuccessCode(){
+        apiSuccessCodeList.clear()
+        apiSuccessCodeList.add(defaultSuccessCode)
     }
 
 }

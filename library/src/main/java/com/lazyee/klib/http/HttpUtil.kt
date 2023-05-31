@@ -75,13 +75,13 @@ class HttpUtil private constructor(
      * @param observable Observable<T>
      * @param callback HttpCallback<T>?
      */
-    fun <T> request(tag: Any, observable: Observable<T>, callback: HttpCallback<T>? = null) {
+    fun <T> request(tag: Any, observable: Observable<T>, callback: ApiCallback<T>? = null) {
         observable.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe(createHttpObserver(tag,callback))
     }
 
-    fun <T> createHttpObserver(tag: Any,callback:HttpCallback<T>? = null): Observer<T> {
+    fun <T> createHttpObserver(tag: Any,callback:ApiCallback<T>? = null): Observer<T> {
         lateinit var task: RxJavaHttpTask
         val observer = object : Observer<T> {
             override fun onSubscribe(disposable: Disposable) {
@@ -97,7 +97,9 @@ class HttpUtil private constructor(
             override fun onError(e: Throwable) {
                 e.printStackTrace()
                 removeTask(tag, task)
-                callback?.onRequestFailure(e)
+                if(callback is ApiCallback2<T>?){
+                    callback?.onRequestFailure(e)
+                }
             }
 
             override fun onComplete() {
@@ -111,7 +113,7 @@ class HttpUtil private constructor(
         return retrofit.create(clazz)
     }
 
-    fun <T> request(tag: Any, call: Call<T>, callback: HttpCallback<T>? = null) {
+    fun <T> request(tag: Any, call: Call<T>, callback: ApiCallback<T>? = null) {
         val task = RetrofitCallHttpTask(call)
         addTask(tag, task)
         call.enqueue(object : Callback<T> {
@@ -123,7 +125,9 @@ class HttpUtil private constructor(
             override fun onFailure(call: Call<T>?, t: Throwable) {
                 t.printStackTrace()
                 removeTask(tag, task)
-                callback?.onRequestFailure(t)
+                if(callback is ApiCallback2<T>?){
+                    callback?.onRequestFailure(t)
+                }
             }
         })
     }
@@ -143,19 +147,19 @@ class HttpUtil private constructor(
         return null
     }
 
-    fun <T> handleHttpResult(result: T?, callback: HttpCallback<T>?) {
+    fun <T> handleHttpResult(result: T?, callback: ApiCallback<T>?) {
         if(result == null){
             callback?.onSuccess(null)
             return
         }
-        if (result !is HttpResult<*>) {
+        if (result !is ApiResult<*>) {
             callback?.onSuccess(result)
             return
         }
 
         if (isHttpResultIntercept(result)) return
 
-        if (HttpCode.isSuccessful(result.getCode())) {
+        if (ApiCode.isSuccessful(result.getCode())) {
             callback?.onSuccess(result)
             return
         }
@@ -205,7 +209,7 @@ class HttpUtil private constructor(
      * @param httpResult HttpResult<*>
      * @return Boolean
      */
-    private fun isHttpResultIntercept(httpResult: HttpResult<*>): Boolean {
+    private fun isHttpResultIntercept(httpResult: ApiResult<*>): Boolean {
         for (interceptor in httpResultInterceptors) {
             if (interceptor.intercept(httpResult)) return true
         }
