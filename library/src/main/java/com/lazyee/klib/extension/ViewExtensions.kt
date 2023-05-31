@@ -53,7 +53,7 @@ fun View.setSingleClick(onSingleClick: OnSingleClick){
 fun View.setSize(w:Number ?= null,h:Number? = null){
     val lp = layoutParams
     w?.run { lp.width = w.toInt() }
-    h?.run { lp.width = h.toInt() }
+    h?.run { lp.height = h.toInt() }
     requestLayout()
 }
 
