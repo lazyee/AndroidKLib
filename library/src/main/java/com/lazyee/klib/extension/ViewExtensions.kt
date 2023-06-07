@@ -1,5 +1,6 @@
 package com.lazyee.klib.extension
 
+import android.graphics.drawable.GradientDrawable
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.LinearLayout
@@ -47,10 +48,40 @@ fun View.setSingleClick(onSingleClick: OnSingleClick){
     setOnClickListener { SingleClick.click(onSingleClick) }
 }
 
+fun View.setBackground(corner:Float,
+                       borderWidth:Int? = null,
+                       borderColor:Int? = null,
+                       backgroundColor:Int){
+    setBackground(corner,corner,corner,corner,borderWidth,borderColor,backgroundColor)
+}
+
+fun View.setBackground(topLeftCorner:Float = 0f,
+                       topRightCorner:Float = 0f,
+                       bottomLeftCorner:Float = 0f,
+                       bottomRightCorner:Float = 0f,
+                       borderWidth:Int? = null,
+                       borderColor:Int? = null,
+                       backgroundColor:Int){
+    val drawable = GradientDrawable()
+    drawable.cornerRadii = floatArrayOf(
+        topLeftCorner, topLeftCorner,
+        topRightCorner, topRightCorner,
+        bottomLeftCorner, bottomLeftCorner,
+        bottomRightCorner, bottomRightCorner
+    )
+    drawable.setColor(backgroundColor)
+
+    if(borderColor != null && borderWidth != null){
+        drawable.setStroke(borderWidth.toInt(),borderColor)
+    }
+    background = drawable
+}
+
 /**
  * 设置控件大小
  */
 fun View.setSize(w:Number ?= null,h:Number? = null){
+    layoutParams?:return
     val lp = layoutParams
     w?.run { lp.width = w.toInt() }
     h?.run { lp.height = h.toInt() }
