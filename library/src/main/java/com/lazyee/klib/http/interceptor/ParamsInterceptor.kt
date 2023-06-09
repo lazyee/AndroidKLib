@@ -20,17 +20,16 @@ class HttpParamsInterceptor(private val paramsProvider: HttpParamsProvider) :
         val builder = originalUrl.newBuilder()
 
         val headers = paramsProvider.provideHeader()
-        if(headers != null && headers.isNotEmpty()){
+        if(!headers.isNullOrEmpty()){
             originalRequest = addHeaderToRequest(originalRequest,headers)
         }
 
         val params = paramsProvider.provideParams()
-        if(params == null || params.isEmpty()){
+        if(params.isNullOrEmpty()){
             return chain.proceed(originalRequest)
         }
 
         val newRequest:Request?
-        val url = builder.build()
         if (originalRequest.method == "POST") {
             val requestBody = setPOSTRequestParams(originalRequest,params)
             if(requestBody != null){
@@ -40,7 +39,7 @@ class HttpParamsInterceptor(private val paramsProvider: HttpParamsProvider) :
             }
         } else {
             setGETRequestParams(builder, params)
-            newRequest = originalRequest.newBuilder().url(url).build()
+            newRequest = originalRequest.newBuilder().url(builder.build()).build()
         }
 
         return chain.proceed(newRequest)
