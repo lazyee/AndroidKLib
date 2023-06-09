@@ -2,6 +2,7 @@ package com.lazyee.klib.http.interceptor
 
 import com.lazyee.klib.http.HttpContentType
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import okio.Buffer
 import org.json.JSONObject
@@ -72,7 +73,7 @@ class HttpParamsInterceptor(private val paramsProvider: HttpParamsProvider) :
             request.body?.writeTo(buffer)
             val json = JSONObject(buffer.readUtf8())
             params.forEach { json.put(it.key,it.value) }
-            return json.toString().toRequestBody()
+            return json.toString().toRequestBody(contentType.toMediaType())
         }
         return request.body
     }
