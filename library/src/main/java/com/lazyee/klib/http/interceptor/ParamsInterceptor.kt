@@ -54,25 +54,26 @@ class HttpParamsInterceptor(private val paramsProvider: HttpParamsProvider) :
     }
 
     private fun setPOSTRequestParams(request: Request, params: HashMap<String, String>):RequestBody?{
-        when(request.body?.contentType().toString()){
-            HttpContentType.APPLICATION_X_WWW_FORM_URLENCODED -> {
-                val bodyBuilder = FormBody.Builder()
-                val oldFormBody = request.body as FormBody
-                (0 until oldFormBody.size).forEach {
-                    bodyBuilder.add(oldFormBody.name(it),oldFormBody.value(it))
-                }
-                params.forEach { bodyBuilder.add(it.key,it.value) }
-                return bodyBuilder.build()
+        if(params.isEmpty()) return request.body
+
+        val contentType = request.body?.contentType().toString()
+        if(contentType.contains(HttpContentType.APPLICATION_X_WWW_FORM_URLENCODED)){
+            val bodyBuilder = FormBody.Builder()
+            val oldFormBody = request.body as FormBody
+            (0 until oldFormBody.size).forEach {
+                bodyBuilder.add(oldFormBody.name(it),oldFormBody.value(it))
             }
-            HttpContentType.APPLICATION_JSON ->{
-                val buffer = Buffer()
-                request.body?.writeTo(buffer)
-                val json = JSONObject(buffer.readUtf8())
-                params.forEach { json.put(it.key,it.value) }
-                return json.toString().toRequestBody()
-            }
+            params.forEach { bodyBuilder.add(it.key,it.value) }
+            return bodyBuilder.build()
         }
 
+        if(contentType.contains(HttpContentType.APPLICATION_JSON)){
+            val buffer = Buffer()
+            request.body?.writeTo(buffer)
+            val json = JSONObject(buffer.readUtf8())
+            params.forEach { json.put(it.key,it.value) }
+            return json.toString().toRequestBody()
+        }
         return request.body
     }
 
