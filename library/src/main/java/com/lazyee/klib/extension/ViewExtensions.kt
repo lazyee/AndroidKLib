@@ -1,13 +1,17 @@
 package com.lazyee.klib.extension
 
+import android.app.Activity
+import android.content.Context
 import android.graphics.drawable.GradientDrawable
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.lazyee.klib.click.OnSingleClick
 import com.lazyee.klib.click.SingleClick
+
 
 /**
  * @Author leeorz
@@ -147,4 +151,16 @@ fun View.setMargins(left: Int? = null, top: Int? = null, right:Int? = null, bott
         requestLayout()
         return
     }
+}
+
+fun View.hideKeyboard(){
+    if(context !is Activity)return
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(this.windowToken, 0)
+}
+
+fun View.showKeyboard(){
+    if(context !is Activity)return
+    val inputMethodManager =context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }

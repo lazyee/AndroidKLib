@@ -2,6 +2,7 @@ package com.lazyee.klib.extension
 
 import android.view.Gravity
 import android.view.Window
+import android.view.WindowManager
 
 /**
  * Author: leeorz
@@ -23,4 +24,12 @@ fun Window.setSize(width:Int, height:Int,gravity: Int = Gravity.CENTER){
     lp.height = height
     lp.gravity = gravity
     attributes = lp
+}
+
+fun Window.hideKeyboard(){
+    setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN)
+}
+
+fun Window.showKeyboard(){
+    setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 }
