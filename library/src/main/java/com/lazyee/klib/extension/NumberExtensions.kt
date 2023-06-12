@@ -2,6 +2,14 @@ package com.lazyee.klib.extension
 
 import android.content.res.Resources
 import android.util.TypedValue
+import java.math.BigDecimal
+import java.math.RoundingMode
+import java.text.DecimalFormat
+
+import java.util.Locale
+
+
+
 
 
 /**
@@ -76,4 +84,13 @@ fun Double.sp2px():Double{
 fun Float.sp2px():Float{
     val scaledDensity = Resources.getSystem().displayMetrics.scaledDensity
     return this * scaledDensity
+}
+
+fun Number?.toDisplayPrice():String{
+    this?:return ""
+    val number = if(this is Float) (this * 100).toInt() / 100.0 else this.toDouble()
+    val df = DecimalFormat(if (number % 1.0 > 0) "#,##0.00" else "#,###")
+    df.roundingMode = RoundingMode.FLOOR
+    return df.format(number)
+
 }
