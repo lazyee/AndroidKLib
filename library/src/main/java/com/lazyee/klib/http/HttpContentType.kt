@@ -8,4 +8,5 @@ package com.lazyee.klib.http
 object HttpContentType {
     const val APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded"
     const val APPLICATION_JSON = "application/json"
+    const val MULTIPART_FORM_DATA = "multipart/form-data"
 }
