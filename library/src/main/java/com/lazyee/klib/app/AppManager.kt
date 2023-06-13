@@ -96,6 +96,13 @@ object AppManager{
     }
 
     /**
+     * 是否包含指定activity
+     */
+    fun contains(clazz: Class<out Activity>): Boolean {
+        return activityList.find { it.javaClass.simpleName == clazz.simpleName } != null
+    }
+
+    /**
      * 返回指定页面
      * @param activity Activity
      */
