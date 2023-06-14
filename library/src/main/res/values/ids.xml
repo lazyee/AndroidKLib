@@ -2,6 +2,7 @@
 <resources>
     <item name="contentView" type="id"/>
     <item name="loadingView" type="id"/>
+    <item name="emptyView" type="id"/>
     <item name="networkErrorView" type="id"/>
     <item name="exceptionView" type="id"/>
 </resources>

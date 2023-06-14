@@ -28,6 +28,7 @@ open class PageStateSwitcher:FrameLayout {
     private var networkErrorView: View? = null
     private var loadingView: View? = null
     private var exceptionView: View? = null
+    private var emptyView:View? = null
 
     constructor(context: Context):super(context,null)
     constructor(context: Context,attrs: AttributeSet?):this(context,attrs,0)
@@ -38,12 +39,11 @@ open class PageStateSwitcher:FrameLayout {
         contentView = findViewById(R.id.contentView)
         networkErrorView = findViewById(R.id.networkErrorView)
         loadingView = findViewById(R.id.loadingView)
+        emptyView = findViewById(R.id.emptyView)
         exceptionView = findViewById(R.id.exceptionView)
-
 
         if(loadingView == null){
             loadingView = inflateLayoutByLayoutId(provider?.getLoadingViewLayoutId())
-
         }
 
         if(networkErrorView == null){
@@ -52,6 +52,10 @@ open class PageStateSwitcher:FrameLayout {
 
         if(exceptionView == null){
             exceptionView = inflateLayoutByLayoutId(provider?.getExceptionViewLayoutId())
+        }
+
+        if(emptyView == null){
+            emptyView = inflateLayoutByLayoutId(provider?.getEmptyViewLayoutId())
         }
 
         showContentView()
@@ -69,11 +73,13 @@ open class PageStateSwitcher:FrameLayout {
     fun getNetworkErrorView():View? = networkErrorView
     fun getLoadingView():View? = loadingView
     fun getExceptionView():View? = exceptionView
+    fun getEmptyView():View? = emptyView
 
     fun showExceptionView(){
         contentView?.gone()
         networkErrorView?.gone()
         loadingView?.gone()
+        emptyView?.gone()
         exceptionView?.visible()
     }
 
@@ -81,6 +87,7 @@ open class PageStateSwitcher:FrameLayout {
         contentView?.visible()
         networkErrorView?.gone()
         loadingView?.gone()
+        emptyView?.gone()
         exceptionView?.gone()
     }
 
@@ -88,6 +95,7 @@ open class PageStateSwitcher:FrameLayout {
         contentView?.gone()
         networkErrorView?.visible()
         loadingView?.gone()
+        emptyView?.gone()
         exceptionView?.gone()
     }
 
@@ -95,6 +103,15 @@ open class PageStateSwitcher:FrameLayout {
         contentView?.gone()
         networkErrorView?.gone()
         loadingView?.visible()
+        emptyView?.gone()
+        exceptionView?.gone()
+    }
+
+    fun showEmptyView(){
+        contentView?.gone()
+        networkErrorView?.gone()
+        loadingView?.gone()
+        emptyView?.visible()
         exceptionView?.gone()
     }
 
@@ -102,6 +119,7 @@ open class PageStateSwitcher:FrameLayout {
         fun getLoadingViewLayoutId():Int?
         fun getExceptionViewLayoutId():Int?
         fun getNetworkErrorViewLayoutId():Int?
+        fun getEmptyViewLayoutId():Int?
     }
 }
 

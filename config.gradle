@@ -30,7 +30,7 @@ ext {
             event_bus                 : "3.2.0",
 
             //squareup
-            moshi_kotlin              : "1.14.0",
+            moshi_kotlin              : "1.12.0",
             retrofit                  : "2.9.0",
             converter_moshi           : "2.9.0",
             logging_interceptor       : "4.9.0",
