@@ -1,12 +1,13 @@
 package com.lazyee.klib.edittext.textwatcher
 
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:需要设置EditText的digits为1234567890
+ * Description:使用这个必须要将editText输入控制在1234567890的范围
  * Date: 2023/6/15 10:54
  */
 class IntInputTextWatcher : TextWatcher {
@@ -23,8 +24,11 @@ class IntInputTextWatcher : TextWatcher {
         s?:return
         if(s.length > 1 && s.startsWith('0')) {
             val result = s.trimStart('0')
-            s.clear()
-            s.append(result)
+            val delCount = s.length - result.length
+            s.delete(0,delCount)
+            if(TextUtils.isEmpty(s)){
+                s.append("0")
+            }
         }
     }
 }
