@@ -97,7 +97,7 @@ class ApiManager private constructor(
             override fun onError(e: Throwable) {
                 e.printStackTrace()
                 removeTask(tag, task)
-                if(callback is ApiCallback2<T>?){
+                if(callback is ApiCallback3<T>?){
                     callback?.onRequestFailure(e)
                 }
             }
@@ -125,7 +125,7 @@ class ApiManager private constructor(
             override fun onFailure(call: Call<T>?, t: Throwable) {
                 t.printStackTrace()
                 removeTask(tag, task)
-                if(callback is ApiCallback2<T>?){
+                if(callback is ApiCallback3<T>?){
                     callback?.onRequestFailure(t)
                 }
             }
@@ -163,7 +163,10 @@ class ApiManager private constructor(
             callback?.onSuccess(result)
             return
         }
-        callback?.onFailure(result)
+        if(callback is ApiCallback2<T>?){
+            callback?.onFailure(result)
+        }
+
     }
 
     private fun createRetrofit() {
