@@ -274,7 +274,7 @@ class ApiManager private constructor(
 
     class Builder {
         private var baseUrl: String = ""
-        private val httpResultInterceptors = mutableListOf<ApiResultInterceptor>()
+        private val apiResultInterceptors = mutableListOf<ApiResultInterceptor>()
         private var paramsProvider: HttpParamsProvider? = null
         private var hostnameVerifier: HostnameVerifier? = null
         private var x509TrustManager: X509TrustManager? = null
@@ -286,8 +286,8 @@ class ApiManager private constructor(
             return this
         }
 
-        fun addHttpResultInterceptor(interceptor: ApiResultInterceptor): Builder {
-            httpResultInterceptors.add(interceptor)
+        fun addApiResultInterceptor(interceptor: ApiResultInterceptor): Builder {
+            apiResultInterceptors.add(interceptor)
             return this
         }
 
@@ -313,7 +313,9 @@ class ApiManager private constructor(
 
         fun build(): ApiManager {
             return ApiManager(
-                baseUrl, paramsProvider, httpResultInterceptors,
+                baseUrl,
+                paramsProvider,
+                apiResultInterceptors,
                 hostnameVerifier = hostnameVerifier ?: defaultHostnameVerifier,
                 sslSocketFactory = sslSocketFactory ?: defaultSSLSocketFactory,
                 x509TrustManager = x509TrustManager ?: x509TrustManager
