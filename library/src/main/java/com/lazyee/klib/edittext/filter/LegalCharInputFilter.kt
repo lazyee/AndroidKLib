@@ -26,6 +26,11 @@ class LegalCharInputFilter(private val legalRule: String) :InputFilter {
          * 中国身份证
          */
         const val CHINESE_ID = "0123456789Xx"
+
+        /**
+         * 整形数字
+         */
+        const val INT = "0123456789"
     }
     override fun filter(
         source: CharSequence?,
