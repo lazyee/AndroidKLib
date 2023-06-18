@@ -12,7 +12,7 @@ import org.json.JSONObject
  * @Date 3/9/21-5:28 PM
  * @Description:设置公共参数拦截器
  */
-class HttpParamsInterceptor(private val paramsProvider: HttpParamsProvider) :
+class HttpParamsInterceptor(private val paramsProvider: ParamsProvider) :
     Interceptor {
     private val TAG = "[HttpParamsInterceptor]"
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -87,7 +87,7 @@ class HttpParamsInterceptor(private val paramsProvider: HttpParamsProvider) :
 /**
  * 公共参数的提供者
  */
-interface HttpParamsProvider {
+interface ParamsProvider {
     fun provideParams(): HashMap<String, String>?
     fun provideHeader():HashMap<String, String>?
 }

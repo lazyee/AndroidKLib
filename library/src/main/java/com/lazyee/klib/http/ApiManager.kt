@@ -1,7 +1,7 @@
 package com.lazyee.klib.http
 
 import android.annotation.SuppressLint
-import com.lazyee.klib.http.interceptor.HttpParamsProvider
+import com.lazyee.klib.http.interceptor.ParamsProvider
 import com.lazyee.klib.http.interceptor.HttpParamsInterceptor
 import com.lazyee.klib.http.interceptor.ApiResultInterceptor
 import com.lazyee.klib.util.LogUtils
@@ -56,7 +56,7 @@ private val defaultSSLSocketFactory = SSLContext.getInstance("SSL").let {
 
 class ApiManager private constructor(
     private val baseUrl: String,
-    private var paramsProvider: HttpParamsProvider? = null,
+    private var paramsProvider: ParamsProvider? = null,
     private val apiResultInterceptors: MutableList<ApiResultInterceptor>,
     private val sslSocketFactory: SSLSocketFactory? = null,
     private val x509TrustManager: X509TrustManager? = null,
@@ -157,7 +157,12 @@ class ApiManager private constructor(
             return
         }
 
-        if (isApiResultIntercept(result)) return
+        if (isApiResultIntercept(result)){
+            if(callback is ApiCallback2<T>?){
+                callback?.onFailure(result)
+            }
+            return
+        }
 
         if (ApiCode.isSuccessful(result.getCode())) {
             callback?.onSuccess(result)
@@ -278,13 +283,13 @@ class ApiManager private constructor(
     class Builder {
         private var baseUrl: String = ""
         private val apiResultInterceptors = mutableListOf<ApiResultInterceptor>()
-        private var paramsProvider: HttpParamsProvider? = null
+        private var paramsProvider: ParamsProvider? = null
         private var hostnameVerifier: HostnameVerifier? = null
         private var x509TrustManager: X509TrustManager? = null
         private var sslSocketFactory: SSLSocketFactory? = null
 
 
-        fun setParamsProvider(provider: HttpParamsProvider): Builder {
+        fun setParamsProvider(provider: ParamsProvider): Builder {
             this.paramsProvider = provider
             return this
         }
