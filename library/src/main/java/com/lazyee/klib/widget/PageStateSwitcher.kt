@@ -24,6 +24,12 @@ open class PageStateSwitcher:FrameLayout {
         }
     }
 
+    private var contentViewLayoutId:Int? = null
+    private var loadViewLayoutId:Int? = null
+    private var networkErrorViewLayoutId:Int? = null
+    private var exceptionViewLayoutId:Int? = null
+    private var emptyViewLayoutId:Int? = null
+
     private var contentView: View? = null
     private var networkErrorView: View? = null
     private var loadingView: View? = null
@@ -36,12 +42,35 @@ open class PageStateSwitcher:FrameLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
+        //通过xml配置
         contentView = findViewById(R.id.contentView)
         networkErrorView = findViewById(R.id.networkErrorView)
         loadingView = findViewById(R.id.loadingView)
         emptyView = findViewById(R.id.emptyView)
         exceptionView = findViewById(R.id.exceptionView)
 
+        //通过代码配置
+        if(contentView == null){
+            contentView = inflateLayoutByLayoutId(contentViewLayoutId)
+        }
+
+        if(loadingView == null){
+            loadingView = inflateLayoutByLayoutId(loadViewLayoutId)
+        }
+
+        if(networkErrorView == null){
+            networkErrorView = inflateLayoutByLayoutId(networkErrorViewLayoutId)
+        }
+
+        if(exceptionView == null){
+            exceptionView = inflateLayoutByLayoutId(exceptionViewLayoutId)
+        }
+
+        if(emptyView == null){
+            emptyView = inflateLayoutByLayoutId(emptyViewLayoutId)
+        }
+
+        //通过全局配置初始化view
         if(loadingView == null){
             loadingView = inflateLayoutByLayoutId(provider?.getLoadingViewLayoutId())
         }
@@ -60,6 +89,28 @@ open class PageStateSwitcher:FrameLayout {
 
         showContentView()
     }
+
+    fun setContentViewLayoutId(layoutId: Int?){
+        this.contentViewLayoutId = layoutId
+    }
+
+    fun setNetworkErrorViewLayoutId(layoutId: Int?){
+        this.networkErrorViewLayoutId = layoutId
+    }
+
+    fun setExceptionViewLayoutId(layoutId: Int?){
+        this.exceptionViewLayoutId = layoutId
+    }
+
+    fun setEmptyViewLayoutId(layoutId: Int?){
+        this.emptyViewLayoutId = layoutId
+    }
+
+    fun setLoadingViewLayoutId(layoutId: Int?){
+        this.loadViewLayoutId = layoutId
+    }
+
+
 
     private fun inflateLayoutByLayoutId(resId:Int?):View?{
         resId?:return null
