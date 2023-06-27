@@ -181,11 +181,11 @@ class ApiManager private constructor(
 
     private fun createRetrofit() {
         val clientBuilder = OkHttpClient().newBuilder()
-            .addInterceptor(getHttpLoggingInterceptor())
 
         if (sslSocketFactory != null && x509TrustManager != null) {
             clientBuilder.sslSocketFactory(sslSocketFactory, x509TrustManager)
         }
+
         if (hostnameVerifier != null) {
             clientBuilder.hostnameVerifier(hostnameVerifier)
         }
@@ -200,6 +200,8 @@ class ApiManager private constructor(
         }
 
         interceptors.forEach { clientBuilder.addInterceptor(it) }
+
+        clientBuilder.addInterceptor(getHttpLoggingInterceptor())
 
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val moshiConverterFactory = MoshiConverterFactory.create(moshi)
