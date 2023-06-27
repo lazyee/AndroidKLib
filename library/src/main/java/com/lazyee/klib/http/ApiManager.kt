@@ -63,6 +63,7 @@ class ApiManager private constructor(
     private val isSupportCookie: Boolean = false,
     private var paramsProvider: ParamsProvider? = null,
     private val interceptors: MutableList<Interceptor>,
+    private val apiResultInterceptors: MutableList<ApiResultInterceptor>,
     private val sslSocketFactory: SSLSocketFactory? = null,
     private val x509TrustManager: X509TrustManager? = null,
     private val hostnameVerifier: HostnameVerifier? = null
@@ -232,25 +233,32 @@ class ApiManager private constructor(
      * @return Boolean
      */
     private fun isApiResultIntercept(result: IApiResult<*>): Boolean {
-        for (interceptor in interceptors) {
-            if (interceptor is ApiResultInterceptor &&  interceptor.intercept(result)) return true
+        for (interceptor in apiResultInterceptors) {
+            if (interceptor.intercept(result)) return true
         }
         return false
     }
 
     /**
-     * 添加api请求结果拦截
-     * @param interceptor ApiResultInterceptor
+     * 添加拦截器
+     * @param interceptor Interceptor
      */
     fun addInterceptor(interceptor: Interceptor) {
         interceptors.add(interceptor)
+    }
+    /**
+     * 添加api请求结果拦截
+     * @param interceptor ApiResultInterceptor
+     */
+    fun addApiResultInterceptor(interceptor: ApiResultInterceptor) {
+        apiResultInterceptors.add(interceptor)
     }
 
     /**
      * 清空所有的网络请求拦截
      */
-    fun clearInterceptor() {
-        interceptors.clear()
+    fun clearApiResultInterceptor() {
+        apiResultInterceptors.clear()
     }
 
     companion object {
@@ -298,6 +306,7 @@ class ApiManager private constructor(
         private var baseUrl: String = ""
         private var isSupportCookie = false
         private val interceptors = mutableListOf<Interceptor>()
+        private val apiResultInterceptors = mutableListOf<ApiResultInterceptor>()
         private var paramsProvider: ParamsProvider? = null
         private var hostnameVerifier: HostnameVerifier? = null
         private var x509TrustManager: X509TrustManager? = null
@@ -311,6 +320,10 @@ class ApiManager private constructor(
 
         fun addInterceptor(interceptor: Interceptor): Builder {
             interceptors.add(interceptor)
+            return this
+        }
+        fun addApiResultInterceptor(interceptor: ApiResultInterceptor): Builder {
+            apiResultInterceptors.add(interceptor)
             return this
         }
 
@@ -352,6 +365,7 @@ class ApiManager private constructor(
                 isSupportCookie,
                 paramsProvider,
                 interceptors,
+                apiResultInterceptors,
                 hostnameVerifier = hostnameVerifier ?: defaultHostnameVerifier,
                 sslSocketFactory = sslSocketFactory ?: defaultSSLSocketFactory,
                 x509TrustManager = x509TrustManager ?: x509TrustManager
