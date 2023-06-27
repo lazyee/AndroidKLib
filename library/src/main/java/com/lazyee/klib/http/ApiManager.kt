@@ -1,9 +1,11 @@
 package com.lazyee.klib.http
 
 import android.annotation.SuppressLint
+import com.lazyee.klib.http.interceptor.AddCookiesInterceptor
 import com.lazyee.klib.http.interceptor.ParamsProvider
 import com.lazyee.klib.http.interceptor.HttpParamsInterceptor
 import com.lazyee.klib.http.interceptor.ApiResultInterceptor
+import com.lazyee.klib.http.interceptor.ReceivedCookiesInterceptor
 import com.lazyee.klib.util.LogUtils
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -12,8 +14,10 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
+import org.greenrobot.eventbus.util.ErrorDialogFragmentFactory.Support
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -56,8 +60,9 @@ private val defaultSSLSocketFactory = SSLContext.getInstance("SSL").let {
 
 class ApiManager private constructor(
     private val baseUrl: String,
+    private val isSupportCookie: Boolean = false,
     private var paramsProvider: ParamsProvider? = null,
-    private val apiResultInterceptors: MutableList<ApiResultInterceptor>,
+    private val interceptors: MutableList<Interceptor>,
     private val sslSocketFactory: SSLSocketFactory? = null,
     private val x509TrustManager: X509TrustManager? = null,
     private val hostnameVerifier: HostnameVerifier? = null
@@ -189,6 +194,13 @@ class ApiManager private constructor(
             clientBuilder.addInterceptor(HttpParamsInterceptor(paramsProvider!!))
         }
 
+        if(isSupportCookie){
+            clientBuilder.addInterceptor(AddCookiesInterceptor())
+            clientBuilder.addInterceptor(ReceivedCookiesInterceptor())
+        }
+
+        interceptors.forEach { clientBuilder.addInterceptor(it) }
+
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val moshiConverterFactory = MoshiConverterFactory.create(moshi)
         retrofit = Retrofit.Builder()
@@ -218,8 +230,8 @@ class ApiManager private constructor(
      * @return Boolean
      */
     private fun isApiResultIntercept(result: IApiResult<*>): Boolean {
-        for (interceptor in apiResultInterceptors) {
-            if (interceptor.intercept(result)) return true
+        for (interceptor in interceptors) {
+            if (interceptor is ApiResultInterceptor &&  interceptor.intercept(result)) return true
         }
         return false
     }
@@ -228,15 +240,15 @@ class ApiManager private constructor(
      * 添加api请求结果拦截
      * @param interceptor ApiResultInterceptor
      */
-    fun addApiResultInterceptor(interceptor: ApiResultInterceptor) {
-        apiResultInterceptors.add(interceptor)
+    fun addInterceptor(interceptor: Interceptor) {
+        interceptors.add(interceptor)
     }
 
     /**
      * 清空所有的网络请求拦截
      */
-    fun clearApiResultInterceptor() {
-        apiResultInterceptors.clear()
+    fun clearInterceptor() {
+        interceptors.clear()
     }
 
     companion object {
@@ -282,7 +294,8 @@ class ApiManager private constructor(
 
     class Builder {
         private var baseUrl: String = ""
-        private val apiResultInterceptors = mutableListOf<ApiResultInterceptor>()
+        private var isSupportCookie = false
+        private val interceptors = mutableListOf<Interceptor>()
         private var paramsProvider: ParamsProvider? = null
         private var hostnameVerifier: HostnameVerifier? = null
         private var x509TrustManager: X509TrustManager? = null
@@ -294,8 +307,8 @@ class ApiManager private constructor(
             return this
         }
 
-        fun addApiResultInterceptor(interceptor: ApiResultInterceptor): Builder {
-            apiResultInterceptors.add(interceptor)
+        fun addInterceptor(interceptor: Interceptor): Builder {
+            interceptors.add(interceptor)
             return this
         }
 
@@ -319,11 +332,18 @@ class ApiManager private constructor(
             return this
         }
 
+        fun setSupportCookie(isSupport: Boolean): Builder {
+            this.isSupportCookie = isSupport
+            return this
+        }
+
+
         fun build(): ApiManager {
             return ApiManager(
                 baseUrl,
+                isSupportCookie,
                 paramsProvider,
-                apiResultInterceptors,
+                interceptors,
                 hostnameVerifier = hostnameVerifier ?: defaultHostnameVerifier,
                 sslSocketFactory = sslSocketFactory ?: defaultSSLSocketFactory,
                 x509TrustManager = x509TrustManager ?: x509TrustManager
