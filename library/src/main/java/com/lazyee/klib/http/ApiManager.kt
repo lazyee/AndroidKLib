@@ -339,6 +339,12 @@ class ApiManager private constructor(
             return this
         }
 
+        fun setSupportCookie(isSupport: Boolean,cookieKeyName:String): Builder {
+            this.isSupportCookie = isSupport
+            AddCookiesInterceptor.cookieKeyName = cookieKeyName
+            return this
+        }
+
 
         fun build(): ApiManager {
             return ApiManager(

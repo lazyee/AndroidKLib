@@ -12,11 +12,14 @@ import okhttp3.Response
  * Date: 2023/6/27 22:19
  */
 class AddCookiesInterceptor : Interceptor {
+    companion object{
+        var cookieKeyName = "Cookie"
+    }
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder: Request.Builder = chain.request().newBuilder()
         //添加Cookie
         if(!TextUtils.isEmpty(ReceivedCookiesInterceptor.cookie)){
-            builder.addHeader("Cookie", ReceivedCookiesInterceptor.cookie)
+            builder.addHeader(cookieKeyName, ReceivedCookiesInterceptor.cookie)
         }
         return chain.proceed(builder.build());
     }
