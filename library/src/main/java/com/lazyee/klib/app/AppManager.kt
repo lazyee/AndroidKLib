@@ -16,6 +16,7 @@ object AppManager{
     private val mActivityLifecycleCallbacks :ActivityLifecycleCallbacks = ActivityLifecycleCallbacks()
     private var mApplication:Application? = null
     private var mForegroundActivity:Activity? = null
+    private val activityList:MutableList<Activity> = mutableListOf()
 
     /**
      * 注册生命周期监听
@@ -59,7 +60,12 @@ object AppManager{
         return activityList.lastOrNull()
     }
 
-    private val activityList:MutableList<Activity> = mutableListOf()
+    /**
+     * 获取activity List的大小
+     */
+    fun size(): Int {
+        return activityList.size
+    }
 
     /**
      * 获取最后的activity实例
