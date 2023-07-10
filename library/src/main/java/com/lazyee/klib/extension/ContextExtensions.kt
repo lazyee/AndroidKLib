@@ -5,9 +5,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.*
-import android.content.pm.ActivityInfo.WindowLayout
 import android.content.res.Configuration
-import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
@@ -15,17 +13,16 @@ import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.text.TextUtils
-import android.util.Size
-import android.util.SizeF
 import android.util.TypedValue
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -35,6 +32,7 @@ import androidx.lifecycle.OnLifecycleEvent
 import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 import com.lazyee.klib.util.FileUtils
+
 
 /**
  * 打开一个Activity
@@ -86,6 +84,26 @@ fun Context.goto(
         throw Exception("不支持的Context类型")
     }
 
+}
+
+/**
+ * 跳转到系统消息弹窗设置页面
+ */
+fun Context.gotoSystemNotificationSetting(){
+    val intent = Intent()
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
+        intent.putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+    } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        intent.action = "android.settings.APP_NOTIFICATION_SETTINGS"
+        intent.putExtra("app_package", packageName)
+        intent.putExtra("app_uid", applicationInfo.uid)
+    } else {
+        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        intent.addCategory(Intent.CATEGORY_DEFAULT)
+        intent.data = Uri.parse("package:$packageName")
+    }
+    startActivity(intent)
 }
 
 
