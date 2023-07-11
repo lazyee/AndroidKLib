@@ -8,9 +8,8 @@ import kotlin.math.floor
  * Author: leeorz
  * Email: 378229364@qq.com
  * Description:
- * Date: 2023/5/11 11:55
+ * Date: 2023/7/2 16:47
  */
-
 object InkScreenImageDitherUtils {
 
     /**
@@ -93,7 +92,7 @@ object InkScreenImageDitherUtils {
         bitmap.getPixels(tempPixels,0,bitmap.width,0,0,bitmap.width,bitmap.height)
         val pixels = mutableListOf<PixelColor>()
         tempPixels.forEach {
-            pixels.add(PixelColor(Color.red(it),Color.green(it),Color.blue(it)))
+            pixels.add(PixelColor(Color.red(it), Color.green(it), Color.blue(it)))
         }
         return pixels
     }
@@ -147,7 +146,7 @@ object InkScreenImageDitherUtils {
                     updatePixelsRedValue(pixels,index + 1,errRed * 7)
                     updatePixelsRedValue(pixels,index + bitmapWidth - 1, errRed * 3)
                     updatePixelsRedValue(pixels,index + bitmapWidth,errRed * 5)
-                    updatePixelsRedValue(pixels,index + bitmapWidth + 1,errRed * 1)
+//                    updatePixelsRedValue(pixels,index + bitmapWidth + 1,errRed * 1)
 
                 }
                 InkFilterMode.ATKINSON -> {
@@ -198,7 +197,7 @@ object InkScreenImageDitherUtils {
                     updatePixelErr(pixels,index + 1,errColor,7)
                     updatePixelErr(pixels,index + bitmapWidth - 1,errColor,3)
                     updatePixelErr(pixels,index + bitmapWidth,errColor,5)
-                    updatePixelErr(pixels,index + bitmapWidth + 1,errColor,1)
+//                    updatePixelErr(pixels,index + bitmapWidth + 1,errColor,1)
 
                 }
                 InkFilterMode.ATKINSON -> {
@@ -222,7 +221,7 @@ object InkScreenImageDitherUtils {
         val mutableBitmap = bitmap.copy(Bitmap.Config.ARGB_8888,true)
         val realPixels = IntArray(pixels.size)
         pixels.forEachIndexed{ index,color, ->
-             realPixels[index] = Color.rgb(color.red,color.green,color.blue)
+            realPixels[index] = Color.rgb(color.red,color.green,color.blue)
         }
         mutableBitmap.setPixels(realPixels,0,bitmap.width,0,0, bitmap.width,bitmap.height)
         return mutableBitmap
@@ -234,12 +233,28 @@ object InkScreenImageDitherUtils {
 class PixelColor(var red:Int,var green:Int,var blue:Int,var alpha:Int = 255)
 
 object InkPalette{
+    /**
+     * 黑白红
+     */
     val BWR = arrayOf<PixelColor>(
         PixelColor(0, 0, 0, 255),
         PixelColor(255, 255, 255, 255),
         PixelColor(255, 0, 0, 255)
     )
 
+    /**
+     * 黑白红黄
+     */
+    val BWRY = arrayOf<PixelColor>(
+        PixelColor(0, 0, 0, 255),
+        PixelColor(255, 255, 255, 255),
+        PixelColor(255, 0, 0, 255),
+        PixelColor(255, 255, 0, 255)
+    )
+
+    /**
+     * 黑白
+     */
     val BW = arrayOf<PixelColor>(
         PixelColor(0, 0, 0, 255),
         PixelColor(255, 255, 255, 255),
@@ -256,5 +271,3 @@ enum class InkFilterMode{
     FLOYD_STEINBERG,
     ATKINSON
 }
-
-
