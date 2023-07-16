@@ -31,6 +31,10 @@ class LegalCharInputFilter(private val legalRule: String) :InputFilter {
          * 整形数字
          */
         const val INT = "0123456789"
+        /**
+         * 小数
+         */
+        const val DECIMAL = "0123456789."
     }
     override fun filter(
         source: CharSequence?,
