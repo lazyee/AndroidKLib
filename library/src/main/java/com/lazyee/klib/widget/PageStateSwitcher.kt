@@ -89,6 +89,16 @@ open class PageStateSwitcher:FrameLayout {
     }
 
 
+    fun <T:View> getTargetViews(viewId:Int):List<T>{
+        val targetViewList = mutableListOf<T>()
+        loadingView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
+        contentView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
+        exceptionView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
+        networkErrorView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
+        emptyView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
+        return targetViewList
+
+    }
 
     private fun inflateLayoutByLayoutId(resId:Int?):View?{
         resId?:return null
