@@ -1,6 +1,7 @@
 package com.lazyee.klib.extension
 
 import android.media.MediaMetadataRetriever
+import com.lazyee.klib.listener.OnFileCopyListener
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -31,7 +32,7 @@ fun File.getAudioDuration(): Long {
 /**
  * 复制文件，增加文件复制监听
  */
-fun File.copy(destFilePath:String, listener:FileCopyListener? = null){
+fun File.copy(destFilePath:String, listener: OnFileCopyListener? = null){
     if(!exists()){
         listener?.onCopyFailed("源文件不存在")
         return
@@ -64,11 +65,4 @@ fun File.copy(destFilePath:String, listener:FileCopyListener? = null){
     fos.flush()
     fos.close()
     listener?.onCopyComplete()
-}
-
-interface FileCopyListener{
-    fun onCopyStart()
-    fun onCopyProgress(progress:Long,total:Long)
-    fun onCopyComplete()
-    fun onCopyFailed(errorMessage:String)
 }

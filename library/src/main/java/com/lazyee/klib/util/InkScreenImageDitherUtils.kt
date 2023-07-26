@@ -7,7 +7,7 @@ import kotlin.math.floor
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:
+ * Description:墨水屏抖动算法工具类
  * Date: 2023/7/2 16:47
  */
 object InkScreenImageDitherUtils {

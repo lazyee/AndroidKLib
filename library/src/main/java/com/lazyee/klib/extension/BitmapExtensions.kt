@@ -12,17 +12,11 @@ import java.io.FileOutputStream
  * Date: 2022/12/1 09:27
  */
 fun Bitmap.savePNGFile(file: File,quality: Int = 100){
-    val fos = FileOutputStream(file)
-    compress(Bitmap.CompressFormat.PNG,quality,fos)
-    fos.flush()
-    fos.close()
+    save(file,Bitmap.CompressFormat.PNG,quality)
 }
 
 fun Bitmap.saveJPEGFile(file: File,quality: Int = 100){
-    val fos = FileOutputStream(file)
-    compress(Bitmap.CompressFormat.JPEG,quality,fos)
-    fos.flush()
-    fos.close()
+    save(file,Bitmap.CompressFormat.JPEG,quality)
 }
 
 fun Bitmap.save(file:File,format:Bitmap.CompressFormat = Bitmap.CompressFormat.PNG,quality:Int = 100){

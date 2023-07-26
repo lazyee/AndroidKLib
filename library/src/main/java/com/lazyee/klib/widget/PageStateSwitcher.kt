@@ -12,7 +12,7 @@ import com.lazyee.klib.extension.visible
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:页面切换loading,network error，exception,content界面
+ * Description:页面切换loading,network error，exception,content,empty界面
  * Date: 2023/6/10 09:54
  */
 open class PageStateSwitcher:FrameLayout {
@@ -97,7 +97,6 @@ open class PageStateSwitcher:FrameLayout {
         networkErrorView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
         emptyView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
         return targetViewList
-
     }
 
     private fun inflateLayoutByLayoutId(resId:Int?):View?{
