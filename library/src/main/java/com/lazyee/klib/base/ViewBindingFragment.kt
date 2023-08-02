@@ -34,4 +34,8 @@ open class ViewBindingFragment<VB:ViewBinding> :BaseFragment(){
     open fun initView(){
 
     }
+
+    open fun initData(){
+
+    }
 }

@@ -8,15 +8,23 @@ import androidx.recyclerview.widget.RecyclerView
 /**
  * Author: leeorz
  * Email: 378229364@qq.com
- * Description:
+ * Description:添加RecyclerView的间距
  * Date: 2022/7/20 15:28
  */
-class LinearSpacingItemDecoration(
-    private val top: Int = 0,
-    private val bottom: Int = 0,
-    private val left: Int = 0,
-    private val right: Int = 0
-) : RecyclerView.ItemDecoration() {
+class LinearSpacingItemDecoration : RecyclerView.ItemDecoration {
+    private var top:Int = 0
+    private var bottom:Int = 0
+    private var left:Int = 0
+    private var right:Int = 0
+
+    constructor(spacing:Int):this(spacing,spacing,spacing,spacing)
+    constructor(top: Int = 0,bottom: Int = 0, left: Int = 0, right: Int = 0){
+        this.top = top
+        this.bottom = bottom
+        this.left = left
+        this.right = right
+    }
+
     override fun getItemOffsets(
         outRect: Rect,
         view: View,

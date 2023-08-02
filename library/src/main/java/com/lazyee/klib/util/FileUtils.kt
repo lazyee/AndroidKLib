@@ -63,7 +63,7 @@ object FileUtils {
 
 
     /**
-     * 简单文件下载
+     * 简单文件下载,在当前线程执行
      */
     fun simpleDownload(downloadFileUrl:String, outFile: File, listener: OnFileDownloadListener?){
         val url: URL

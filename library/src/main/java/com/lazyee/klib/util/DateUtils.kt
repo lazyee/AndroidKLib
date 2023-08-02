@@ -1,5 +1,7 @@
 package com.lazyee.klib.util
 
+import android.text.TextUtils
+import com.lazyee.klib.extension.toDate
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -27,5 +29,27 @@ object DateUtils {
     fun format(date:Date,format: String): String {
         val simpleFormatter = SimpleDateFormat(format, Locale.getDefault())
         return simpleFormatter.format(date)
+    }
+
+    /**
+     * 将字符串转换为Date
+     */
+    fun stringToDate(string:String,format:String = yyyyMMddHHmmss,locale:Locale = Locale.CHINA): Date? {
+        if(TextUtils.isEmpty(string))return null
+        try {
+            val dateFormat = SimpleDateFormat(format, locale)
+            return dateFormat.parse(string)
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+        return null
+    }
+
+    /**
+     * 将字符串转换为时间戳
+     */
+    fun stringToTimeMillis(string:String, format:String = yyyyMMddHHmmss,locale:Locale = Locale.CHINA): Long? {
+        if(TextUtils.isEmpty(string))return null
+        return stringToDate(string,format,locale)?.time
     }
 }

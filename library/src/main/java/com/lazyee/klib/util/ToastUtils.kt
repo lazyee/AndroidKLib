@@ -11,11 +11,21 @@ import com.google.android.material.snackbar.BaseTransientBottomBar
  * Date: 2022/5/5 3:24 下午
  */
 object ToastUtils {
+    @Deprecated("use toastShort method")
     fun shortToast(context: Context, msg:String){
         toast(context,msg,Toast.LENGTH_SHORT)
     }
 
+    fun toastShort(context:Context,msg:String){
+        toast(context,msg,Toast.LENGTH_SHORT)
+    }
+
+    @Deprecated("use toastLong method")
     fun longToast(context:Context,msg:String){
+        toast(context,msg,Toast.LENGTH_LONG)
+    }
+
+    fun toastLong(context: Context,msg:String){
         toast(context,msg,Toast.LENGTH_LONG)
     }
 

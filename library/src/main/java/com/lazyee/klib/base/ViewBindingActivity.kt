@@ -26,4 +26,8 @@ open  class ViewBindingActivity<VB: ViewBinding>:BaseActivity() {
 
     }
 
+    open fun initData(){
+
+    }
+
 }

@@ -10,7 +10,7 @@ import com.lazyee.klib.util.LogUtils
  */
 class SP constructor(context: Context, name:String? = null,mode:Int? = null) {
     private val  TAG = "[SP]"
-    private val defaultName = "default"
+    private val defaultName = "sharedPreferences"
     private val sharedPreferences by lazy { context.getSharedPreferences(name ?: defaultName,mode?:Context.MODE_PRIVATE) }
 
     /**
