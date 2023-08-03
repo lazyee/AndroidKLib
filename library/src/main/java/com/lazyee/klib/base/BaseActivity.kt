@@ -1,6 +1,8 @@
 package com.lazyee.klib.base
 
 import android.app.Activity
+import android.content.Context
+import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.ViewTreeObserver
@@ -13,6 +15,7 @@ import com.lazyee.klib.http.ApiManager
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
+import com.lazyee.klib.util.AppUtils
 
 /**
  * @Author leeorz
@@ -20,6 +23,10 @@ import com.lazyee.klib.mvvm.MVVMBaseView
  * @Description: activity base 类
  */
 open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
+    companion object{
+        var isFollowSystemFontScale = true
+    }
+
     val TAG :String by lazy { this::class.java.simpleName }
     private var mDecorViewVisibleHeight = 0
 
@@ -35,6 +42,21 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
      */
     private var mOnKeyboardVisibleChangeGlobalLayoutListener: ViewTreeObserver.OnGlobalLayoutListener? =
         null
+
+    override fun attachBaseContext(newBase: Context?) {
+        if(isFollowSystemFontScale){
+            super.attachBaseContext(newBase)
+        }else{
+            super.attachBaseContext(getConfigurationContext(newBase))
+        }
+    }
+
+    private fun getConfigurationContext(context: Context?): Context? {
+        context?:return null
+        val configuration: Configuration = context.resources.configuration
+        configuration.fontScale = 1f
+        return context.createConfigurationContext(configuration)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
