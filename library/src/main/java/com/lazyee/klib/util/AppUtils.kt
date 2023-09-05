@@ -1,5 +1,6 @@
 package com.lazyee.klib.util
 
+import android.app.ActivityManager
 import android.content.Context
 import android.widget.Toast
 import com.google.android.material.snackbar.BaseTransientBottomBar
@@ -40,5 +41,22 @@ object AppUtils {
         }
 
         return false
+    }
+
+
+    /**
+     * 获取当前进程名
+     */
+    fun getCurrentProcessName(applicationContext:Context): String? {
+        val pid = android.os.Process.myPid()
+        var processName:String? = ""
+        val manager = applicationContext.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        manager.runningAppProcesses.forEach {process->
+            if(process.pid == pid){
+                processName = process.processName
+                return processName
+            }
+        }
+        return processName
     }
 }

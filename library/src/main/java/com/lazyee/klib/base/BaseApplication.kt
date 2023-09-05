@@ -2,6 +2,7 @@ package com.lazyee.klib.base
 
 import android.app.Application
 import com.lazyee.klib.app.AppManager
+import com.lazyee.klib.util.AppUtils
 
 /**
  * Author: leeorz
@@ -14,4 +15,6 @@ open class BaseApplication :Application(){
         super.onCreate()
         AppManager.register(this)
     }
+
+    fun isMainProcess():Boolean = packageName == AppUtils.getCurrentProcessName(applicationContext)
 }
