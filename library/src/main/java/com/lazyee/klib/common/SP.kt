@@ -57,24 +57,48 @@ class SP constructor(context: Context, name:String? = null,mode:Int? = null) {
         return get { sharedPreferences.getString(key,null) }
     }
 
+    fun string(key:String,defaultValue:String?):String?{
+        return get { sharedPreferences.getString(key,defaultValue) }
+    }
+
     fun stringSet(key: String):Set<String>?{
         return get { sharedPreferences.getStringSet(key,null) }
+    }
+
+    fun stringSet(key:String,defaultValue: Set<String>?):Set<String>?{
+        return get { sharedPreferences.getStringSet(key,defaultValue) }
     }
 
     fun int(key:String):Int{
         return get { sharedPreferences.getInt(key,0) } ?: 0
     }
 
+    fun int(key:String,defaultValue: Int = 0): Int? {
+        return get { sharedPreferences.getInt(key,defaultValue) }
+    }
+
     fun boolean(key:String):Boolean{
         return get { sharedPreferences.getBoolean(key,false) } ?: false
+    }
+
+    fun boolean(key:String,defaultValue: Boolean): Boolean {
+        return get { sharedPreferences.getBoolean(key,defaultValue) }?:false
     }
 
     fun float(key:String):Float{
         return get { sharedPreferences.getFloat(key,0f) } ?: 0f
     }
 
+    fun float(key:String,defaultValue: Float): Float {
+        return get { sharedPreferences.getFloat(key,defaultValue) } ?: 0f
+    }
+
     fun long(key:String):Long{
         return get { sharedPreferences.getLong(key,0L) } ?: 0L
+    }
+
+    fun long(key:String,defaultValue: Long): Long {
+        return get { sharedPreferences.getLong(key,defaultValue) } ?: 0L
     }
 
     private fun <T> get(block:()->T):T?{
