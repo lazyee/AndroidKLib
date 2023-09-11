@@ -26,12 +26,12 @@ class ChineseMobilePhoneNumberStyleTextWatcher(private val margin:Int) : TextWat
 //        s.clearSpans()
         val spans = s.getSpans(0,s.length,SpacingSpan::class.java)
         spans.forEach { s.removeSpan(it) }
-        if(s.length >= 3){
-            s.setSpan(SpacingSpan(margin),2,3, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        if(s.length >= 4){
+            s.setSpan(SpacingSpan(margin),3,4, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 
-        if(s.length >= 7){
-            s.setSpan(SpacingSpan(margin),6,7, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        if(s.length >= 8){
+            s.setSpan(SpacingSpan(margin),7,8, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         }
 
     }
@@ -60,7 +60,7 @@ class ChineseMobilePhoneNumberStyleTextWatcher(private val margin:Int) : TextWat
             paint: Paint
         ) {
             text?:return
-            canvas.drawText(text, start, end, x, y.toFloat(), paint)
+            canvas.drawText(text, start, end, x + spacing, y.toFloat(), paint)
         }
     }
 }
