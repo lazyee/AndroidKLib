@@ -11,7 +11,7 @@ import android.util.Log
 object LogUtils {
 
     private var isDebug = true
-    private fun init(isDebug:Boolean){
+    fun init(isDebug:Boolean){
         this.isDebug = isDebug
     }
 
