@@ -26,6 +26,9 @@ open  class ViewBindingActivity<VB: ViewBinding>:BaseActivity() {
 
     }
 
+    /**
+     * 这里不主动发起调用initData，由开发者自己选择调用时机，这里起到的作用仅仅是固定初始化数据的方法名
+     */
     open fun initData(){
 
     }
