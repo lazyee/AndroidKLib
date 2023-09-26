@@ -2,6 +2,8 @@ package com.lazyee.klib.util
 
 import android.content.Context
 import android.text.TextUtils
+import com.lazyee.klib.listener.OnUnZipListener
+import com.lazyee.klib.listener.OnZipListener
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -20,35 +22,45 @@ import java.util.zip.ZipOutputStream
 private const val TAG = "[ZipUtils]"
 object ZipUtils {
 
-    fun unZip(zipFile: File,targetFile:File){
-        unzip(FileInputStream(zipFile),targetFile)
+    fun unZip(zipFile: File,targetFile:File,listener:OnUnZipListener? = null){
+        listener?.onUnZipStart()
+        realUnZip(FileInputStream(zipFile),targetFile)
+        listener?.onUnZipEnd()
     }
 
-    fun zip(sourceFile:File,zipFile: File){
-        zip(listOf(sourceFile),zipFile)
+    fun unZipFromAssets(context: Context, assetName: String, targetFile: File,listener: OnUnZipListener? = null) {
+        listener?.onUnZipStart()
+        val dataSource = context.assets.open(assetName)
+        realUnZip(dataSource,targetFile,listener)
+        listener?.onUnZipEnd()
     }
 
-    fun zip(sourceFileList: List<File>,zipFile: File){
+    fun zip(sourceFile:File,zipFile: File,listener: OnZipListener? = null){
+        zip(listOf(sourceFile),zipFile,listener)
+    }
 
+    fun zip(sourceFileList: List<File>,zipFile: File,listener: OnZipListener? = null){
+        listener?.onZipStart()
         try {
             if(zipFile.exists()){
                 zipFile.delete()
             }
             val fileOutputStream = FileOutputStream(zipFile)
             val zipOutputStream = ZipOutputStream(fileOutputStream)
-            zip("",sourceFileList ,zipOutputStream)
+            realZip("",sourceFileList ,zipOutputStream,listener)
             zipOutputStream.close()
         }catch (e:Exception){
             e.printStackTrace()
         }
+        listener?.onZipEnd()
     }
 
-    private fun zip(dirName:String, sourceFileList: List<File>,zipOutputStream: ZipOutputStream){
-        sourceFileList.forEach { zip(dirName,it,zipOutputStream) }
+    private fun realZip(dirName:String, sourceFileList: List<File>,zipOutputStream: ZipOutputStream,listener: OnZipListener? = null){
+        sourceFileList.forEach { realZip(dirName,it,zipOutputStream,listener) }
     }
 
 
-    private fun zip(parentDirName:String,sourceFile:File,zipOutputStream: ZipOutputStream){
+    private fun realZip(parentDirName:String,sourceFile:File,zipOutputStream: ZipOutputStream,listener: OnZipListener? = null){
         val zipEntry:ZipEntry
         if(sourceFile.isDirectory){
             val dirName = parentDirName + sourceFile.name + File.separator
@@ -56,13 +68,14 @@ object ZipUtils {
             zipOutputStream.putNextEntry(zipEntry)
             val listFiles = sourceFile.listFiles()?.toList()?: emptyList()
             if(listFiles.isNotEmpty()){
-                zip(dirName,listFiles, zipOutputStream)
+                realZip(dirName,listFiles, zipOutputStream,listener)
             }
             return
         }
 
         zipEntry = ZipEntry(parentDirName + sourceFile.name)
         zipOutputStream.putNextEntry(zipEntry)
+        listener?.onZipProgress(zipEntry.name)
         val fileInputStream = FileInputStream(sourceFile)
         val buffer = ByteArray(1024)
         var length:Int
@@ -71,19 +84,16 @@ object ZipUtils {
         }
     }
 
-    fun unZipFromAssets(context: Context, assetName: String, targetFile: File) {
-        val dataSource = context.assets.open(assetName)
-        unzip(dataSource,targetFile)
-    }
 
-    private fun unzip(inputStream: InputStream,targetFile: File){
+
+    private fun realUnZip(inputStream: InputStream,targetFile: File,listener: OnUnZipListener? = null){
         try {
             val zipInputStream = ZipInputStream(inputStream)
             var entry = zipInputStream.nextEntry
 
             mkdirs(targetFile.absolutePath)
             while (entry != null) {
-                zipEntryToFile(zipInputStream,entry,targetFile)
+                unZipFile(zipInputStream,entry,targetFile,listener)
                 entry = zipInputStream.nextEntry
             }
             zipInputStream.close()
@@ -92,19 +102,20 @@ object ZipUtils {
         }
     }
 
-    private fun zipEntryToFile(zipInputStream:ZipInputStream, entry:ZipEntry,targetFile: File){
-        if (entry.isDirectory) {
-            var name = entry.name
+    private fun unZipFile(zipInputStream:ZipInputStream, zipEntry:ZipEntry, targetFile: File, listener: OnUnZipListener? = null){
+        if (zipEntry.isDirectory) {
+            var name = zipEntry.name
             name = name.substring(0, name.length - 1)
             mkdirs(targetFile.absolutePath + File.separator + name)
             return
         }
 
-        val file = File(targetFile.absolutePath + File.separator + entry.name)
+        val file = File(targetFile.absolutePath + File.separator + zipEntry.name)
         val parentPath = file.parent
         mkdirs(parentPath)
         createNewFile(file)
 
+        listener?.onUnZipProgress(zipEntry.name)
         val out = FileOutputStream(file)
         val buffer = ByteArray(1024)
         var length: Int
@@ -114,7 +125,8 @@ object ZipUtils {
         out.close()
     }
 
-    private fun mkdirs(dirPath:String){
+    private fun mkdirs(dirPath:String?){
+        dirPath?:return
         if(TextUtils.isEmpty(dirPath))return
         var realDirPath = dirPath
         if(realDirPath.endsWith(File.separator)){
