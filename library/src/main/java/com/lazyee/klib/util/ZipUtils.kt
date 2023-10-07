@@ -22,21 +22,52 @@ import java.util.zip.ZipOutputStream
 private const val TAG = "[ZipUtils]"
 object ZipUtils {
 
+    fun unZip(zipFilePath: String,targetFilePath: String,listener: OnUnZipListener?){
+        unZip(File(zipFilePath),File(targetFilePath),listener)
+    }
+
+    fun unZip(zipFile: File,targetFilePath:String,listener: OnUnZipListener? = null){
+        unZip(zipFile,File(targetFilePath),listener)
+    }
+
     fun unZip(zipFile: File,targetFile:File,listener:OnUnZipListener? = null){
+        if(!zipFile.exists())return
         listener?.onUnZipStart()
         realUnZip(FileInputStream(zipFile),targetFile)
         listener?.onUnZipEnd()
     }
 
-    fun unZipFromAssets(context: Context, assetName: String, targetFile: File,listener: OnUnZipListener? = null) {
+    fun unZipFromAssets(context: Context,assetsFilePath: String,targetFilePath: String,listener: OnUnZipListener? = null){
+        unZipFromAssets(context,assetsFilePath,File(targetFilePath),listener)
+    }
+
+    fun unZipFromAssets(context: Context, assetsFilePath: String, targetFile: File,listener: OnUnZipListener? = null) {
         listener?.onUnZipStart()
-        val dataSource = context.assets.open(assetName)
+        val dataSource = context.assets.open(assetsFilePath)
         realUnZip(dataSource,targetFile,listener)
         listener?.onUnZipEnd()
     }
 
+    fun zip(sourceFilePath: String,zipFilePath: String,listener: OnZipListener? = null){
+        zip(listOf(File(sourceFilePath)),File(zipFilePath),listener)
+    }
+
+    fun zip(sourceFile: File,zipFilePath: String,listener: OnZipListener? = null){
+        zip(listOf(sourceFile),File(zipFilePath),listener)
+    }
+
     fun zip(sourceFile:File,zipFile: File,listener: OnZipListener? = null){
         zip(listOf(sourceFile),zipFile,listener)
+    }
+
+    fun zip(sourceFileList: List<File>, zipFilePath: String, listener: OnZipListener? = null){
+        zip(sourceFileList,File(zipFilePath),listener)
+    }
+
+    fun zip(sourceFilePathList: List<String>, zipFilePath: String, listener: OnZipListener? = null){
+        val sourceFileList = mutableListOf<File>()
+        sourceFilePathList.forEach { sourceFileList.add(File(it)) }
+        zip(sourceFileList,File(zipFilePath),listener)
     }
 
     fun zip(sourceFileList: List<File>,zipFile: File,listener: OnZipListener? = null){
@@ -61,6 +92,7 @@ object ZipUtils {
 
 
     private fun realZip(parentDirName:String,sourceFile:File,zipOutputStream: ZipOutputStream,listener: OnZipListener? = null){
+        if(!sourceFile.exists())return
         val zipEntry:ZipEntry
         if(sourceFile.isDirectory){
             val dirName = parentDirName + sourceFile.name + File.separator
@@ -113,7 +145,10 @@ object ZipUtils {
         val file = File(targetFile.absolutePath + File.separator + zipEntry.name)
         val parentPath = file.parent
         mkdirs(parentPath)
-        createNewFile(file)
+        if(file.exists()){
+            file.delete()
+        }
+        file.createNewFile()
 
         listener?.onUnZipProgress(zipEntry.name)
         val out = FileOutputStream(file)
@@ -135,16 +170,6 @@ object ZipUtils {
         val dir = File(realDirPath)
         if(dir.exists())return
         dir.mkdirs()
-    }
-
-    /**
-     * 如果有同名文件就直接覆盖
-     */
-    private fun createNewFile(file:File){
-        if(file.exists()){
-            file.delete()
-        }
-        file.createNewFile()
     }
 
 }
