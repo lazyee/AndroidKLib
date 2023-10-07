@@ -79,16 +79,20 @@ object ZipUtils {
 
     fun zipMultipleFile(sourceFileList: List<File>,zipFile: File,listener: OnZipListener? = null){
         listener?.onZipStart()
-        try {
-            if(zipFile.exists()){
-                zipFile.delete()
+        val isExists = sourceFileList.find { it.exists() } != null
+        if(isExists){
+            try {
+                if(zipFile.exists()){
+                    zipFile.delete()
+                }
+
+                val fileOutputStream = FileOutputStream(zipFile)
+                val zipOutputStream = ZipOutputStream(fileOutputStream)
+                realZip("",sourceFileList ,zipOutputStream,listener)
+                zipOutputStream.close()
+            }catch (e:Exception){
+                e.printStackTrace()
             }
-            val fileOutputStream = FileOutputStream(zipFile)
-            val zipOutputStream = ZipOutputStream(fileOutputStream)
-            realZip("",sourceFileList ,zipOutputStream,listener)
-            zipOutputStream.close()
-        }catch (e:Exception){
-            e.printStackTrace()
         }
         listener?.onZipEnd()
     }
