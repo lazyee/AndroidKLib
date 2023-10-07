@@ -22,10 +22,12 @@ import java.util.zip.ZipOutputStream
 private const val TAG = "[ZipUtils]"
 object ZipUtils {
 
-    fun unZip(zipFilePath: String,targetFilePath: String,listener: OnUnZipListener?){
+    @JvmName("unZip3")
+    fun unZip(zipFilePath: String,targetFilePath: String,listener: OnUnZipListener? = null){
         unZip(File(zipFilePath),File(targetFilePath),listener)
     }
 
+    @JvmName("unZip2")
     fun unZip(zipFile: File,targetFilePath:String,listener: OnUnZipListener? = null){
         unZip(zipFile,File(targetFilePath),listener)
     }
@@ -37,6 +39,7 @@ object ZipUtils {
         listener?.onUnZipEnd()
     }
 
+    @JvmName("unZipFromAssets2")
     fun unZipFromAssets(context: Context,assetsFilePath: String,targetFilePath: String,listener: OnUnZipListener? = null){
         unZipFromAssets(context,assetsFilePath,File(targetFilePath),listener)
     }
@@ -48,29 +51,33 @@ object ZipUtils {
         listener?.onUnZipEnd()
     }
 
+    @JvmName("zip3")
     fun zip(sourceFilePath: String,zipFilePath: String,listener: OnZipListener? = null){
-        zip(listOf(File(sourceFilePath)),File(zipFilePath),listener)
+        zip(File(sourceFilePath),File(zipFilePath),listener)
     }
 
+    @JvmName("zip2")
     fun zip(sourceFile: File,zipFilePath: String,listener: OnZipListener? = null){
-        zip(listOf(sourceFile),File(zipFilePath),listener)
+        zip(sourceFile,File(zipFilePath),listener)
     }
 
     fun zip(sourceFile:File,zipFile: File,listener: OnZipListener? = null){
-        zip(listOf(sourceFile),zipFile,listener)
+        zipMultipleFile(listOf(sourceFile),zipFile,listener)
     }
 
-    fun zip(sourceFileList: List<File>, zipFilePath: String, listener: OnZipListener? = null){
-        zip(sourceFileList,File(zipFilePath),listener)
+    @JvmName("zipMultipleFile2")
+    fun zipMultipleFile(sourceFileList: List<File>, zipFilePath: String, listener: OnZipListener? = null){
+        zipMultipleFile(sourceFileList,File(zipFilePath),listener)
     }
 
-    fun zip(sourceFilePathList: List<String>, zipFilePath: String, listener: OnZipListener? = null){
+    @JvmName("zipMultipleFile3")
+    fun zipMultipleFile(sourceFilePathList: List<String>, zipFilePath: String, listener: OnZipListener? = null){
         val sourceFileList = mutableListOf<File>()
         sourceFilePathList.forEach { sourceFileList.add(File(it)) }
-        zip(sourceFileList,File(zipFilePath),listener)
+        zipMultipleFile(sourceFileList,File(zipFilePath),listener)
     }
 
-    fun zip(sourceFileList: List<File>,zipFile: File,listener: OnZipListener? = null){
+    fun zipMultipleFile(sourceFileList: List<File>,zipFile: File,listener: OnZipListener? = null){
         listener?.onZipStart()
         try {
             if(zipFile.exists()){
