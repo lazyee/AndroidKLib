@@ -17,7 +17,6 @@ import io.reactivex.schedulers.Schedulers
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import org.greenrobot.eventbus.util.ErrorDialogFragmentFactory.Support
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -170,7 +169,7 @@ class ApiManager private constructor(
             return
         }
 
-        if (ApiCode.isSuccessful(result.getCode())) {
+        if (ApiCode.isSuccessful(result.getICode())) {
             callback?.onSuccess(result)
             return
         }
