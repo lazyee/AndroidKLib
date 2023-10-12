@@ -2,9 +2,12 @@ package com.lazyee.klib.util
 
 import android.app.ActivityManager
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.lazyee.klib.extension.safeToLong
+import java.io.File
 
 /**
  * Author: leeorz
@@ -58,5 +61,35 @@ object AppUtils {
             }
         }
         return processName
+    }
+
+    /**
+     * 分享文件
+     *
+     * 1.在AndroidManifest.xml中添加provider
+     * <provider
+     *    android:name="androidx.core.content.FileProvider"
+     *    android:authorities="xxx.yyy.zzzz.provider.FileProvider"
+     *    android:exported="false"
+     *    android:grantUriPermissions="true">
+     *    <meta-data
+     *        android:name="android.support.FILE_PROVIDER_PATHS"
+     *        android:resource="@xml/file_paths" />
+     * </provider>
+     *
+     * 2.在res中创建xml文件夹，在xml文件夹中创建file_paths.xml
+     * <?xml version="1.0" encoding="utf-8"?>
+     * <paths xmlns:android="http://schemas.android.com/apk/res/android">
+     *     <external-path name="external_files" path="." />
+     *     <root-path name="root_path" path=""/>
+     * </paths>
+     */
+    fun shareFile(context:Context,authority:String, file: File){
+        val shareIntent = Intent()
+        shareIntent.action = Intent.ACTION_SEND
+        shareIntent.type = "*/*"
+        val fileUri = FileProvider.getUriForFile(context,authority,file)
+        shareIntent.putExtra(Intent.EXTRA_STREAM,fileUri)
+        context.startActivity(Intent.createChooser(shareIntent,"分享文件到"))
     }
 }

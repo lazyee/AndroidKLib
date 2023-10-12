@@ -7,4 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:text="测试重复点击"/>
+    <Button
+        android:id="@+id/btnShareFile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="分享文件"/>
 </LinearLayout>
