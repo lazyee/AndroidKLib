@@ -31,6 +31,7 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
 import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
+import com.lazyee.klib.typed.TCallback
 import com.lazyee.klib.util.FileUtils
 
 
@@ -423,7 +424,7 @@ fun Context.getExternalFsAvailableSize(): Long {
  * @param lifecycle
  * @param callback
  */
-fun Context.registerNetworkStateCallback(lifecycle:Lifecycle, callback:(isAvailable:Boolean)->Unit){
+fun Context.registerNetworkStateCallback(lifecycle:Lifecycle, callback:TCallback<Boolean>){
     val broadcastReceiver = object :BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
             callback.invoke(isNetworkAvailable())
@@ -438,6 +439,22 @@ fun Context.registerNetworkStateCallback(lifecycle:Lifecycle, callback:(isAvaila
             unregisterReceiver(broadcastReceiver)
         }
     })
+}
+
+/**
+ * 添加网络状态回调,需要手动移除广播监听
+ * @param callback
+ */
+fun Context.registerNetworkStateCallback(callback:TCallback<Boolean>): BroadcastReceiver {
+    val broadcastReceiver = object :BroadcastReceiver(){
+        override fun onReceive(context: Context?, intent: Intent?) {
+            callback.invoke(isNetworkAvailable())
+        }
+    }
+
+    val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
+    registerReceiver(broadcastReceiver,intentFilter)
+    return broadcastReceiver
 }
 
 /**
