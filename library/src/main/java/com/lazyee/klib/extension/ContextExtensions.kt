@@ -420,16 +420,22 @@ fun Context.getExternalFsAvailableSize(): Long {
 }
 
 /**
- * 添加网络状态回调
+ * 添加网络状态变更回调
  * @param lifecycle
  * @param callback
  */
-fun Context.registerNetworkStateCallback(lifecycle:Lifecycle, callback:TCallback<Boolean>){
+fun Context.registerNetworkStateChangedCallback(lifecycle:Lifecycle, callback:TCallback<Boolean>){
+    var isNetworkAvailable = isNetworkAvailable()
     val broadcastReceiver = object :BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            callback.invoke(isNetworkAvailable())
+            val currentNetworkAvailable = isNetworkAvailable()
+            if(currentNetworkAvailable != isNetworkAvailable){
+                isNetworkAvailable = currentNetworkAvailable
+                callback.invoke(isNetworkAvailable)
+            }
         }
     }
+
     val intentFilter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION)
     registerReceiver(broadcastReceiver,intentFilter)
 
@@ -442,13 +448,18 @@ fun Context.registerNetworkStateCallback(lifecycle:Lifecycle, callback:TCallback
 }
 
 /**
- * 添加网络状态回调,需要手动移除广播监听
+ * 添加网络状态变更回调,需要手动移除广播监听
  * @param callback
  */
-fun Context.registerNetworkStateCallback(callback:TCallback<Boolean>): BroadcastReceiver {
+fun Context.registerNetworkStateChangedCallback(callback:TCallback<Boolean>): BroadcastReceiver {
+    var isNetworkAvailable = isNetworkAvailable()
     val broadcastReceiver = object :BroadcastReceiver(){
         override fun onReceive(context: Context?, intent: Intent?) {
-            callback.invoke(isNetworkAvailable())
+            val currentNetworkAvailable = isNetworkAvailable()
+            if(currentNetworkAvailable != isNetworkAvailable){
+                isNetworkAvailable = currentNetworkAvailable
+                callback.invoke(isNetworkAvailable)
+            }
         }
     }
 
