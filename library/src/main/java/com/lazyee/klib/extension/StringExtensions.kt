@@ -11,7 +11,6 @@ import kotlinx.coroutines.launch
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
-import java.text.SimpleDateFormat
 import java.util.*
 import java.util.regex.Matcher
 import java.util.regex.Pattern
@@ -243,6 +242,40 @@ fun String.split2Combo():List<String>{
     return comboList
 }
 
-//fun main() {
-//    "你好AAABCD".split2Combo()
-//}
+
+/**
+ * 字符串转char再转16进制 通用用于发送文字给设备显示
+ * @param charString
+ * @return
+ */
+fun String.charToHex(): String? {
+    val charArray = toCharArray()
+    val sb = StringBuilder(charArray.size)
+    for (c in charArray) {
+        sb.append(Integer.toHexString(c.toInt()))
+    }
+    return sb.toString()
+}
+
+/**
+ * 十六进制字符串转换成bytes[]
+ */
+fun String.hexToBytes(): ByteArray? {
+    var m = 0
+    var n = 0
+    val l = length / 2
+    val ret = ByteArray(l)
+    for (i in 0 until l) {
+        m = i * 2 + 1
+        n = m + 1
+        ret[i] = uniteBytes(substring(i * 2, m), substring(m, n))
+    }
+    return ret
+}
+
+private fun uniteBytes(src0: String, src1: String): Byte {
+    var b0 = java.lang.Byte.decode("0x$src0")
+    b0 = (b0.toInt() shl 4).toByte()
+    val b1 = java.lang.Byte.decode("0x$src1")
+    return (b0.toInt() or b1.toInt()).toByte()
+}
