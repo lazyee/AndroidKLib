@@ -1,6 +1,7 @@
 package com.lazyee.klib.util
 
 import android.content.Context
+import android.os.Build
 import android.text.TextUtils
 import com.lazyee.klib.listener.OnUnZipListener
 import com.lazyee.klib.listener.OnZipListener
@@ -9,6 +10,8 @@ import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import java.util.zip.ZipOutputStream
@@ -22,32 +25,34 @@ import java.util.zip.ZipOutputStream
 private const val TAG = "[ZipUtils]"
 object ZipUtils {
 
+    val GBK = Charset.forName("GBK")
+
     @JvmName("unZip3")
-    fun unZip(zipFilePath: String,targetFilePath: String,listener: OnUnZipListener? = null){
-        unZip(File(zipFilePath),File(targetFilePath),listener)
+    fun unZip(zipFilePath: String,targetFilePath: String,charset: Charset = StandardCharsets.UTF_8,listener: OnUnZipListener? = null){
+        unZip(File(zipFilePath),File(targetFilePath),charset,listener)
     }
 
     @JvmName("unZip2")
-    fun unZip(zipFile: File,targetFilePath:String,listener: OnUnZipListener? = null){
-        unZip(zipFile,File(targetFilePath),listener)
+    fun unZip(zipFile: File,targetFilePath:String,charset: Charset = StandardCharsets.UTF_8,listener: OnUnZipListener? = null){
+        unZip(zipFile,File(targetFilePath),charset,listener)
     }
 
-    fun unZip(zipFile: File,targetFile:File,listener:OnUnZipListener? = null){
+    fun unZip(zipFile: File,targetFile:File,charset: Charset = StandardCharsets.UTF_8,listener:OnUnZipListener? = null){
         if(!zipFile.exists())return
         listener?.onUnZipStart()
-        realUnZip(FileInputStream(zipFile),targetFile)
+        realUnZip(FileInputStream(zipFile),targetFile,charset,listener)
         listener?.onUnZipEnd()
     }
 
     @JvmName("unZipFromAssets2")
-    fun unZipFromAssets(context: Context,assetsFilePath: String,targetFilePath: String,listener: OnUnZipListener? = null){
-        unZipFromAssets(context,assetsFilePath,File(targetFilePath),listener)
+    fun unZipFromAssets(context: Context,assetsFilePath: String,targetFilePath: String,charset: Charset = StandardCharsets.UTF_8,listener: OnUnZipListener? = null){
+        unZipFromAssets(context,assetsFilePath,File(targetFilePath),charset,listener)
     }
 
-    fun unZipFromAssets(context: Context, assetsFilePath: String, targetFile: File,listener: OnUnZipListener? = null) {
+    fun unZipFromAssets(context: Context, assetsFilePath: String, targetFile: File,charset: Charset = StandardCharsets.UTF_8,listener: OnUnZipListener? = null) {
         listener?.onUnZipStart()
         val dataSource = context.assets.open(assetsFilePath)
-        realUnZip(dataSource,targetFile,listener)
+        realUnZip(dataSource,targetFile,charset,listener)
         listener?.onUnZipEnd()
     }
 
@@ -129,9 +134,13 @@ object ZipUtils {
 
 
 
-    private fun realUnZip(inputStream: InputStream,targetFile: File,listener: OnUnZipListener? = null){
+    private fun realUnZip(inputStream: InputStream,targetFile: File,charset: Charset,listener: OnUnZipListener? = null){
         try {
-            val zipInputStream = ZipInputStream(inputStream)
+            val zipInputStream = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                ZipInputStream(inputStream,charset)
+            } else {
+                ZipInputStream(inputStream)
+            }
             var entry = zipInputStream.nextEntry
 
             mkdirs(targetFile.absolutePath)

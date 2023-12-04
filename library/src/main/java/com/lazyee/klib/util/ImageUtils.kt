@@ -112,7 +112,7 @@ object ImageUtils{
             var top = 0
             val fos = FileOutputStream(outPath)
             longImageItemList.forEachIndexed { index,image->
-                callback?.onMergeProgress(index,image.filePath)
+                callback?.onHandleImage(index,image.filePath)
                 val option = BitmapFactory.Options()
                 option.inJustDecodeBounds = false
                 option.inSampleSize = image.inSampleSize
@@ -125,7 +125,7 @@ object ImageUtils{
                 canvas.drawBitmap(bitmap,null,dstRect,null)
                 bitmap.recycle()
             }
-
+            callback?.onCompressImage()
             longImageBitmap.compress(Bitmap.CompressFormat.JPEG,85,fos)
             fos.close()
             callback?.onMergeComplete(outPath)
@@ -145,7 +145,8 @@ object ImageUtils{
 
     interface MergeLongImageCallback{
         fun onMergeStart()
-        fun onMergeProgress(index:Int,filePath:String)
+        fun onHandleImage(index:Int,filePath:String)
+        fun onCompressImage()
         fun onMergeComplete(outPath:String)
         fun onMergeFailed(msg:String)
     }
