@@ -111,11 +111,13 @@ fun String.decodeURL():String{
  * @return Long
  */
 fun String?.safeToLong(): Long {
-    this?:return 0
+    this?:return 0L
     try {
-        return if (TextUtils.isEmpty(this)) 0 else this.toLong()
-    } catch (e: Exception) { }
-    return 0
+        return if (TextUtils.isEmpty(this)) 0L else this.toLong()
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+    return 0L
 }
 
 /**

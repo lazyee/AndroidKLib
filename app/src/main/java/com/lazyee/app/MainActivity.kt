@@ -6,6 +6,7 @@ import com.lazyee.klib.base.BaseActivity
 import com.lazyee.klib.extension.goto
 import com.lazyee.klib.extension.setSingleClick
 import com.lazyee.klib.util.AppUtils
+import com.lazyee.klib.util.LogUtils
 import java.io.File
 
 /**
@@ -19,6 +20,7 @@ class MainActivity: BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(mBinding.root)
 
+        LogUtils.e(TAG, "hasNewVersion:${AppUtils.hasNewVersion("1.3.1","1.3")}")
         mBinding.btnSingleClick.setSingleClick {
             goto(SecondActivity::class.java)
         }

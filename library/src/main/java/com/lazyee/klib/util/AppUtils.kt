@@ -16,31 +16,38 @@ import java.io.File
  * Date: 2022/5/5 3:24 下午
  */
 object AppUtils {
+
     /**
-     * 比较版本名,如果当前版本名比待比较的版本名大，那么返回true
+     * 比较版本名,如果当前版本名比待比较的版本名大，那么返回false
+     * 这里的比较只能比较由数字组成的版本名，如果有类似1.1.1.beta之类的版本名就不要用这个了
      * @receiver String
      * @param currentVersionName String 1.1.1.1
      * @param compareVersionName String 1.1.1.2
      * @return Boolean
      */
-    fun compareVersionName(currentVersionName:String,compareVersionName: String): Boolean {
-        val currentVersionNameArr = currentVersionName.split("\\.".toRegex()).toTypedArray()
-        val compareVersionNameArr = compareVersionName.split("\\.".toRegex()).toTypedArray()
-        val loopCount = compareVersionNameArr.size.coerceAtLeast(currentVersionNameArr.size)
-        val currentVersionArr = arrayOfNulls<String>(loopCount)
-        for (i in currentVersionNameArr.indices) {
-            currentVersionArr[i] = currentVersionNameArr[i]
-        }
-        val compareVersionArr = arrayOfNulls<String>(loopCount)
-        for (i in compareVersionNameArr.indices) {
-            compareVersionArr[i] = compareVersionNameArr[i]
-        }
-        for (i in 0 until loopCount) {
-            val currentVersion = currentVersionArr[i].safeToLong()
-            val compareVersion = compareVersionArr[i].safeToLong()
-            if (currentVersion != compareVersion) {
-                return currentVersion > compareVersion
+    fun hasNewVersion(currentVersionName:String,compareVersionName: String):Boolean{
+        try {
+            val currentVersionNameArr = currentVersionName.split("\\.".toRegex()).toTypedArray()
+            val compareVersionNameArr = compareVersionName.split("\\.".toRegex()).toTypedArray()
+            val loopCount = compareVersionNameArr.size.coerceAtLeast(currentVersionNameArr.size)
+            val currentVersionArr = arrayOfNulls<String>(loopCount)
+            for (i in currentVersionNameArr.indices) {
+                currentVersionArr[i] = currentVersionNameArr[i]
             }
+            val compareVersionArr = arrayOfNulls<String>(loopCount)
+            for (i in compareVersionNameArr.indices) {
+                compareVersionArr[i] = compareVersionNameArr[i]
+            }
+            for (i in 0 until loopCount) {
+                val currentVersion = currentVersionArr[i].safeToLong()
+                val compareVersion = compareVersionArr[i].safeToLong()
+                if (currentVersion != compareVersion) {
+                    return currentVersion < compareVersion
+                }
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+            return false
         }
 
         return false
