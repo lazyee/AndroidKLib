@@ -1,6 +1,5 @@
 package com.lazyee.klib.util
 
-import android.os.Environment
 import android.os.StatFs
 import android.text.TextUtils
 import com.lazyee.klib.listener.OnFileDownloadListener
@@ -103,13 +102,13 @@ object FileUtils {
                 //此处的len表示每次循环读取的内容长度
                 var len: Int
                 //已经读取的总长度
-                var totle = 0
+                var total = 0
                 //bytes是用于存储每次读取出来的内容
                 val bytes = ByteArray(1024)
                 while (bfi.read(bytes).also { len = it } != -1) {
-                    //每次读取完了都将len累加在totle里
-                    totle += len
-                    listener?.onDownloading(totle,contentLength)
+                    //每次读取完了都将len累加在total里
+                    total += len
+                    listener?.onDownloading(total,contentLength)
 
                     //通过文件输出流写入从服务器中读取的数据
                     outputStream.write(bytes, 0, len)

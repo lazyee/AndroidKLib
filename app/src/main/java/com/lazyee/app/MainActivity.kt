@@ -20,7 +20,7 @@ class MainActivity: BaseActivity(){
         super.onCreate(savedInstanceState)
         setContentView(mBinding.root)
 
-        LogUtils.e(TAG, "hasNewVersion:${AppUtils.hasNewVersion("1.3.1","1.3")}")
+        LogUtils.e(TAG, "hasNewVersion:${AppUtils.hasNewVersion("V1.3.1","V1.3")}")
         mBinding.btnSingleClick.setSingleClick {
             goto(SecondActivity::class.java)
         }
