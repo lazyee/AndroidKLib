@@ -179,6 +179,11 @@ class ApiManager private constructor(
 
     }
 
+    private lateinit var okHttpClient:OkHttpClient
+    fun getOkHttpClient():OkHttpClient{
+        return okHttpClient
+    }
+
     private fun createRetrofit() {
         val clientBuilder = OkHttpClient().newBuilder()
 
@@ -205,11 +210,14 @@ class ApiManager private constructor(
 
         val moshi = Moshi.Builder().add(KotlinJsonAdapterFactory()).build()
         val moshiConverterFactory = MoshiConverterFactory.create(moshi)
+
+        okHttpClient = clientBuilder.build()
+
         retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
             .addConverterFactory(moshiConverterFactory)
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .client(clientBuilder.build())
+            .client(okHttpClient)
             .build()
     }
 
