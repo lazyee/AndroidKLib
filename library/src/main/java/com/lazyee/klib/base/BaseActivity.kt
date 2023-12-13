@@ -6,7 +6,9 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.ViewTreeObserver
+import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import com.lazyee.klib.extension.addAdjustNothingModeOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.removeKeyBoardVisibleListener
 import com.lazyee.klib.extension.toastLong
@@ -66,6 +68,7 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
     override fun onDestroy() {
         super.onDestroy()
         ApiManager.cancel(this)
+        removeOnKeyboardVisibleListener()
     }
 
     override fun onLoadingStateChanged(state: LoadingState) {
@@ -87,12 +90,28 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
     }
 
     /**
-     * 设置键盘显示监听
+     * 添加键盘显示监听
      */
-    fun setOnKeyboardVisibleListener(listener: OnKeyboardVisibleListener?){
+    fun addOnKeyboardVisibleListener(listener: OnKeyboardVisibleListener?){
         mOnKeyboardVisibleListener = listener
         mOnKeyboardVisibleChangeGlobalLayoutListener?.run { removeKeyBoardVisibleListener(this) }
-        mOnKeyboardVisibleChangeGlobalLayoutListener = addOnKeyBoardVisibleListener(mOnKeyboardVisibleListener)
+        if(window.attributes.softInputMode == WindowManager.LayoutParams.SOFT_INPUT_ADJUST_NOTHING){
+            mOnKeyboardVisibleChangeGlobalLayoutListener = addAdjustNothingModeOnKeyBoardVisibleListener(mOnKeyboardVisibleListener)
+        }else{
+            mOnKeyboardVisibleChangeGlobalLayoutListener = addOnKeyBoardVisibleListener(mOnKeyboardVisibleListener)
+        }
     }
+
+    /**
+     * 移除键盘显示监听
+     */
+    fun removeOnKeyboardVisibleListener(){
+        mOnKeyboardVisibleListener = null
+        mOnKeyboardVisibleChangeGlobalLayoutListener?.run {
+            removeKeyBoardVisibleListener(this)
+        }
+        mOnKeyboardVisibleChangeGlobalLayoutListener = null
+    }
+
 }
 
