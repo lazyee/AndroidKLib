@@ -73,19 +73,6 @@ class ApiManager private constructor(
         createRetrofit()
     }
 
-
-    /**
-     * 请求
-     * @param tag Any
-     * @param observable Observable<T>
-     * @param callback HttpCallback<T>?
-     */
-    fun <T> request(tag: Any, observable: Observable<T>, callback: ApiCallback<T>? = null) {
-        observable.subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(createHttpObserver(tag,callback))
-    }
-
     fun <T> createHttpObserver(tag: Any,callback:ApiCallback<T>? = null): Observer<T> {
         lateinit var task: RxJavaHttpTask
         val observer = object : Observer<T> {
@@ -118,6 +105,24 @@ class ApiManager private constructor(
         return retrofit.create(clazz)
     }
 
+    /**
+     * 请求
+     * @param tag Any
+     * @param observable Observable<T>
+     * @param callback HttpCallback<T>?
+     */
+    fun <T> request(tag: Any, observable: Observable<T>, callback: ApiCallback<T>? = null) {
+        observable.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe(createHttpObserver(tag,callback))
+    }
+
+    /**
+     * 请求
+     * @param tag Any
+     * @param call Call<T>
+     * @param callback HttpCallback<T>?
+     */
     fun <T> request(tag: Any, call: Call<T>, callback: ApiCallback<T>? = null) {
         val task = RetrofitCallHttpTask(call)
         addTask(tag, task)
@@ -143,7 +148,15 @@ class ApiManager private constructor(
     suspend fun <T> request(tag: Any,call:Call<T>): T? {
         val task = RetrofitCallHttpTask(call)
         try {
+            addTask(tag,task)
             val response = call.execute()
+            if(response is IApiResult<*>){
+                if(isApiResultIntercept(response)){
+                    removeTask(tag,task)
+                    return null
+                }
+            }
+            removeTask(tag,task)
             return response.body()
         }catch (e:Exception){
             e.printStackTrace()
@@ -151,6 +164,29 @@ class ApiManager private constructor(
         removeTask(tag,task)
         return null
     }
+
+//    /**
+//     * 协程请求
+//     */
+//    suspend fun <T> request(tag: Any,call:Call<IApiResult<T>>): T? {
+//        val task = RetrofitCallHttpTask(call)
+//        try {
+//            addTask(tag,task)
+//            val response = call.execute()
+//            if(response is IApiResult<*>){
+//                if(isApiResultIntercept(response)){
+//                    removeTask(tag,task)
+//                    return null
+//                }
+//            }
+//            removeTask(tag,task)
+//            return response.body()
+//        }catch (e:Exception){
+//            e.printStackTrace()
+//        }
+//        removeTask(tag,task)
+//        return null
+//    }
 
     fun <T> handleHttpResult(result: T?, callback: ApiCallback<T>?) {
         if(result == null){
