@@ -150,14 +150,15 @@ class ApiManager private constructor(
         try {
             addTask(tag,task)
             val response = call.execute()
-            if(response is IApiResult<*>){
-                if(isApiResultIntercept(response)){
+            val body = response.body()
+            if(body is IApiResult<*>){
+                if(isApiResultIntercept(body)){
                     removeTask(tag,task)
                     return null
                 }
             }
             removeTask(tag,task)
-            return response.body()
+            return body
         }catch (e:Exception){
             e.printStackTrace()
         }
