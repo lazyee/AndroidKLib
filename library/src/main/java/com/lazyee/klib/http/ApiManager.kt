@@ -14,6 +14,8 @@ import io.reactivex.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -152,9 +154,10 @@ class ApiManager private constructor(
             val response = call.execute()
             val body = response.body()
             if(body is IApiResult<*>){
-                if(isApiResultIntercept(body)){
-                    removeTask(tag,task)
-                    return null
+                withContext(Dispatchers.Main){
+                    if(isApiResultIntercept(body)){
+                        throw Exception("api result intercept success")
+                    }
                 }
             }
             removeTask(tag,task)
