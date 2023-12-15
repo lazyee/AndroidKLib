@@ -169,29 +169,6 @@ class ApiManager private constructor(
         return null
     }
 
-//    /**
-//     * 协程请求
-//     */
-//    suspend fun <T> request(tag: Any,call:Call<IApiResult<T>>): T? {
-//        val task = RetrofitCallHttpTask(call)
-//        try {
-//            addTask(tag,task)
-//            val response = call.execute()
-//            if(response is IApiResult<*>){
-//                if(isApiResultIntercept(response)){
-//                    removeTask(tag,task)
-//                    return null
-//                }
-//            }
-//            removeTask(tag,task)
-//            return response.body()
-//        }catch (e:Exception){
-//            e.printStackTrace()
-//        }
-//        removeTask(tag,task)
-//        return null
-//    }
-
     fun <T> handleHttpResult(result: T?, callback: ApiCallback<T>?) {
         if(result == null){
             callback?.onSuccess(null)
