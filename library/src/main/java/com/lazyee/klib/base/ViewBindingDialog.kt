@@ -19,11 +19,11 @@ open class ViewBindingDialog<VB:ViewBinding> :Dialog{
     constructor(context: Context,themeResId:Int):super(context,themeResId)
     constructor(context: Context,cancelable:Boolean,cancelListener: DialogInterface.OnCancelListener):super(context,cancelable,cancelListener)
 
-    lateinit var mViewBinding: VB
+    var mViewBinding: VB? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mViewBinding = ViewBindingUtils.getViewBinding(javaClass, layoutInflater)
-        setContentView(mViewBinding.root)
+        mViewBinding?.run { setContentView(root) }
         initView()
     }
 

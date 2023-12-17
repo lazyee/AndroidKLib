@@ -64,7 +64,8 @@ object FileUtils {
         return blockSize * availableSize
     }
 
-    suspend fun download(downloadFileUrl:String,outFile:File):Boolean{
+    suspend fun download(downloadFileUrl:String?,outFile:File):Boolean{
+        if(TextUtils.isEmpty(downloadFileUrl)) return false
         val url: URL
         val connection: HttpURLConnection
         try {
@@ -126,8 +127,14 @@ object FileUtils {
     /**
      * 简单文件下载
      */
-    fun download(downloadFileUrl:String, outFile: File, listener: OnFileDownloadListener?){
+    fun download(downloadFileUrl:String?, outFile: File, listener: OnFileDownloadListener?){
         CoroutineScope(Dispatchers.IO).launch {
+            if(TextUtils.isEmpty(downloadFileUrl)){
+                listener?.run {
+                    withContext(Dispatchers.Main){ onDownloadFailure(Exception("downloadFileUrl is empty string ")) }
+                }
+                return@launch
+            }
             val url: URL
             val connection: HttpURLConnection
             try {
@@ -151,8 +158,8 @@ object FileUtils {
                 //得到链接的响应码 200为成功
                 val responseCode = connection.responseCode
                 if (responseCode != HttpURLConnection.HTTP_OK) {
-                    withContext(Dispatchers.Main){
-                        listener?.onDownloadFailure(Exception("download failed,responseCode:${responseCode}"))
+                    listener?.run {
+                        withContext(Dispatchers.Main){ onDownloadFailure(Exception("download failed,responseCode:${responseCode}")) }
                     }
                     return@launch
                 }
@@ -164,8 +171,8 @@ object FileUtils {
                 //获取请求的内容总长度
                 val contentLength = connection.contentLength
 
-                withContext(Dispatchers.Main){
-                    listener?.onDownloadStart(contentLength)
+                listener?.run {
+                    withContext(Dispatchers.Main) { onDownloadStart(contentLength) }
                 }
 
                 //创建缓冲输入流对象，相对于inputStream效率要高一些
@@ -179,8 +186,8 @@ object FileUtils {
                 while (bfi.read(bytes).also { len = it } != -1) {
                     //每次读取完了都将len累加在total里
                     total += len
-                    withContext(Dispatchers.Main){
-                        listener?.onDownloading(total,contentLength)
+                    listener?.run {
+                        withContext(Dispatchers.Main){ onDownloading(total,contentLength) }
                     }
 
                     //通过文件输出流写入从服务器中读取的数据
@@ -190,14 +197,15 @@ object FileUtils {
                 outputStream.close()
                 inputStream.close()
                 bfi.close()
-                withContext(Dispatchers.Main){
-                    listener?.onDownloadComplete(outFile)
+                listener?.run {
+                    withContext(Dispatchers.Main){ onDownloadComplete(outFile) }
                 }
+
 
             } catch (e: Exception) {
                 e.printStackTrace()
-                withContext(Dispatchers.Main){
-                    listener?.onDownloadFailure(e)
+                listener?.run {
+                    withContext(Dispatchers.Main){ onDownloadFailure(e) }
                 }
             }
         }
