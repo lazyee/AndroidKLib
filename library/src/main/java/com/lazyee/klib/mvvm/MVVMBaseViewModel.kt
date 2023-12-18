@@ -13,6 +13,8 @@ open class MVVMBaseViewModel :ViewModel() {
     val pageLoadingStateLiveData = MutableLiveData<LoadingState>()
     val toastLongMsgLiveData = MutableLiveData<String?>()
     val toastShortMsgLiveData = MutableLiveData<String?>()
+    val toastLongResIdLiveData = MutableLiveData<Int>()
+    val toastShortResIdLiveData = MutableLiveData<Int>()
     private val mRepositoryList = mutableListOf<MVVMBaseRepository>()
 
     fun getRepositoryList():List<MVVMBaseRepository>{
@@ -80,5 +82,13 @@ open class MVVMBaseViewModel :ViewModel() {
 
     fun toastShort(msg:String?){
         toastShortMsgLiveData.postValue(msg)
+    }
+
+    fun toastLong(resId:Int){
+        toastLongResIdLiveData.postValue(resId)
+    }
+
+    fun toastShort(resId:Int){
+        toastShortResIdLiveData.postValue(resId)
     }
 }
