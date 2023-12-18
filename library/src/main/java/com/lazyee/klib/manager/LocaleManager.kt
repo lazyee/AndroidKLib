@@ -1,6 +1,7 @@
 package com.lazyee.klib.manager
 
 import android.app.Activity
+import android.content.Context
 import android.os.Build
 import com.lazyee.klib.typed.VoidCallback
 import java.util.Locale
@@ -12,13 +13,13 @@ import java.util.Locale
  * Date: 2023/12/18 17:30
  */
 class LocaleManager {
-    private lateinit var mActivity: Activity
-    constructor(activity:Activity){
-        this.mActivity = activity
+    private val mContext: Context
+    constructor(context: Context){
+        this.mContext = context
     }
 
     fun changeLocale(locale: Locale,callback:VoidCallback){
-        val resources = mActivity.resources
+        val resources = mContext.resources
         val configuration = resources.configuration
 
         configuration.setLocale(locale)
@@ -36,7 +37,7 @@ class LocaleManager {
      * 是否是简体中文
      */
     fun isSimplifiedChinese(): Boolean {
-        val resources = mActivity.resources
+        val resources = mContext.resources
         val configuration = resources.configuration
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             configuration.locales.get(0) == Locale.SIMPLIFIED_CHINESE
@@ -49,7 +50,7 @@ class LocaleManager {
      * 是否是繁体中文
      */
     fun isTraditionalChinese(): Boolean {
-        val resources = mActivity.resources
+        val resources = mContext.resources
         val configuration = resources.configuration
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             configuration.locales.get(0) == Locale.TRADITIONAL_CHINESE
@@ -62,7 +63,7 @@ class LocaleManager {
      * 是否英语
      */
     fun isEnglish(): Boolean {
-        val resources = mActivity.resources
+        val resources = mContext.resources
         val configuration = resources.configuration
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             configuration.locales.get(0) == Locale.ENGLISH
