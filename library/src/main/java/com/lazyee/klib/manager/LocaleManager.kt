@@ -18,7 +18,7 @@ class LocaleManager {
         this.mContext = context
     }
 
-    fun changeLocale(locale: Locale,callback:VoidCallback){
+    fun changeLocale(locale: Locale,callback:VoidCallback? = null){
         val resources = mContext.resources
         val configuration = resources.configuration
 
@@ -30,7 +30,7 @@ class LocaleManager {
         /**
          * 一般来说需要跳转到第一个activity
          */
-        callback.invoke()
+        callback?.invoke()
     }
 
     /**
