@@ -56,4 +56,12 @@ open class BaseFragment:Fragment(),MVVMBaseView {
         if(TextUtils.isEmpty(msg))return
         activity?.toastShort(msg!!)
     }
+
+    override fun onShowLongToast(resId: Int) {
+        activity?.toastLong(resId)
+    }
+
+    override fun onShowShortToast(resId: Int) {
+        activity?.toastShort(resId)
+    }
 }
