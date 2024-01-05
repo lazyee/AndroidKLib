@@ -1,5 +1,6 @@
 package com.leeorz.klib
 
+import com.lazyee.klib.extension.isEmailLegal
 import org.junit.Test
 
 /**
@@ -11,6 +12,11 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
 //        assertEquals(4, 2 + 2)
+//        println("333.com".isEmailLegal())
+//        println("333@.com".isEmailLegal())
+//        println("333@cc.com".isEmailLegal())
+//        println("333@11.com".isEmailLegal())
+//        println("@.com".isEmailLegal())
 
     }
 }

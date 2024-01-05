@@ -210,6 +210,16 @@ fun String?.isHKPhoneLegal(): Boolean {
 }
 
 /**
+ * 是否是合法邮箱格式
+ */
+fun String?.isEmailLegal():Boolean{
+    val regExp = "^[^@]+@[^@]+\\.[^@]+$"
+    val p: Pattern = Pattern.compile(regExp)
+    val m: Matcher = p.matcher(this!!)
+    return m.matches()
+}
+
+/**
  * 将字符串转换为Date
  */
 fun String?.toDate(format:String = DateUtils.yyyyMMddHHmmss,locale:Locale = Locale.CHINA): Date? {
