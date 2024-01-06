@@ -69,12 +69,4 @@ open class BaseFragment:Fragment(),MVVMBaseView {
     override fun onShowShortToast(resId: Int) {
         activity?.toastShort(resId)
     }
-
-    fun registerSimpleLauncher(callback:VoidCallback): ActivityResultLauncher<Intent> {
-        val installApkLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
-            if(result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
-            callback.invoke()
-        }
-        return installApkLauncher
-    }
 }

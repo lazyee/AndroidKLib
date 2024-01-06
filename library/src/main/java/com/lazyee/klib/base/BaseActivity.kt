@@ -123,13 +123,5 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
         }
         mOnKeyboardVisibleChangeGlobalLayoutListener = null
     }
-
-    fun registerSimpleLauncher(callback:VoidCallback): ActivityResultLauncher<Intent> {
-        val installApkLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
-            if(result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
-            callback.invoke()
-        }
-        return installApkLauncher
-    }
 }
 

@@ -17,10 +17,6 @@ import java.io.File
  */
 class MainActivity: BaseActivity(),OnKeyboardVisibleListener{
     private val mBinding by lazy { ActivityMainBinding.inflate(layoutInflater) }
-
-    private val installApkLauncher = registerSimpleLauncher {
-        AppUtils.realInstallApk(this,"com.lazyee.app.provider.FileProvider",File(filesDir.absolutePath + File.separator + "base.apk"))
-    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(mBinding.root)
@@ -32,7 +28,7 @@ class MainActivity: BaseActivity(),OnKeyboardVisibleListener{
         }
         mBinding.btnInstallApk.setOnClickListener {
 //            AppUtils.installApk(this,File(filesDir.absolutePath + File.separator + "base.apk"))
-            AppUtils.installApk(installApkLauncher,activity,"com.lazyee.app.provider.FileProvider",File(filesDir.absolutePath + File.separator + "base.apk"))
+            AppUtils.installApk(this,"com.lazyee.app.provider.FileProvider",File(filesDir.absolutePath + File.separator + "base.apk"))
         }
 
         mBinding.btnShareFile.setOnClickListener {
