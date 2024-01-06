@@ -1,14 +1,19 @@
 package com.lazyee.klib.base
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.lazyee.klib.extension.toastLong
 import com.lazyee.klib.extension.toastShort
 import com.lazyee.klib.http.ApiManager
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
+import com.lazyee.klib.typed.VoidCallback
 
 /**
  * @Author leeorz
@@ -63,5 +68,13 @@ open class BaseFragment:Fragment(),MVVMBaseView {
 
     override fun onShowShortToast(resId: Int) {
         activity?.toastShort(resId)
+    }
+
+    fun registerSimpleLauncher(callback:VoidCallback): ActivityResultLauncher<Intent> {
+        val installApkLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
+            if(result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+            callback.invoke()
+        }
+        return installApkLauncher
     }
 }

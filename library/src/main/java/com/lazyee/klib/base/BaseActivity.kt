@@ -2,11 +2,14 @@ package com.lazyee.klib.base
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.ViewTreeObserver
 import android.view.WindowManager
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.lazyee.klib.extension.addAdjustNothingModeOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
@@ -17,7 +20,7 @@ import com.lazyee.klib.http.ApiManager
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
-import com.lazyee.klib.util.AppUtils
+import com.lazyee.klib.typed.VoidCallback
 
 /**
  * @Author leeorz
@@ -121,5 +124,12 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
         mOnKeyboardVisibleChangeGlobalLayoutListener = null
     }
 
+    fun registerSimpleLauncher(callback:VoidCallback): ActivityResultLauncher<Intent> {
+        val installApkLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
+            if(result.resultCode != Activity.RESULT_OK) return@registerForActivityResult
+            callback.invoke()
+        }
+        return installApkLauncher
+    }
 }
 

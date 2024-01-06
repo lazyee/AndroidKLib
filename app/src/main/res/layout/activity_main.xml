@@ -12,6 +12,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="分享文件"/>
+    <Button
+        android:id="@+id/btnInstallApk"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="安装Apk"/>
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"

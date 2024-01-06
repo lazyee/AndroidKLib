@@ -1,11 +1,17 @@
 package com.lazyee.klib.util
 
+import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
-import android.widget.Toast
+import android.net.Uri
+import android.os.Build
+import android.provider.Settings
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContract
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.lazyee.klib.extension.safeToLong
 import java.io.File
 
@@ -98,5 +104,27 @@ object AppUtils {
         val fileUri = FileProvider.getUriForFile(context,authority,file)
         shareIntent.putExtra(Intent.EXTRA_STREAM,fileUri)
         context.startActivity(Intent.createChooser(shareIntent,"分享文件到"))
+    }
+
+    /**
+     * 安装apk
+     */
+    fun installApk(launcher: ActivityResultLauncher<Intent>,activity: Activity,authority:String, apkFile: File){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val packageUri = Uri.parse("package:" + activity.packageName)
+            val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageUri)
+            launcher.launch(intent)
+            return
+        }
+        realInstallApk(activity,authority,apkFile)
+    }
+
+    fun realInstallApk(activity: Activity,authority: String,apkFile: File){
+        val intent = Intent(Intent.ACTION_VIEW)
+        val apkUri:Uri = FileProvider.getUriForFile(activity, authority, apkFile)
+        intent.setDataAndType(apkUri, "application/vnd.android.package-archive")
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        activity.startActivity(intent)
     }
 }
