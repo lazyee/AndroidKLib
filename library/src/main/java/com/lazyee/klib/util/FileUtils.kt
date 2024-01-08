@@ -127,29 +127,28 @@ object FileUtils {
     /**
      * 递归删除文件or文件夹(包括文件夹下面的所有文件)
      */
-    fun delete(filePath:String){
-        if(TextUtils.isEmpty(filePath))return
-        delete(File(filePath))
+    fun delete(filePath:String): Boolean {
+        if(TextUtils.isEmpty(filePath)) return false
+        return delete(File(filePath))
     }
 
     /**
      * 递归删除文件or文件夹(包括文件夹下面的所有文件)
      */
-    fun delete(file:File){
+    fun delete(file:File):Boolean{
         try {
-            if(!file.exists())return
+            if(!file.exists()) return false
             if(file.isFile){
-                file.delete()
-                return
+                return file.delete()
             }
             if(file.isDirectory){
                 file.listFiles()?.forEach { delete(it) }
-                file.delete()
-                return
+                return file.delete()
             }
         }catch (e:Exception){
             e.printStackTrace()
         }
+        return false
     }
 
     /**
