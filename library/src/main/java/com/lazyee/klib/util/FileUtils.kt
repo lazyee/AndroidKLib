@@ -125,6 +125,34 @@ object FileUtils {
     }
 
     /**
+     * 递归删除文件or文件夹(包括文件夹下面的所有文件)
+     */
+    fun delete(filePath:String){
+        if(TextUtils.isEmpty(filePath))return
+        delete(File(filePath))
+    }
+
+    /**
+     * 递归删除文件or文件夹(包括文件夹下面的所有文件)
+     */
+    fun delete(file:File){
+        try {
+            if(!file.exists())return
+            if(file.isFile){
+                file.delete()
+                return
+            }
+            if(file.isDirectory){
+                file.listFiles()?.forEach { delete(it) }
+                file.delete()
+                return
+            }
+        }catch (e:Exception){
+            e.printStackTrace()
+        }
+    }
+
+    /**
      * 简单文件下载
      */
     fun download(downloadFileUrl:String?, outFile: File, listener: OnFileDownloadListener?){
