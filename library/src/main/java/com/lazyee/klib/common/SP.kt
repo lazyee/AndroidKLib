@@ -8,8 +8,8 @@ import com.lazyee.klib.util.LogUtils
  * @Date 2020/10/30-11:46 AM
  * @Description:读写sp的工具类
  */
+private const val TAG = "[SP]"
 class SP constructor(context: Context, name:String? = null,mode:Int? = null) {
-    private val  TAG = "[SP]"
     private val defaultName = "sharedPreferences"
     private val sharedPreferences by lazy { context.getSharedPreferences(name ?: defaultName,mode?:Context.MODE_PRIVATE) }
 

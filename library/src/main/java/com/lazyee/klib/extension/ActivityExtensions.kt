@@ -11,16 +11,13 @@ import android.view.inputmethod.InputMethodManager
  * Description:
  * Date: 2023/6/12 14:46
  */
-class ActivityExtensions {
 
-    fun Activity.hideKeyboard(view:View){
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
+fun Activity.hideKeyboard(view:View){
+    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(view.windowToken, 0)
+}
 
-    fun Activity.showKeyboard(view:View){
-        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-    }
-
+fun Activity.showKeyboard(view:View){
+    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
 }

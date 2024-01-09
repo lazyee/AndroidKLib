@@ -51,7 +51,7 @@ object AppManager{
         try {
             return activityList.lastOrNull() as T?
         }catch (e: Exception){
-
+            e.printStackTrace()
         }
         return null
     }
@@ -216,7 +216,6 @@ object AppManager{
         }
 
         override fun onActivityDestroyed(activity: Activity) {
-
             remove(activity)
         }
     }

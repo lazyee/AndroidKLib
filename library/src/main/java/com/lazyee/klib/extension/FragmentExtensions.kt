@@ -12,15 +12,12 @@ import androidx.fragment.app.Fragment
  * Description:
  * Date: 2023/6/12 14:46
  */
-class FragmentExtensions {
+fun Fragment.hideKeyboard(view: View){
+    val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    imm.hideSoftInputFromWindow(view.windowToken, 0)
+}
 
-    fun Fragment.hideKeyboard(view: View){
-        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-    fun Fragment.showKeyboard(view: View){
-        val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
-    }
+fun Fragment.showKeyboard(view: View){
+    val inputMethodManager = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
 }
