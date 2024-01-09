@@ -5,6 +5,7 @@ import android.util.Log
 import com.lazyee.klib.util.DateUtils
 import com.lazyee.klib.util.LogUtils
 import java.io.File
+import java.lang.StringBuilder
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -22,6 +23,18 @@ class Log2File(private val isRecord:Boolean, private val logFileDirPath: String,
 
     init{
         mExecutorService.run { deleteTimeOutLogFile() }
+    }
+    
+    fun log(log:String){
+        log2File(log)
+    }
+
+    fun log(sb:StringBuilder){
+        log(sb.toString())
+    }
+
+    fun log(sb:StringBuffer){
+        log(sb.toString())
     }
 
     fun d(tag: String?, any: Any?) {
@@ -76,6 +89,14 @@ class Log2File(private val isRecord:Boolean, private val logFileDirPath: String,
         val yyyyMMddHHmmss = DateUtils.format(currentTimeMillis, DateUtils.yyyyMMddHHmmss)
         val yyyyMMdd = yyyyMMddHHmmss.split(" ")[0]
         val log =  "$yyyyMMddHHmmss -> [${level.name}] $tag : ${msg}\n"
+        getTargetLogFile(yyyyMMdd).appendText(log)
+    }
+
+    private fun log2File(log:String){
+        if(logFileDirPath.isEmpty())return
+        val currentTimeMillis = System.currentTimeMillis()
+        val yyyyMMddHHmmss = DateUtils.format(currentTimeMillis, DateUtils.yyyyMMddHHmmss)
+        val yyyyMMdd = yyyyMMddHHmmss.split(" ")[0]
         getTargetLogFile(yyyyMMdd).appendText(log)
     }
 
