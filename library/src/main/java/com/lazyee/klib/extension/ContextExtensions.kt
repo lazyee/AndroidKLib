@@ -5,6 +5,7 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.*
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.Paint
@@ -29,11 +30,27 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.OnLifecycleEvent
+import com.lazyee.klib.app.GlobalExceptionCatcher
 import com.lazyee.klib.constant.AppConstants
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
 import com.lazyee.klib.typed.TCallback
 import com.lazyee.klib.util.FileUtils
 
+/**
+ * 获取当前app版本号
+ */
+fun Context.getVersionCode():Int{
+    val packageInfo  = packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
+    return packageInfo.versionCode
+}
+
+/**
+ * 获取当前app版本名
+ */
+fun Context.getVersionName():String{
+    val packageInfo  = packageManager.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES)
+    return packageInfo.versionName
+}
 
 /**
  * 打开一个Activity

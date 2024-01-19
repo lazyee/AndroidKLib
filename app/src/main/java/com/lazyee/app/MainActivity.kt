@@ -23,6 +23,9 @@ class MainActivity: BaseActivity(),OnKeyboardVisibleListener{
         addOnKeyboardVisibleListener(this)
 
         LogUtils.e(TAG, "hasNewVersion:${AppUtils.hasNewVersion("V1.3.1","V1.3")}")
+
+        mBinding.touchCallbackLayout.addTouchDownCallback { LogUtils.e(TAG,"onTouchDown") }
+
         mBinding.btnSingleClick.setSingleClick {
             goto(SecondActivity::class.java)
         }
