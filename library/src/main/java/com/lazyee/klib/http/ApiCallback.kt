@@ -13,7 +13,7 @@ interface ApiCallback<T> {
 interface ApiCallback2<T>:ApiCallback<T> {
 
     /**
-     * 只有业务失败(HttpResult)的时候才会回调
+     * 只有业务失败的时候才会回调
      */
     fun onFailure(result:T?)
 }

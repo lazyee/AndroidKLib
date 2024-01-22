@@ -1,15 +1,10 @@
 package com.lazyee.klib.base
 
-import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.ContentFrameLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.viewbinding.ViewBinding
 import com.lazyee.klib.BuildConfig
 import com.lazyee.klib.common.SP
-import com.lazyee.klib.databinding.LayoutDebugConfigBinding
 import com.lazyee.klib.debug.DebugView
 import com.lazyee.klib.debug.IDebugConfig
 
