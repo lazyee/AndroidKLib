@@ -45,19 +45,19 @@ open class PageStateSwitcher:FrameLayout {
 
         //通过全局配置初始化view
         if(loadingView == null){
-            loadingView = inflateLayoutByLayoutId(provider?.getLoadingViewLayoutId())
+            loadingView = inflateLayoutById(provider?.getLoadingViewLayoutId())
         }
 
         if(networkErrorView == null){
-            networkErrorView = inflateLayoutByLayoutId(provider?.getNetworkErrorViewLayoutId())
+            networkErrorView = inflateLayoutById(provider?.getNetworkErrorViewLayoutId())
         }
 
         if(exceptionView == null){
-            exceptionView = inflateLayoutByLayoutId(provider?.getExceptionViewLayoutId())
+            exceptionView = inflateLayoutById(provider?.getExceptionViewLayoutId())
         }
 
         if(emptyView == null){
-            emptyView = inflateLayoutByLayoutId(provider?.getEmptyViewLayoutId())
+            emptyView = inflateLayoutById(provider?.getEmptyViewLayoutId())
         }
 
         showContentView()
@@ -65,31 +65,39 @@ open class PageStateSwitcher:FrameLayout {
 
     fun setContentViewLayoutId(layoutId: Int?){
         contentView?.run { removeView(this) }
-        contentView = inflateLayoutByLayoutId(layoutId)
+        contentView = inflateLayoutById(layoutId)
     }
 
     fun setNetworkErrorViewLayoutId(layoutId: Int?){
         networkErrorView?.run { removeView(this) }
-        networkErrorView = inflateLayoutByLayoutId(layoutId)
+        networkErrorView = inflateLayoutById(layoutId)
     }
 
     fun setExceptionViewLayoutId(layoutId: Int?){
         exceptionView?.run { removeView(this) }
-        exceptionView = inflateLayoutByLayoutId(layoutId)
+        exceptionView = inflateLayoutById(layoutId)
     }
 
     fun setEmptyViewLayoutId(layoutId: Int?){
         emptyView?.run { removeView(this) }
-        emptyView = inflateLayoutByLayoutId(layoutId)
+        emptyView = inflateLayoutById(layoutId)
     }
 
     fun setLoadingViewLayoutId(layoutId: Int?){
         loadingView?.run { removeView(this) }
-        loadingView = inflateLayoutByLayoutId(layoutId)
+        loadingView = inflateLayoutById(layoutId)
     }
 
 
+    @Deprecated("该方法已经废弃了，请使用findTargetViewsById方法", replaceWith = ReplaceWith("findTargetViewsById(viewId)"))
     fun <T:View> getTargetViews(viewId:Int):List<T>{
+        return findTargetViewsById(viewId)
+    }
+
+    /**
+     * 根据ID获取对应的view集合
+     */
+    fun <T:View> findTargetViewsById(viewId:Int):List<T>{
         val targetViewList = mutableListOf<T>()
         loadingView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
         contentView?.findViewById<T>(viewId)?.run { targetViewList.add(this) }
@@ -99,7 +107,7 @@ open class PageStateSwitcher:FrameLayout {
         return targetViewList
     }
 
-    private fun inflateLayoutByLayoutId(resId:Int?):View?{
+    private fun inflateLayoutById(resId:Int?):View?{
         resId?:return null
         if(resId == 0)return null
         val view = LayoutInflater.from(context).inflate(resId,this,false)
