@@ -20,6 +20,7 @@ import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.hjq.permissions.XXPermissions
 import com.lazyee.klib.R
 import com.lazyee.klib.extension.safeToLong
 import com.lazyee.klib.typed.TCallback
@@ -85,6 +86,26 @@ object AppUtils {
             }
         }
         return processName
+    }
+
+    /**
+     * 打开权限设置界面，并且返回回调
+     */
+    fun startPermissionActivity(activity: FragmentActivity,callback:TCallback<ActivityResult>){
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package",activity.packageName,null)
+        intent.data = uri
+        registerSimpleActivityResult(activity,intent,callback)
+    }
+
+    /**
+     * 打开权限设置界面，并且返回回调
+     */
+    fun startPermissionActivity(fragment:Fragment,callback:TCallback<ActivityResult>){
+        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        val uri = Uri.fromParts("package",fragment.activity?.packageName,null)
+        intent.data = uri
+        registerSimpleActivityResult(fragment,intent,callback)
     }
 
     /**
@@ -202,7 +223,7 @@ object AppUtils {
 
             val packageUri = Uri.parse("package:" + context.packageName)
             val intent = Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, packageUri)
-            registerSimpleActivityResult(fragmentManager,intent){result->
+            registerSimpleActivityResult(fragmentManager,intent){ result->
                 if(result.resultCode != Activity.RESULT_OK)return@registerSimpleActivityResult
                 realInstallApk(context,authority,apkFile)
             }
@@ -239,6 +260,9 @@ object AppUtils {
         transaction.commitAllowingStateLoss()
     }
 
+    /**
+     * 必须设置为公开的class
+     */
     class ActivityResultFragment(private val intent:Intent,private val callback:TCallback<ActivityResult>):Fragment(){
         private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
             parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
