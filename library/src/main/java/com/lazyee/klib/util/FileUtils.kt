@@ -1,5 +1,6 @@
 package com.lazyee.klib.util
 
+import android.content.Context
 import android.os.StatFs
 import android.text.TextUtils
 import com.lazyee.klib.listener.OnFileDownloadListener
@@ -62,6 +63,30 @@ object FileUtils {
         }
 
         return blockSize * availableSize
+    }
+
+    /**
+     * 复制assets文件到制定路径
+     */
+    fun copyAssetsFile(context: Context, assetsFilePath:String, targetFilePath: String){
+        copyAssetsFile(context,assetsFilePath,File(targetFilePath))
+    }
+
+    /**
+     * 复制assets文件到制定路径
+     */
+    fun copyAssetsFile(context: Context,assetsFilePath: String,targetFile:File){
+        val assetsX5CoreInputStream = context.assets.open(assetsFilePath)
+        val buffer = ByteArray(1024)
+
+        val targetFileOutputStream = FileOutputStream(targetFile)
+        var len = 0
+        while (assetsX5CoreInputStream.read(buffer).also { len = it } != -1){
+            targetFileOutputStream.write(buffer,0,len)
+        }
+
+        assetsX5CoreInputStream.close()
+        targetFileOutputStream.close()
     }
 
     suspend fun download(downloadFileUrl:String?,outFile:File):Boolean{
