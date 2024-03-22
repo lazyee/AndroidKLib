@@ -82,6 +82,11 @@ object FileUtils {
                     return false
                 }
                targetFile.delete()
+            }else{
+                val dir = File(targetFile.parent?:File.separator)
+                if(!dir.exists()){
+                    dir.mkdirs()
+                }
             }
 
             targetFile.createNewFile()

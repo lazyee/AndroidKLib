@@ -1,9 +1,11 @@
 package com.lazyee.klib.permission
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.LayoutInflater
@@ -16,7 +18,9 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
+import com.hjq.permissions.XXPermissions
 import com.lazyee.klib.R
+import com.lazyee.klib.typed.AllGrantedCallback
 import com.lazyee.klib.typed.GrantedCallback
 import com.lazyee.klib.typed.DeniedCallback
 import com.lazyee.klib.typed.TCallback
@@ -28,12 +32,14 @@ import com.lazyee.klib.util.AppUtils
  * Description:权限检测
  * Date: 2024/3/21 23:19
  */
+@Deprecated("不推荐使用这个权限检查类，这个类目前做得很不完善", replaceWith = ReplaceWith("XXPermissions"))
 class PermissionChecker {
     private var mActivity: FragmentActivity? = null
     private var mFragment: Fragment? = null
     private var mContext:Context
     private val mPermissions :MutableList<String> = mutableListOf()
     private var mGrantedCallback: GrantedCallback? = null
+    private var mAllGrantedCallback:AllGrantedCallback? = null
     private var mDeniedCallback :DeniedCallback? = null
 
     private constructor(activity: FragmentActivity){
@@ -54,6 +60,8 @@ class PermissionChecker {
         fun with(fragment: Fragment): PermissionChecker {
             return PermissionChecker(fragment)
         }
+
+        val MANAGE_EXTERNAL_STORAGE = "android.permission.MANAGE_EXTERNAL_STORAGE"
     }
 
     /**
@@ -113,6 +121,22 @@ class PermissionChecker {
         return this
     }
 
+    fun manageExternalStoragePermission(): PermissionChecker {
+        mPermissions.clear()
+        if(Build.VERSION.SDK_INT >= 30){
+            mPermissions.add(MANAGE_EXTERNAL_STORAGE)
+        }else{
+            mPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
+            mPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        }
+        return this
+    }
+
+    fun onAllGranted(callback: AllGrantedCallback):PermissionChecker{
+        mAllGrantedCallback = callback
+        return this
+    }
+
     fun onGranted(callback:GrantedCallback): PermissionChecker {
         mGrantedCallback = callback
         return this
@@ -143,7 +167,7 @@ class PermissionChecker {
         targetFragment?.run {
             transaction.remove(this)
         }
-        targetFragment = PermissionFragment(mPermissions,mGrantedCallback,mDeniedCallback)
+        targetFragment = PermissionFragment(mPermissions,mAllGrantedCallback,mGrantedCallback,mDeniedCallback)
         transaction.add(targetFragment,tag)
         transaction.commitAllowingStateLoss()
     }
@@ -152,6 +176,7 @@ class PermissionChecker {
      * 必须设置为公开的class
      */
     class PermissionFragment(private val permissions:MutableList<String>,
+                             private val allGrantedCallback: AllGrantedCallback? = null,
                              private val grantedCallback: GrantedCallback? = null,
                              private val deniedCallback: DeniedCallback? = null):Fragment(){
         private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){ result->
@@ -171,8 +196,18 @@ class PermissionChecker {
                     deniedPermissionList.add(permission)
                 }
             }
-            grantedCallback?.invoke(deniedPermissionList.isEmpty(),grantedPermissionList.toTypedArray())
-            deniedCallback?.invoke(deniedPermissionList.toTypedArray())
+            if(grantedPermissionList.isNotEmpty()){
+                grantedCallback?.invoke(deniedPermissionList.isEmpty(),grantedPermissionList.toTypedArray())
+            }
+
+            if(deniedPermissionList.isNotEmpty()){
+                deniedCallback?.invoke(deniedPermissionList.toTypedArray())
+            }
+
+            if(deniedPermissionList.isEmpty()){
+                allGrantedCallback?.invoke()
+            }
+
         }
 
         override fun onCreate(savedInstanceState: Bundle?) {

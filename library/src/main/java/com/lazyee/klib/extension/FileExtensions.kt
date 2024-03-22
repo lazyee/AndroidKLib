@@ -22,7 +22,7 @@ fun File.getAudioDuration(): Long {
     try {
         val mediaMetadataRetriever = MediaMetadataRetriever()
         mediaMetadataRetriever.setDataSource(absolutePath)
-        return mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION).toLong()
+        return mediaMetadataRetriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)?.toLong()?:0L
     }catch (e:Exception){
         return 0L
     }
