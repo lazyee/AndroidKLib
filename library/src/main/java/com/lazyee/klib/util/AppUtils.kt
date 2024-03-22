@@ -12,19 +12,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResult
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
-import com.hjq.permissions.XXPermissions
 import com.lazyee.klib.R
 import com.lazyee.klib.extension.safeToLong
 import com.lazyee.klib.typed.TCallback
-import com.lazyee.klib.typed.VoidCallback
 import java.io.File
 
 /**
@@ -88,25 +83,7 @@ object AppUtils {
         return processName
     }
 
-    /**
-     * 打开权限设置界面，并且返回回调
-     */
-    fun startPermissionActivity(activity: FragmentActivity,callback:TCallback<ActivityResult>){
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package",activity.packageName,null)
-        intent.data = uri
-        registerSimpleActivityResult(activity,intent,callback)
-    }
 
-    /**
-     * 打开权限设置界面，并且返回回调
-     */
-    fun startPermissionActivity(fragment:Fragment,callback:TCallback<ActivityResult>){
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-        val uri = Uri.fromParts("package",fragment.activity?.packageName,null)
-        intent.data = uri
-        registerSimpleActivityResult(fragment,intent,callback)
-    }
 
     /**
      * 分享文件

@@ -68,25 +68,39 @@ object FileUtils {
     /**
      * 复制assets文件到制定路径
      */
-    fun copyAssetsFile(context: Context, assetsFilePath:String, targetFilePath: String){
-        copyAssetsFile(context,assetsFilePath,File(targetFilePath))
+    fun copyAssetsFile(context: Context, assetsFilePath:String, targetFilePath: String): Boolean {
+        return copyAssetsFile(context,assetsFilePath,File(targetFilePath))
     }
 
     /**
      * 复制assets文件到制定路径
      */
-    fun copyAssetsFile(context: Context,assetsFilePath: String,targetFile:File){
-        val assetsX5CoreInputStream = context.assets.open(assetsFilePath)
-        val buffer = ByteArray(1024)
+    fun copyAssetsFile(context: Context,assetsFilePath: String,targetFile:File): Boolean {
+        try {
+            if(targetFile.exists()){
+                if(!targetFile.canWrite()){
+                    return false
+                }
+               targetFile.delete()
+            }
 
-        val targetFileOutputStream = FileOutputStream(targetFile)
-        var len = 0
-        while (assetsX5CoreInputStream.read(buffer).also { len = it } != -1){
-            targetFileOutputStream.write(buffer,0,len)
+            targetFile.createNewFile()
+            val assetsX5CoreInputStream = context.assets.open(assetsFilePath)
+            val buffer = ByteArray(1024)
+
+            val targetFileOutputStream = FileOutputStream(targetFile)
+            var len = 0
+            while (assetsX5CoreInputStream.read(buffer).also { len = it } != -1){
+                targetFileOutputStream.write(buffer,0,len)
+            }
+
+            assetsX5CoreInputStream.close()
+            targetFileOutputStream.close()
+        }catch (e:Exception){
+            e.printStackTrace()
+            return false
         }
-
-        assetsX5CoreInputStream.close()
-        targetFileOutputStream.close()
+        return true
     }
 
     suspend fun download(downloadFileUrl:String?,outFile:File):Boolean{
