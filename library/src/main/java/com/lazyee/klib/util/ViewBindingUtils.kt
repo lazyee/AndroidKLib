@@ -17,8 +17,8 @@ object ViewBindingUtils {
     private fun <T:ViewBinding> getClass(clazz: Class<Any>): Class<T> {
         val type = clazz.genericSuperclass as ParameterizedType
         return type.actualTypeArguments[0] as Class<T>
-
     }
+
     fun <T:ViewBinding> getViewBinding(clazz: Class<Any>, layoutInflater: LayoutInflater):T{
         lateinit var binding:T
 

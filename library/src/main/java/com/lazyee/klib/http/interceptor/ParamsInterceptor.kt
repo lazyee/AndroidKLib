@@ -12,9 +12,9 @@ import org.json.JSONObject
  * @Date 3/9/21-5:28 PM
  * @Description:设置公共参数拦截器
  */
-class HttpParamsInterceptor(private val paramsProvider: ParamsProvider) :
-    Interceptor {
-    private val TAG = "[HttpParamsInterceptor]"
+private const val TAG = "[HttpParamsInterceptor]"
+class HttpParamsInterceptor(private val paramsProvider: ParamsProvider) : Interceptor {
+
     override fun intercept(chain: Interceptor.Chain): Response {
         var originalRequest = chain.request()
         val originalUrl = originalRequest.url
@@ -61,7 +61,7 @@ class HttpParamsInterceptor(private val paramsProvider: ParamsProvider) :
         if(contentType.contains(HttpContentType.APPLICATION_X_WWW_FORM_URLENCODED)){
             val bodyBuilder = FormBody.Builder()
             val oldFormBody = request.body as FormBody
-            (0 until oldFormBody.size).forEach {
+            repeat(oldFormBody.size){
                 bodyBuilder.add(oldFormBody.name(it),oldFormBody.value(it))
             }
             params.forEach { bodyBuilder.add(it.key,it.value) }
