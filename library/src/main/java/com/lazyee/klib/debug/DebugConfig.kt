@@ -6,7 +6,7 @@ package com.lazyee.klib.debug
  * Description:debug config 接口
  * Date: 2022/5/16 11:27 上午
  */
-interface IDebugConfig {
-    fun getBaseUrl():String
-    fun getConfigName():String
+abstract class DebugConfig {
+    var isSelected = false
+    abstract fun getKey():String
 }
