@@ -1,5 +1,6 @@
 package com.lazyee.klib.zip
 
+import com.lazyee.klib.handler.SimpleHandler
 import com.lazyee.klib.listener.OnZipListener
 import java.io.File
 import java.io.FileInputStream
@@ -15,12 +16,17 @@ import java.util.zip.ZipOutputStream
  * Description:
  * Date: 2024/4/16 17:21
  */
+private const val TAG = "[Zipper]"
 class Zipper {
 
     private var mSourceFileList = mutableListOf<File>()
     private var mTargetZipFile:File? = null
     private var mCharset:Charset = StandardCharsets.UTF_8
     private var mOnZipListener: OnZipListener? = null
+    private var mOverwrite:Boolean = true//是否是覆盖模式
+    private var mHandler: SimpleHandler = SimpleHandler()
+
+
     
     constructor(filePath:String){
         mSourceFileList.add(File(filePath))
@@ -29,12 +35,6 @@ class Zipper {
     constructor(file:File){
         mSourceFileList.add(file)
     }
-    
-//    constructor(filePathList:List<String>){
-//        filePathList.forEach{
-//            mSourceFileList.add(File(it))
-//        }
-//    }
 
     constructor(fileList:List<File>){
         fileList.forEach{
@@ -80,6 +80,11 @@ class Zipper {
         return this
     }
 
+    fun overwrite(b:Boolean): Zipper {
+        mOverwrite = b
+        return this
+    }
+
     fun listen(listener:OnZipListener): Zipper {
         mOnZipListener = listener
         return this
@@ -88,22 +93,36 @@ class Zipper {
     fun excetue(){
         mTargetZipFile?:return
         mOnZipListener?.onZipStart()
-        val isExists = mSourceFileList.find { it.exists() } != null
-        if(isExists){
-            try {
-                if(mTargetZipFile!!.exists()){
-                    mTargetZipFile!!.delete()
-                }
+        Thread{
+            val isExists = mSourceFileList.find { it.exists() } != null
+            if(isExists){
+                if(!mOverwrite){
+                    mHandler.callback {
+                        mOnZipListener?.onZipEnd(false)
+                    }
 
-                val fileOutputStream = FileOutputStream(mTargetZipFile!!)
-                val zipOutputStream = ZipOutputStream(fileOutputStream)
-                realZip("",mSourceFileList ,zipOutputStream)
-                zipOutputStream.close()
-            }catch (e:Exception){
-                e.printStackTrace()
+                    return@Thread
+                }
+                try {
+                    if(mTargetZipFile!!.exists()){
+                        mTargetZipFile!!.delete()
+                    }
+
+                    val fileOutputStream = FileOutputStream(mTargetZipFile!!)
+                    val zipOutputStream = ZipOutputStream(fileOutputStream)
+                    realZip("",mSourceFileList ,zipOutputStream)
+                    zipOutputStream.close()
+                    mHandler.callback {
+                        mOnZipListener?.onZipEnd(true)
+                    }
+                }catch (e:Exception){
+                    e.printStackTrace()
+                    mHandler.callback {
+                        mOnZipListener?.onZipEnd(false)
+                    }
+                }
             }
-        }
-        mOnZipListener?.onZipEnd()
+        }.start()
     }
 
     private fun realZip(dirName:String, sourceFileList: List<File>, zipOutputStream: ZipOutputStream){
@@ -127,7 +146,9 @@ class Zipper {
 
         zipEntry = ZipEntry(parentDirName + sourceFile.name)
         zipOutputStream.putNextEntry(zipEntry)
-        mOnZipListener?.onZipProgress(zipEntry.name)
+        mHandler.callback {
+            mOnZipListener?.onZipProgress(zipEntry.name)
+        }
         val fileInputStream = FileInputStream(sourceFile)
         val buffer = ByteArray(1024)
         var length:Int

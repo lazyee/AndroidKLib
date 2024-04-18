@@ -9,5 +9,5 @@ package com.lazyee.klib.listener
 interface OnZipListener {
     fun onZipStart()
     fun onZipProgress(fileName:String)
-    fun onZipEnd()
+    fun onZipEnd(isComplete:Boolean)
 }

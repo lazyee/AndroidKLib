@@ -3,8 +3,8 @@ package com.lazyee.klib.zip
 import android.content.Context
 import android.os.Build
 import android.text.TextUtils
+import com.lazyee.klib.handler.SimpleHandler
 import com.lazyee.klib.listener.OnUnZipListener
-import com.lazyee.klib.listener.OnZipListener
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -12,7 +12,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.charset.Charset
 import java.nio.charset.StandardCharsets
-import java.util.stream.IntStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 
@@ -22,6 +21,7 @@ import java.util.zip.ZipInputStream
  * Description:
  * Date: 2024/4/16 17:29
  */
+private const val TAG = "[UnZipper]"
 class UnZipper  {
 
     constructor(zipFile: File){
@@ -37,6 +37,8 @@ class UnZipper  {
     private var mTargetUnZipFile:File? = null
     private var mInputStream :InputStream? = null
     private var mOnUnZipListener:OnUnZipListener? = null
+    private var mOverwrite:Boolean = true//是否是覆盖模式
+    private var mHandler: SimpleHandler = SimpleHandler()
 
     companion object{
         fun from(zipFilePath:String): UnZipper {
@@ -73,30 +75,44 @@ class UnZipper  {
         return this
     }
 
+    /**
+     * 是否是覆盖模式
+     */
+    fun overwrite(b:Boolean): UnZipper {
+        mOverwrite = b
+        return this
+    }
+
     fun excetue(){
-        mOnUnZipListener?.onUnZipStart()
-        try {
-            if(mInputStream == null){
-                mInputStream = FileInputStream(mZipFile)
+        Thread{
+            mHandler.callback { mOnUnZipListener?.onUnZipStart() }
+            try {
+                if(mInputStream == null){
+                    mInputStream = FileInputStream(mZipFile)
+                }
+
+                val zipInputStream = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    ZipInputStream(mInputStream!!,mCharset)
+                } else {
+                    ZipInputStream(mInputStream!!)
+                }
+                var entry = zipInputStream.nextEntry
+
+                mkdirs(mTargetUnZipFile!!.absolutePath)
+                while (entry != null) {
+                    unZipFile(zipInputStream,entry)
+                    entry = zipInputStream.nextEntry
+                }
+                zipInputStream.close()
+            } catch (e: IOException) {
+                e.printStackTrace()
+            }
+            mHandler.callback {
+                mOnUnZipListener?.onUnZipEnd()
             }
 
-            val zipInputStream = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                ZipInputStream(mInputStream!!,mCharset)
-            } else {
-                ZipInputStream(mInputStream!!)
-            }
-            var entry = zipInputStream.nextEntry
+        }.start()
 
-            mkdirs(mTargetUnZipFile!!.absolutePath)
-            while (entry != null) {
-                unZipFile(zipInputStream,entry)
-                entry = zipInputStream.nextEntry
-            }
-            zipInputStream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-        mOnUnZipListener?.onUnZipEnd()
     }
 
     private fun unZipFile(zipInputStream: ZipInputStream, zipEntry: ZipEntry){
@@ -111,11 +127,14 @@ class UnZipper  {
         val parentPath = file.parent
         mkdirs(parentPath)
         if(file.exists()){
+            if(!mOverwrite) return
             file.delete()
         }
         file.createNewFile()
 
-        mOnUnZipListener?.onUnZipProgress(zipEntry.name)
+        mHandler.callback {
+            mOnUnZipListener?.onUnZipProgress(zipEntry.name)
+        }
         val out = FileOutputStream(file)
         val buffer = ByteArray(1024)
         var length: Int
