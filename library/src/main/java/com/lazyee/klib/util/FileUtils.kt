@@ -91,7 +91,7 @@ object FileUtils {
 
             targetFile.createNewFile()
             val assetsX5CoreInputStream = context.assets.open(assetsFilePath)
-            val buffer = ByteArray(1024)
+            val buffer = ByteArray(8 * 1024)
 
             val targetFileOutputStream = FileOutputStream(targetFile)
             var len = 0
@@ -149,7 +149,7 @@ object FileUtils {
             //已经读取的总长度
             var total = 0
             //bytes是用于存储每次读取出来的内容
-            val bytes = ByteArray(1024)
+            val bytes = ByteArray(8 * 1024)
             while (bfi.read(bytes).also { len = it } != -1) {
                 //每次读取完了都将len累加在total里
                 total += len
@@ -253,16 +253,16 @@ object FileUtils {
                 //已经读取的总长度
                 var total = 0
                 //bytes是用于存储每次读取出来的内容
-                val bytes = ByteArray(1024)
+                val bytes = ByteArray(8 * 1024)
                 while (bfi.read(bytes).also { len = it } != -1) {
+                    //通过文件输出流写入从服务器中读取的数据
+                    outputStream.write(bytes, 0, len)
+
                     //每次读取完了都将len累加在total里
                     total += len
                     listener?.run {
                         withContext(Dispatchers.Main){ onDownloading(total,contentLength) }
                     }
-
-                    //通过文件输出流写入从服务器中读取的数据
-                    outputStream.write(bytes, 0, len)
                 }
                 //关闭打开的流对象
                 outputStream.close()
