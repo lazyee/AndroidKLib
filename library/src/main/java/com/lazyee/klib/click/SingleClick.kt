@@ -1,5 +1,7 @@
 package com.lazyee.klib.click
 
+import com.lazyee.klib.typed.OnSingleClick
+
 /**
  * @Author leeorz
  * @Date 3/30/21-5:40 PM
@@ -24,5 +26,3 @@ object SingleClick {
         onClick()
     }
 }
-
-typealias OnSingleClick = ()->Unit

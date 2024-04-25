@@ -9,8 +9,8 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import com.lazyee.klib.click.OnSingleClick
 import com.lazyee.klib.click.SingleClick
+import com.lazyee.klib.typed.OnSingleClick
 
 
 /**

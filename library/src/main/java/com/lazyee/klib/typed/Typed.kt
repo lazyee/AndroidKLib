@@ -24,3 +24,5 @@ typealias TCallback5<T1,T2,T3,T4,T5> = (T1,T2,T3,T4,T5) -> Unit
 typealias AllGrantedCallback = () -> Unit
 typealias GrantedCallback = (isAllGranted:Boolean,permissions:Array<PermissionStatus>) -> Unit
 typealias DeniedCallback = (permissions:Array<PermissionStatus>) -> Unit
+
+typealias OnSingleClick = ()->Unit

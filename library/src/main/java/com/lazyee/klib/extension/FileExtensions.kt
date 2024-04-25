@@ -52,7 +52,7 @@ fun File.copy(destFilePath:String, listener: OnFileCopyListener? = null){
         destFile.createNewFile()
     }
     val fos = FileOutputStream(destFile)
-    val buffer = ByteArray(1024)
+    val buffer = ByteArray(8 * 1024)
     var copyProgress = 0L
     var byteRead = 0
     listener?.onCopyStart()
