@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
+import androidx.recyclerview.widget.RecyclerView.Recycler
 import com.lazyee.klib.R
 
 open class RecyclerPager : FrameLayout {
@@ -24,7 +25,7 @@ open class RecyclerPager : FrameLayout {
 
     override fun onFinishInflate() {
         super.onFinishInflate()
-        mRecyclerView = RecyclerView(context)
+        mRecyclerView = createRecyclerView()
         mRecyclerView.layoutParams = LayoutParams(LayoutParams.MATCH_PARENT,LayoutParams.MATCH_PARENT)
         val linearLayoutManager = LinearLayoutManager(context)
         linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
@@ -33,6 +34,10 @@ open class RecyclerPager : FrameLayout {
         addView(mRecyclerView)
 
         mRecyclerView.addOnScrollListener(mOnScrollListener)
+    }
+
+    open fun createRecyclerView(): RecyclerView {
+        return RecyclerView(context)
     }
 
     private val mOnScrollListener = object : RecyclerView.OnScrollListener() {
