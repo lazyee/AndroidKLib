@@ -3,13 +3,10 @@ package com.lazyee.klib.widget
 import android.content.Context
 import android.util.AttributeSet
 import android.widget.FrameLayout
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.Adapter
-import androidx.recyclerview.widget.RecyclerView.Recycler
-import com.lazyee.klib.R
 
 open class RecyclerPager : FrameLayout {
     constructor(context: Context):super(context,null)
