@@ -226,7 +226,7 @@ object AppUtils {
     }
 
     private fun registerSimpleActivityResult(fragmentManager: FragmentManager,intent: Intent,callback: TCallback<ActivityResult>){
-        val tag = "ActivityResultFragment" + System.currentTimeMillis()
+        val tag = "ActivityResultFragment"
         var targetFragment:Fragment? = fragmentManager.findFragmentByTag(tag)
         val transaction = fragmentManager.beginTransaction()
         targetFragment?.run {
