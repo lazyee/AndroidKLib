@@ -234,7 +234,7 @@ class PixelColor(var red:Int,var green:Int,var blue:Int,var alpha:Int = 255)
 
 object InkPalette{
     /**
-     * 黑白红
+     * 3色 黑白红
      */
     val BWR = arrayOf<PixelColor>(
         PixelColor(0, 0, 0, 255),
@@ -243,7 +243,7 @@ object InkPalette{
     )
 
     /**
-     * 黑白红黄
+     * 4色 黑白红黄
      */
     val BWRY = arrayOf<PixelColor>(
         PixelColor(0, 0, 0, 255),
@@ -253,11 +253,23 @@ object InkPalette{
     )
 
     /**
-     * 黑白
+     * 2色 黑白
      */
     val BW = arrayOf<PixelColor>(
         PixelColor(0, 0, 0, 255),
         PixelColor(255, 255, 255, 255),
+    )
+
+    /**
+     * 6色 黑白红黄蓝绿
+     */
+    val BWRYBG = arrayOf<PixelColor>(
+        PixelColor(0, 0, 0, 255),
+        PixelColor(255, 255, 255, 255),
+        PixelColor(255, 0, 0, 255),
+        PixelColor(255, 255, 0, 255),
+        PixelColor(0, 0, 255, 255),
+        PixelColor(0, 255, 0, 255)
     )
 }
 
