@@ -226,7 +226,7 @@ object AppUtils {
     }
 
     private fun registerSimpleActivityResult(fragmentManager: FragmentManager,intent: Intent,callback: TCallback<ActivityResult>){
-        val tag = "ActivityResultFragment"
+        val tag = "ActivityResultFragment" + System.currentTimeMillis()
         var targetFragment:Fragment? = fragmentManager.findFragmentByTag(tag)
         val transaction = fragmentManager.beginTransaction()
         targetFragment?.run {
@@ -236,7 +236,6 @@ object AppUtils {
         transaction.add(targetFragment,tag)
         transaction.commitAllowingStateLoss()
     }
-
     /**
      * 必须设置为公开的class
      */
