@@ -232,22 +232,36 @@ object AppUtils {
         targetFragment?.run {
             transaction.remove(this)
         }
-        targetFragment = ActivityResultFragment(intent,callback)
+        targetFragment = ActivityResultFragment.newInstance(intent,callback)
         transaction.add(targetFragment,tag)
         transaction.commitAllowingStateLoss()
     }
     /**
      * 必须设置为公开的class
      */
-    class ActivityResultFragment(private val intent:Intent,private val callback:TCallback<ActivityResult>):Fragment(){
+    class ActivityResultFragment:Fragment(){
+        private var intent:Intent? = null
+        private var callback:TCallback<ActivityResult>? = null
+        companion object{
+            fun newInstance(intent: Intent,callback: TCallback<ActivityResult>): ActivityResultFragment{
+
+                val fragment = ActivityResultFragment()
+                fragment.intent = intent
+                fragment.callback = callback
+                return fragment
+            }
+        }
+
         private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
             parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
-            callback.invoke(result)
+            callback?.invoke(result)
         }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            activityResultLauncher.launch(intent)
+            intent?.run {
+                activityResultLauncher.launch(intent)
+            }
         }
 
         override fun onCreateView(
