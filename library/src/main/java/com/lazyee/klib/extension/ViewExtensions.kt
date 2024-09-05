@@ -8,7 +8,9 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.TableLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.setMargins
 import com.lazyee.klib.click.SingleClick
 import com.lazyee.klib.typed.OnSingleClick
 
@@ -147,6 +149,19 @@ fun View.setMargins(left: Int? = null, top: Int? = null, right:Int? = null, bott
                 top?:this.topMargin,
                 right?:this.rightMargin,
                 bottom?:this.rightMargin)
+        }
+        requestLayout()
+        return
+    }
+
+    //TableLayout
+    if(this.layoutParams is TableLayout.LayoutParams){
+        (this.layoutParams as TableLayout.LayoutParams).run {
+            this.setMargins(left?:this.leftMargin,
+                top?:this.topMargin,
+                right?:this.rightMargin,
+                bottom?:this.bottomMargin
+            )
         }
         requestLayout()
         return
