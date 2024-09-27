@@ -4,7 +4,6 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.AttributeSet
-import android.webkit.ValueCallback
 import androidx.appcompat.widget.AppCompatEditText
 import com.lazyee.klib.typed.ValueChanged
 import io.reactivex.disposables.Disposable
@@ -48,7 +47,6 @@ open class DelayEditText : AppCompatEditText , TextWatcher {
     }
 
     override fun afterTextChanged(s: Editable?) {
-
     }
 
     override fun onTextChanged(text: CharSequence?, start: Int, lengthBefore: Int, lengthAfter: Int) {
