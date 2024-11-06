@@ -97,7 +97,7 @@ class Log2File(private val isRecord:Boolean, private val logFileDirPath: String,
         val currentTimeMillis = System.currentTimeMillis()
         val yyyyMMddHHmmss = DateUtils.format(currentTimeMillis, DateUtils.yyyyMMddHHmmss)
         val yyyyMMdd = yyyyMMddHHmmss.split(" ")[0]
-        getTargetLogFile(yyyyMMdd).appendText(log)
+        getTargetLogFile(yyyyMMdd).appendText("$yyyyMMddHHmmss -> ${log}\n")
     }
 
 
