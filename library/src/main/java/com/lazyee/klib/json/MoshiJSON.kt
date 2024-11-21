@@ -1,5 +1,6 @@
 package com.lazyee.klib.json
 
+import com.lazyee.klib.json.moshi.MoshiArrayListJsonAdapter
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 
