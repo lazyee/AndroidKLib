@@ -41,7 +41,6 @@ fun Bitmap.save(file:File,targetWidth:Int = -1,targetHeight:Int = -1, format:Bit
     fos.close()
 }
 
-
 /**
  * 转换到base64字符串
  */
@@ -53,4 +52,3 @@ fun Bitmap.toBase64String(format:Bitmap.CompressFormat = Bitmap.CompressFormat.J
     bos.close()
     return base64String
 }
-

@@ -2,12 +2,15 @@
 
 package com.lazyee.klib.extension
 
+import android.graphics.BitmapFactory
 import android.text.TextUtils
 import android.util.Base64
+import com.lazyee.klib.bean.ImageSize
 import com.lazyee.klib.util.DateUtils
 import com.lazyee.klib.util.LogUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
@@ -290,4 +293,14 @@ private fun uniteBytes(src0: String, src1: String): Byte {
     b0 = (b0.toInt() shl 4).toByte()
     val b1 = java.lang.Byte.decode("0x$src1")
     return (b0.toInt() or b1.toInt()).toByte()
+}
+
+/**
+ * 获取图片大小
+ */
+fun String.getImageSize(): ImageSize {
+    val options = BitmapFactory.Options()
+    options.inJustDecodeBounds = true
+    val bitmap = BitmapFactory.decodeFile(this)
+    return ImageSize(bitmap.width,bitmap.height)
 }
