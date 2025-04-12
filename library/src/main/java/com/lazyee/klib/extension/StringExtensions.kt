@@ -10,7 +10,6 @@ import com.lazyee.klib.util.DateUtils
 import com.lazyee.klib.util.LogUtils
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.io.File
 import java.net.URLDecoder
 import java.net.URLEncoder
 import java.security.MessageDigest
@@ -304,3 +303,19 @@ fun String.getImageSize(): ImageSize {
     val bitmap = BitmapFactory.decodeFile(this)
     return ImageSize(bitmap.width,bitmap.height)
 }
+
+/**
+ * 匹配所有Text中所有的URL
+ */
+fun String.matchAllUrl(): List<TextMatchInfo> {
+    val urlPattern = Pattern.compile("(http)(s)?(://[0-9a-zA-Z.]+)\\.([a-zA-Z]+)(/[/0-9a-zA-Z?$#%&=]+)?")
+    val matcher = urlPattern.matcher(this)
+    val matchList = mutableListOf<TextMatchInfo>()
+    while (matcher.find()) {
+        matchList.add(TextMatchInfo(matcher.start(),matcher.end(),matcher.group()))
+    }
+
+    return matchList
+}
+
+data class TextMatchInfo(val start:Int,val end:Int,val text:String)
