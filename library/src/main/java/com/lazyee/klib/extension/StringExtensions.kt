@@ -308,7 +308,7 @@ fun String.getImageSize(): ImageSize {
  * 匹配所有Text中所有的URL
  */
 fun String.matchAllUrl(): List<TextMatchInfo> {
-    val urlPattern = Pattern.compile("(http)(s)?(://[0-9a-zA-Z.]+)\\.([a-zA-Z]+)(/[/0-9a-zA-Z?$#%&=]+)?")
+    val urlPattern = Pattern.compile("(http)(s)?(://[0-9a-zA-Z.]+)\\.([a-zA-Z]+)(/[/0-9a-zA-Z?$#%&=.]+)?")
     val matcher = urlPattern.matcher(this)
     val matchList = mutableListOf<TextMatchInfo>()
     while (matcher.find()) {

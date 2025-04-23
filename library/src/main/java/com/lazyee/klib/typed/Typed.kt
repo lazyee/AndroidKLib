@@ -1,5 +1,6 @@
 package com.lazyee.klib.typed
 
+import com.lazyee.klib.http.ApiCallback3
 import com.lazyee.klib.permission.PermissionStatus
 
 /**
