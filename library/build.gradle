@@ -4,7 +4,7 @@ plugins {
     id 'kotlin-kapt'
 }
 
-apply from: "../config.gradle"
+apply from: "../config_min_sdk_21.gradle"
 
 android {
     compileSdkVersion versions.compile_sdk
@@ -79,5 +79,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
 
     api "com.google.code.gson:gson:${versions.gson}"
+    api "com.tencent:mmkv:${versions.mmkv}"
 
 }
