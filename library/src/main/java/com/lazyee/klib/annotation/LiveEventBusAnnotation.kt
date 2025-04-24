@@ -2,6 +2,7 @@ package com.lazyee.klib.annotation
 
 import androidx.lifecycle.LifecycleOwner
 import com.jeremyliao.liveeventbus.LiveEventBus
+import kotlin.reflect.KClass
 
 /**
  * ClassName: LiveEventBusAnnotation
@@ -9,10 +10,7 @@ import com.jeremyliao.liveeventbus.LiveEventBus
  * Date: 2025/4/24 11:18
  * @author Leeorz
  */
-@Target(AnnotationTarget.PROPERTY,
-    AnnotationTarget.FIELD,
-    AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER
-)
+@Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class LiveEvent(val event: String)
 
@@ -22,9 +20,17 @@ fun LifecycleOwner.observeLiveEvent(){
         method.annotations
             .filterIsInstance<LiveEvent>()
             .forEach { annotation ->
+                if (method.parameterCount != 1){
+                    throw IllegalArgumentException("用@LiveBus注解修饰的方法[${method.name}]的参数必须只能有一个")
+                }
                 LiveEventBus.get<Any>(annotation.event).observe(this){ data->
                     method.invoke(this,data)
                 }
             }
     }
 }
+
+
+//@Target(AnnotationTarget.FUNCTION)
+//@Retention(AnnotationRetention.RUNTIME)
+//annotation class LiveEvent2(val clazz: KClass<*>)

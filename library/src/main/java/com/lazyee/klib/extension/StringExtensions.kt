@@ -5,6 +5,7 @@ package com.lazyee.klib.extension
 import android.graphics.BitmapFactory
 import android.text.TextUtils
 import android.util.Base64
+import com.jeremyliao.liveeventbus.LiveEventBus
 import com.lazyee.klib.bean.ImageSize
 import com.lazyee.klib.util.DateUtils
 import com.lazyee.klib.util.LogUtils
@@ -319,3 +320,8 @@ fun String.matchAllUrl(): List<TextMatchInfo> {
 }
 
 data class TextMatchInfo(val start:Int,val end:Int,val text:String)
+
+
+fun String.post(any:Any){
+    LiveEventBus.get<Any>(this).post(any)
+}
