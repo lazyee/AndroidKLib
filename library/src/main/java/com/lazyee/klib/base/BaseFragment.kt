@@ -1,19 +1,15 @@
 package com.lazyee.klib.base
 
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import com.lazyee.klib.annotation.observeLiveEvent
 import com.lazyee.klib.extension.toastLong
 import com.lazyee.klib.extension.toastShort
 import com.lazyee.klib.http.ApiManager
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
-import com.lazyee.klib.typed.VoidCallback
 
 /**
  * @Author leeorz
@@ -29,6 +25,7 @@ open class BaseFragment:Fragment(),MVVMBaseView {
         super.onViewCreated(view, savedInstanceState)
         isViewCreated = true
         initViewModel(this)
+        observeLiveEvent()
     }
 
     /**
