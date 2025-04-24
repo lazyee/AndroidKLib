@@ -59,49 +59,53 @@ fun Context.getVersionName():String{
  * @param flag Int?
  * @param requestCode Int?
  */
-fun Context.goto(
-    clazz: Class<out Activity>? = null,
-    action: String? = null,
-    bundle: Bundle? = null,
-    flag: Int? = null,
-    requestCode: Int? = null
-) {
+fun Context.goto(clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null, requestCode: Int? = null) {
+    val intent = createIntent(this,clazz,action,bundle,flag)
+    intent?:return
+    if (requestCode == null) {
+        startActivity(intent)
+    } else {
+        if(this is Activity) {
+            startActivityForResult(intent, requestCode)
+        }
+    }
+}
+
+fun Fragment.goto(clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null, requestCode: Int? = null) {
+    val intent = createIntent(requireContext(), clazz, action, bundle, flag)
+    intent ?: return
+
+    if (requestCode == null) {
+        startActivity(intent)
+    } else {
+        startActivityForResult(intent, requestCode)
+    }
+}
+
+fun android.app.Fragment.goto(clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null, requestCode: Int? = null){
+    val intent = createIntent(activity,clazz,action,bundle,flag)
+    intent?:return
+    if (requestCode == null) {
+        startActivity(intent)
+    } else {
+        startActivityForResult(intent, requestCode)
+    }
+}
+
+private fun createIntent(context: Context, clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null): Intent? {
 
     var intent: Intent? = null
     if (clazz != null) {
-        intent = Intent(this, clazz)
+        intent = Intent(context, clazz)
     } else if (!TextUtils.isEmpty(action)) {
         intent = Intent(action)
     }
 
-    intent ?: return
+    intent ?: return null
 
     if (flag != null) intent.flags = flag
     if (bundle != null) intent.putExtras(bundle)
-
-    if (this is Activity) {
-        if (requestCode == null) {
-            startActivity(intent)
-        } else {
-            startActivityForResult(intent, requestCode)
-        }
-
-    } else if (this is Fragment) {
-        if (requestCode == null) {
-            startActivity(intent)
-        } else {
-            startActivityForResult(intent, requestCode)
-        }
-    } else if (this is android.app.Fragment) {
-        if (requestCode == null) {
-            startActivity(intent)
-        } else {
-            startActivityForResult(intent, requestCode)
-        }
-    } else {
-        throw Exception("不支持的Context类型")
-    }
-
+    return intent
 }
 
 /**
