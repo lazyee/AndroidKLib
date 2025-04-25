@@ -3,12 +3,11 @@ package com.lazyee.app
 import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.lazyee.app.databinding.ActivityMainBinding
-import com.lazyee.klib.base.BaseActivity
+import com.lazyee.klib.annotation.ViewModel
 import com.lazyee.klib.base.ViewBindingActivity
 import com.lazyee.klib.extension.goto
 import com.lazyee.klib.extension.setSingleClick
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
-import com.lazyee.klib.mvvm.ViewModel
 import com.lazyee.klib.util.AppUtils
 import com.lazyee.klib.util.LogUtils
 import java.io.File
