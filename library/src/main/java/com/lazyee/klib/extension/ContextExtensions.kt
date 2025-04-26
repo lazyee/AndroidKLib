@@ -24,6 +24,7 @@ import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -498,4 +499,43 @@ fun Context.isNetworkAvailable(): Boolean {
     val mNetworkInfo = mConnectivityManager.activeNetworkInfo
     return mNetworkInfo?.isAvailable?:false
 }
+
+/**
+ * 查询是否开启通知
+ */
+fun Context.checkNotificationEnabled(): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.areNotificationsEnabled()
+    }
+    return true
+}
+
+/**
+ * 跳转通知设置界面,只是跳转，无返回结果
+ *
+ * 如果是使用registerForActivityResult的方式的话，需要在Activity或者Fragment中定义notificationLauncher方法
+ * 然后notificationLauncher.launch(getNotificationSettingsIntent())
+ * private val notificationLauncher =
+ *     registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
+ *         if(checkNotificationEnabled()){
+ *         }
+ *     }
+ */
+fun Context.gotoNotificationSettings() {
+    getNotificationSettingsIntent()?.run { startActivity(this) }
+}
+
+/**
+ * 获取通知设置界面的Intent
+ */
+fun Context.getNotificationSettingsIntent(): Intent? {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        return Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+            putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+        }
+    }
+    return null
+}
+
 
