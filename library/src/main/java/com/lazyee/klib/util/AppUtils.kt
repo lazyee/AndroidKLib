@@ -112,7 +112,7 @@ object AppUtils {
         shareIntent.type = "*/*"
         val fileUri = FileProvider.getUriForFile(context,authority,file)
         shareIntent.putExtra(Intent.EXTRA_STREAM,fileUri)
-        context.startActivity(Intent.createChooser(shareIntent,"分享文件到"))
+        context.startActivity(Intent.createChooser(shareIntent,context.getString(R.string.str_share_file_to)))
     }
 
     /**

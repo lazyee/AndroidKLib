@@ -110,9 +110,24 @@ private fun createIntent(context: Context, clazz: Class<out Activity>? = null, a
 }
 
 /**
- * 跳转到系统消息弹窗设置页面
+ * 跳转通知设置界面,只是跳转，无返回结果
+ *
+ * 如果是使用registerForActivityResult的方式的话，需要在Activity或者Fragment中定义notificationLauncher方法
+ * 然后notificationLauncher.launch(getSystemNotificationSetting())
+ * private val notificationLauncher =
+ *     registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
+ *         if(checkNotificationEnabled()){
+ *         }
+ *     }
  */
 fun Context.gotoSystemNotificationSetting(){
+    startActivity(getSystemNotificationSetting())
+}
+
+/**
+ * 获取要跳转的系统通知的Intent
+ */
+fun Context.getSystemNotificationSetting(): Intent {
     val intent = Intent()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
@@ -126,7 +141,7 @@ fun Context.gotoSystemNotificationSetting(){
         intent.addCategory(Intent.CATEGORY_DEFAULT)
         intent.data = Uri.parse("package:$packageName")
     }
-    startActivity(intent)
+    return intent
 }
 
 
@@ -510,32 +525,4 @@ fun Context.checkNotificationEnabled(): Boolean {
     }
     return true
 }
-
-/**
- * 跳转通知设置界面,只是跳转，无返回结果
- *
- * 如果是使用registerForActivityResult的方式的话，需要在Activity或者Fragment中定义notificationLauncher方法
- * 然后notificationLauncher.launch(getNotificationSettingsIntent())
- * private val notificationLauncher =
- *     registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
- *         if(checkNotificationEnabled()){
- *         }
- *     }
- */
-fun Context.gotoNotificationSettings() {
-    getNotificationSettingsIntent()?.run { startActivity(this) }
-}
-
-/**
- * 获取通知设置界面的Intent
- */
-fun Context.getNotificationSettingsIntent(): Intent? {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        return Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-            putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
-        }
-    }
-    return null
-}
-
 
