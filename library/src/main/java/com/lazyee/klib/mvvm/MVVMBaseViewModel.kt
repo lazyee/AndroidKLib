@@ -1,19 +1,22 @@
 package com.lazyee.klib.mvvm
 
-import android.util.Log
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.lazyee.klib.http.ApiManager
+import com.lazyee.klib.http.IApiResult
+import com.lazyee.klib.typed.TCallback
+import com.lazyee.klib.typed.VoidCallback
+import com.lazyee.klib.util.LogUtils
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
 
 /**
  * @Author leeorz
  * @Date 3/25/21-3:05 PM
  * @Description:viewmodel
  */
-open class MVVMBaseViewModel :ViewModel(), LifecycleObserver {
+open class MVVMBaseViewModel :ViewModel() {
     val loadingStateLiveData = MutableLiveData<LoadingState>()
     val pageLoadingStateLiveData = MutableLiveData<LoadingState>()
     val toastLongMsgLiveData = MutableLiveData<String?>()
@@ -97,33 +100,23 @@ open class MVVMBaseViewModel :ViewModel(), LifecycleObserver {
         toastShortResIdLiveData.postValue(resId)
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_CREATE)
-    open fun onCreate(){
-//        Log.e("TAG","onCreate")
+    override fun onCleared() {
+        super.onCleared()
+        LogUtils.e("viewMode onCleared")
+        mRepositoryList.forEach { it.onCleared() }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_START)
-    open fun onStart(){
-//        Log.e("TAG","onStart")
+    /**
+     * 协程环境下请求网络接口
+     */
+    fun <T> request(block:suspend ()-> T,
+                   onSuccess:TCallback<T>? = null,
+                   onFailure:TCallback<T>? = null,
+                   onRequestFailure:TCallback<Throwable>? = null,
+                   onFinal:VoidCallback? = null){
+        viewModelScope.launch {
+            ApiManager.request(block,onSuccess,onFailure,onRequestFailure,onFinal)
+        }
     }
 
-    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
-    open fun onStop(){
-//        Log.e("TAG","onStop")
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
-    open fun onResume(){
-//        Log.e("TAG","onResume")
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
-    open fun onPause(){
-//        Log.e("TAG","onPause")
-    }
-
-    @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-    open fun onDestroy(){
-//        Log.e("TAG","onDestroy")
-    }
 }

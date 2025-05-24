@@ -3,7 +3,9 @@ package com.lazyee.klib.app
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
+import android.os.Build
 import android.os.Bundle
+import androidx.annotation.RequiresApi
 import java.util.*
 
 /**

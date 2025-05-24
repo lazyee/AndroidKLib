@@ -51,10 +51,6 @@ interface MVVMBaseView {
     }
 
     private fun initViewModel(owner: LifecycleOwner, viewModel: MVVMBaseViewModel) {
-        owner.lifecycle.addObserver(viewModel)
-        viewModel.getRepositoryList().forEach {
-            owner.lifecycle.addObserver(it)
-        }
 
         viewModel.loadingStateLiveData.observe(owner, object : Observer<LoadingState> {
             override fun onChanged(state: LoadingState?) {

@@ -526,3 +526,11 @@ fun Context.checkNotificationEnabled(): Boolean {
     return true
 }
 
+/**
+ * 关闭所有通知，一般是用在启动App的时候
+ */
+fun Context.cancelAllNotifications(){
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.cancelAll()
+}
+
