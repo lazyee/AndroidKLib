@@ -51,7 +51,10 @@ ext {
             lifecycle                 : "2.3.1",
 
             gson                      : "2.11.0",
-            mmkv                      : "2.0.0"
+            mmkv                      : "2.0.0",
+
+            //work
+            work                      : "2.7.0"
 
     ]
     options = [

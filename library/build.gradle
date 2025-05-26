@@ -47,20 +47,21 @@ dependencies {
 
     api "androidx.appcompat:appcompat:${versions.appcompat}"
     api "com.google.android.material:material:${versions.material}"
-    implementation "androidx.multidex:multidex:${versions.multidex}"
+    api "androidx.multidex:multidex:${versions.multidex}"
 
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
-    implementation "androidx.core:core-ktx:${versions.core_ktx}"
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinx_coroutines_android}"
+    api "org.jetbrains.kotlin:kotlin-stdlib:${versions.kotlin}"
+    api "androidx.core:core-ktx:${versions.core_ktx}"
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-android:${versions.kotlinx_coroutines_android}"
+    api "androidx.work:work-runtime-ktx:${versions.work}"
 
     api "org.greenrobot:eventbus:${versions.event_bus}"
     api "io.github.jeremyliao:live-event-bus-x:${versions.live_event_bus}"
 
     api "com.squareup.moshi:moshi-kotlin:${versions.moshi_kotlin}"
     api "com.squareup.retrofit2:retrofit:${versions.retrofit}"
-    implementation "com.squareup.retrofit2:converter-moshi:${versions.converter_moshi}"
-    implementation "com.squareup.okhttp3:logging-interceptor:${versions.logging_interceptor}"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:${versions.adapter_rxjava2}"
+    api "com.squareup.retrofit2:converter-moshi:${versions.converter_moshi}"
+    api "com.squareup.okhttp3:logging-interceptor:${versions.logging_interceptor}"
+    api "com.squareup.retrofit2:adapter-rxjava2:${versions.adapter_rxjava2}"
 
     api "io.reactivex.rxjava2:rxjava:${versions.rxjava2}"
     api "io.reactivex.rxjava2:rxandroid:${versions.rxandroid}"

@@ -50,7 +50,10 @@ ext {
             lifecycle                 : "2.3.1",
 
             gson                      : "2.11.0",
-            mmkv                      : "1.2.16"
+            mmkv                      : "1.2.16",
+
+            //work
+            work                      : "2.7.0"
 
 
     ]
