@@ -1,13 +1,8 @@
 package com.lazyee.klib.base
 
-import android.graphics.Rect
 import android.os.Bundle
-import android.view.ViewTreeObserver
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.lazyee.klib.util.ViewBindingUtils
-import kotlin.reflect.jvm.internal.impl.load.java.structure.JavaClass
 
 /**
  * Author: leeorz

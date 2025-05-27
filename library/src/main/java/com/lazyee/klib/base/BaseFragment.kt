@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.lazyee.klib.annotation.observeLiveEvent
 import com.lazyee.klib.extension.toastLong
 import com.lazyee.klib.extension.toastShort
@@ -20,6 +22,11 @@ open class BaseFragment:Fragment(),MVVMBaseView {
     val TAG :String by lazy { this::class.java.simpleName }
 
     var isViewCreated:Boolean = false
+
+
+    fun <T : ViewModel> getViewModel(modelClass: Class<T> ): T {
+        return ViewModelProvider(this).get(modelClass)
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

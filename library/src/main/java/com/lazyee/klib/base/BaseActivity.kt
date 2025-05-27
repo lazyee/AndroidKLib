@@ -37,6 +37,7 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
     val activity: Activity
         get() = this
 
+
     fun <T : ViewModel> getViewModel(modelClass: Class<T> ): T {
         return ViewModelProvider(this).get(modelClass)
     }

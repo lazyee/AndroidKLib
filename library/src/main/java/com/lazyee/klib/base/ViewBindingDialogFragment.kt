@@ -5,6 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.viewbinding.ViewBinding
 import com.lazyee.klib.annotation.observeLiveEvent
 import com.lazyee.klib.util.ViewBindingUtils
@@ -22,6 +24,10 @@ open class ViewBindingDialogFragment<VB : ViewBinding> : DialogFragment() {
         super.onCreateView(inflater, container, savedInstanceState)
         mViewBinding = ViewBindingUtils.getViewBinding(javaClass,inflater,container,false)
         return mViewBinding.root
+    }
+
+    fun <T : ViewModel> getViewModel(modelClass: Class<T> ): T {
+        return ViewModelProvider(this).get(modelClass)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
