@@ -8,6 +8,8 @@ import android.text.TextUtils
 import android.view.ViewTreeObserver
 import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.lazyee.klib.annotation.observeLiveEvent
 import com.lazyee.klib.extension.addAdjustNothingModeOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
@@ -34,6 +36,10 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
 
     val activity: Activity
         get() = this
+
+    fun <T : ViewModel> getViewModel(modelClass: Class<T> ): T {
+        return ViewModelProvider(this).get(modelClass)
+    }
 
     /**
      * 键盘显示监听

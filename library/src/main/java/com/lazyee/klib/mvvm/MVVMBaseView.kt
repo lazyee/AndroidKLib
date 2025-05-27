@@ -26,7 +26,8 @@ interface MVVMBaseView {
                     field.isAccessible = true
                     val target: Any? = field.get(this)
                     if (target != null && target is MVVMBaseViewModel) {
-                        initViewModel(owner, target)
+                        initViewModelObserve(owner, target)
+                        target.findAllRepository()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -40,7 +41,8 @@ interface MVVMBaseView {
                     method.isAccessible = true
                     val target: Any? = method.invoke(this)
                     if (target != null && target is MVVMBaseViewModel) {
-                        initViewModel(owner, target)
+                        initViewModelObserve(owner, target)
+                        target.findAllRepository()
                     }
 
                 } catch (e: Exception) {
@@ -50,7 +52,7 @@ interface MVVMBaseView {
         }
     }
 
-    private fun initViewModel(owner: LifecycleOwner, viewModel: MVVMBaseViewModel) {
+    private fun initViewModelObserve(owner: LifecycleOwner, viewModel: MVVMBaseViewModel) {
 
         viewModel.loadingStateLiveData.observe(owner, object : Observer<LoadingState> {
             override fun onChanged(state: LoadingState?) {

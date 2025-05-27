@@ -86,6 +86,12 @@ class ApiManager private constructor(
                 addTask(tag, task)
             }
 
+//            override fun onNext(data: T & Any) {
+//                TODO("Not yet implemented")
+//                removeTask(tag, task)
+//                handleHttpResult(data, callback)
+//            }
+
             override fun onNext(data: T) {
                 removeTask(tag, task)
                 handleHttpResult(data, callback)
