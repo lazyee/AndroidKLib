@@ -56,6 +56,7 @@ object GlobalExceptionCatcher {
         sb.append(" ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ CRASH STACK TRACE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓\n")
         sb.append(throwable.stackTraceToString())
         sb.append("==============================================================================================\n")
+        //todo 需要增加文件内容是否为空的判断，如果为空，则添加设备信息，后续错误日志则不在继续添加设备信息
         crashLog2File.log(sb)
 
         mUncaughtExceptionCallback?.onUncaughtException(throwable)
