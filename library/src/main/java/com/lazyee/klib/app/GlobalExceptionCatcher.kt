@@ -1,13 +1,8 @@
 package com.lazyee.klib.app
 
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Process
-import com.lazyee.klib.extension.screenHeight
-import com.lazyee.klib.extension.screenWidth
 import com.lazyee.klib.log.Log2File
-import com.lazyee.klib.util.DateUtils
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -22,7 +17,7 @@ object GlobalExceptionCatcher {
     private lateinit var mApplicationContext:Context
     private var mUncaughtExceptionCallback:UncaughtExceptionCallback? = null
 
-    private val crashLog2File by lazy { Log2File(true,mCrashLogDirPath,"crash") }
+    private val crashLog2File by lazy { Log2File(mApplicationContext,true,mCrashLogDirPath,"crash") }
 
     fun init(applicationContext: Context) {
         init(applicationContext,null)
@@ -42,23 +37,7 @@ object GlobalExceptionCatcher {
     }
 
     private val mUncaughtExceptionHandler:Thread.UncaughtExceptionHandler = Thread.UncaughtExceptionHandler { thread, throwable ->
-        val packageManager = mApplicationContext.packageManager
-        val packageInfo  = packageManager.getPackageInfo(mApplicationContext.packageName, PackageManager.GET_ACTIVITIES)
-        val sb = StringBuilder()
-        sb.append("==============================================================================================\n")
-        sb.append(" CRASH DATE            : ${DateUtils.format(System.currentTimeMillis(), DateUtils.yyyyMMddHHmmss)}\n")
-        sb.append(" BRAND                 : ${Build.BRAND}\n")
-        sb.append(" DEVICE                : ${Build.DEVICE}\n")
-        sb.append(" OS VERSION            : ${Build.VERSION.RELEASE}\n")
-        sb.append(" APP VERSION CODE      : ${packageInfo?.versionCode?:"null"}\n")
-        sb.append(" APP VERSION NAME      : ${packageInfo?.versionName?:"null"}\n")
-        sb.append(" SCREEN PIXEL          : ${mApplicationContext.screenWidth}x${mApplicationContext.screenHeight}\n")
-        sb.append(" ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ CRASH STACK TRACE ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓\n")
-        sb.append(throwable.stackTraceToString())
-        sb.append("==============================================================================================\n")
-        //todo 需要增加文件内容是否为空的判断，如果为空，则添加设备信息，后续错误日志则不在继续添加设备信息
-        crashLog2File.log(sb)
-
+        crashLog2File.log(throwable.stackTraceToString())
         mUncaughtExceptionCallback?.onUncaughtException(throwable)
     }
 
@@ -79,11 +58,11 @@ object GlobalExceptionCatcher {
         return crashLogDir.listFiles()?.maxByOrNull { it.lastModified() }
     }
 
-    fun getCrashLogFileList(): Array<File>? {
+    fun getCrashLogFileList(): List<File>? {
         if(!this::mCrashLogDirPath.isInitialized )return null
         val crashLogDir = File(mCrashLogDirPath)
-        if(!crashLogDir.exists())return emptyArray()
-        return crashLogDir.listFiles()
+        if(!crashLogDir.exists())return emptyList()
+        return crashLogDir.listFiles()?.toList()
     }
 
     interface UncaughtExceptionCallback{
