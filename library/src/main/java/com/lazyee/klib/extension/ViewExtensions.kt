@@ -13,6 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setMargins
 import com.lazyee.klib.click.SingleClick
 import com.lazyee.klib.typed.OnSingleClick
+import com.lazyee.klib.util.LogUtils
 
 
 /**
@@ -176,6 +177,12 @@ fun View.hideKeyboard(){
 
 fun View.showKeyboard(){
     if(context !is Activity)return
-    val inputMethodManager =context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+}
+
+fun View.showKeyboardForced(){
+    if(context !is Activity)return
+    val inputMethodManager =context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_FORCED)
 }
