@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -272,5 +273,27 @@ object AppUtils {
             super.onCreateView(inflater, container, savedInstanceState)
             return inflater.inflate(R.layout.layout_debug_config,null,false)
         }
+    }
+
+    /**
+     * 判断微信是否安装
+     */
+    fun isWechatInstalled(context: Context): Boolean {
+        return isTargetAppInstalled(context,"com.tencent.mm")
+    }
+
+    /**
+     * 判断QQ是否安装
+     */
+    fun isQQInstalled(context: Context): Boolean {
+        return isTargetAppInstalled(context,"com.tencent.mobileqq")
+    }
+
+    private fun isTargetAppInstalled(context: Context, packageName: String): Boolean {
+        val packageManager = context.packageManager
+        val intent = Intent()
+        intent.setPackage(packageName)
+        val list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        return list.isNotEmpty()
     }
 }
