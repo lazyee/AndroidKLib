@@ -82,5 +82,6 @@ dependencies {
 
     api "com.google.code.gson:gson:${versions.gson}"
     api "com.tencent:mmkv:${versions.mmkv}"
+    api "com.kunminx.arch:unpeek-livedata:${versions.unpeek_livedata}"
 
 }

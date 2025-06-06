@@ -51,6 +51,7 @@ ext {
 
             gson                      : "2.11.0",
             mmkv                      : "1.2.16",
+            unpeek_livedata           : "7.8.0",
 
             //work
             work                      : "2.7.0"
