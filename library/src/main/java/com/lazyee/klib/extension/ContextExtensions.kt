@@ -19,6 +19,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.LinearLayout
@@ -272,6 +273,9 @@ fun Window.addOnKeyBoardVisibleListener(listener:OnKeyboardVisibleListener?):Vie
 /**
  * 设置键盘显示隐藏监听
  * activity softInputMode 为 adjustNothing的时候使用
+ * ps:在android15中测试发现仔AdjustNothing模式下，直接使用addOnKeyBoardVisibleListener也可以实现键盘的监听
+ *    在Android15中发现键盘显示隐藏回调会触发多次，目前还不明确是否是AndroidAPI变化导致的，所以，至少在Android15中，无需再调用此方法
+ *    【重点】但是在其他版本中还需要观察
  */
 fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
     if (this !is Activity) return null
@@ -350,28 +354,25 @@ private fun createKeyboardGlobalLayoutListener(view:View,getVisibleHeight:(view:
     return object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             val visibleHeight = getVisibleHeight(view)
-
-            if (decorViewVisibleHeight == 0) {
+            if (visibleHeight > decorViewVisibleHeight) {
                 decorViewVisibleHeight = visibleHeight
                 return
             }
 
             if (decorViewVisibleHeight == visibleHeight) {
+                listener?.onSoftKeyboardHide()
                 return
             }
 
             val keyboardHeight = decorViewVisibleHeight - visibleHeight
-            if (keyboardHeight > 200) {
-                AppConstants.SOFT_KEYBOARD_HEIGHT = keyboardHeight
-                listener?.onSoftKeyboardShow(keyboardHeight)
-                decorViewVisibleHeight = visibleHeight
-                return
-            }
+            listener?.onSoftKeyboardShow(keyboardHeight)
+//            decorViewVisibleHeight = visibleHeight
+//            return
 
-            if (visibleHeight - decorViewVisibleHeight > 200) {
-                listener?.onSoftKeyboardHide()
-                decorViewVisibleHeight = visibleHeight
-            }
+//            if (visibleHeight - decorViewVisibleHeight > 200) {
+//                listener?.onSoftKeyboardHide()
+//                decorViewVisibleHeight = visibleHeight
+//            }
         }
     }
 }
