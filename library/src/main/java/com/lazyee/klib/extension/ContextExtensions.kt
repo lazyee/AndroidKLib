@@ -247,8 +247,13 @@ fun Context.toastLong(msg: String) {
 }
 
 /**
+ * Android软键盘弹起交互的几种方案
+ * https://mp.weixin.qq.com/s/D3206Xn0breh9gKeV6y0lg
+ */
+
+/**
  * 设置键盘显示隐藏监听
- * activity softInputMode 为 adjustNothing的时候无法监听
+ * activity softInputMode 为 adjustNothing的时候无法监听（Android15中可以监听）
  */
 fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
     if (this !is Activity) return null
@@ -257,7 +262,7 @@ fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): 
 
 /**
  * 设置键盘显示隐藏监听
- * window softInputMode 为 adjustNothing的时候无法监听
+ * activity softInputMode 为 adjustNothing的时候无法监听（Android15中可以监听）
  */
 fun Window.addOnKeyBoardVisibleListener(listener:OnKeyboardVisibleListener?):ViewTreeObserver.OnGlobalLayoutListener?{
     fun getVisibleHeight(view:View):Int{
