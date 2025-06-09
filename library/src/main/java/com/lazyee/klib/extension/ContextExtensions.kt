@@ -146,14 +146,17 @@ fun Context.getSystemNotificationSetting(): Intent {
 }
 
 
-/**
- * @Author leeorz
- * @Date 2020/11/2-6:23 PM
- * @Description:Context类的拓展方法
- */
 
 fun Context.inflate(layoutId: Int): View {
     return LayoutInflater.from(this).inflate(layoutId, null)
+}
+
+fun Context.inflate(layoutId: Int,parent:ViewGroup): View {
+    return LayoutInflater.from(this).inflate(layoutId, parent)
+}
+
+fun Context.inflate(layoutId: Int, parent: ViewGroup, attachToRoot: Boolean): View {
+    return LayoutInflater.from(this).inflate(layoutId, parent, attachToRoot)
 }
 
 /**
