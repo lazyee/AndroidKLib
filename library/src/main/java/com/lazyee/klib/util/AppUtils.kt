@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -112,7 +113,7 @@ object AppUtils {
         shareIntent.type = "*/*"
         val fileUri = FileProvider.getUriForFile(context,authority,file)
         shareIntent.putExtra(Intent.EXTRA_STREAM,fileUri)
-        context.startActivity(Intent.createChooser(shareIntent,"分享文件到"))
+        context.startActivity(Intent.createChooser(shareIntent,context.getString(R.string.str_share_file_to)))
     }
 
     /**
@@ -232,23 +233,36 @@ object AppUtils {
         targetFragment?.run {
             transaction.remove(this)
         }
-        targetFragment = ActivityResultFragment(intent,callback)
+        targetFragment = ActivityResultFragment.newInstance(intent,callback)
         transaction.add(targetFragment,tag)
         transaction.commitAllowingStateLoss()
     }
-
     /**
      * 必须设置为公开的class
      */
-    class ActivityResultFragment(private val intent:Intent,private val callback:TCallback<ActivityResult>):Fragment(){
+    class ActivityResultFragment:Fragment(){
+        private var intent:Intent? = null
+        private var callback:TCallback<ActivityResult>? = null
+        companion object{
+            fun newInstance(intent: Intent,callback: TCallback<ActivityResult>): ActivityResultFragment{
+
+                val fragment = ActivityResultFragment()
+                fragment.intent = intent
+                fragment.callback = callback
+                return fragment
+            }
+        }
+
         private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
             parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
-            callback.invoke(result)
+            callback?.invoke(result)
         }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
-            activityResultLauncher.launch(intent)
+            intent?.run {
+                activityResultLauncher.launch(intent)
+            }
         }
 
         override fun onCreateView(
@@ -259,5 +273,27 @@ object AppUtils {
             super.onCreateView(inflater, container, savedInstanceState)
             return inflater.inflate(R.layout.layout_debug_config,null,false)
         }
+    }
+
+    /**
+     * 判断微信是否安装
+     */
+    fun isWechatInstalled(context: Context): Boolean {
+        return isTargetAppInstalled(context,"com.tencent.mm")
+    }
+
+    /**
+     * 判断QQ是否安装
+     */
+    fun isQQInstalled(context: Context): Boolean {
+        return isTargetAppInstalled(context,"com.tencent.mobileqq")
+    }
+
+    private fun isTargetAppInstalled(context: Context, packageName: String): Boolean {
+        val packageManager = context.packageManager
+        val intent = Intent()
+        intent.setPackage(packageName)
+        val list = packageManager.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY)
+        return list.isNotEmpty()
     }
 }

@@ -1,4 +1,4 @@
-package com.lazyee.klib.json
+package com.lazyee.klib.json.moshi
 
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader

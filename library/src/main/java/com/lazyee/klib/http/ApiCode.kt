@@ -13,7 +13,7 @@ object ApiCode {
     }
 
     fun isSuccessful(code:String?):Boolean = apiSuccessCodeList.find { it == code } != null
-    fun <T> isSuccessful(apiResult: IApiResult<T>):Boolean = apiSuccessCodeList.find { it == apiResult.getICode() } != null
+    fun <T> isSuccessful(apiResult: IApiResult<T>):Boolean = apiSuccessCodeList.find { it == apiResult.code } != null
 
     /**
      * 添加成功状态码

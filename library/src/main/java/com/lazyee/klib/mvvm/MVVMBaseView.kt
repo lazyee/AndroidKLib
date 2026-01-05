@@ -1,9 +1,8 @@
 package com.lazyee.klib.mvvm
 
-import android.util.Log
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.lazyee.klib.annotation.ViewModel
 import java.lang.Exception
 
 /**
@@ -27,7 +26,8 @@ interface MVVMBaseView {
                     field.isAccessible = true
                     val target: Any? = field.get(this)
                     if (target != null && target is MVVMBaseViewModel) {
-                        initViewModel(owner, target)
+                        initViewModelObserve(owner, target)
+                        target.findAllRepository()
                     }
                 } catch (e: Exception) {
                     e.printStackTrace()
@@ -41,7 +41,8 @@ interface MVVMBaseView {
                     method.isAccessible = true
                     val target: Any? = method.invoke(this)
                     if (target != null && target is MVVMBaseViewModel) {
-                        initViewModel(owner, target)
+                        initViewModelObserve(owner, target)
+                        target.findAllRepository()
                     }
 
                 } catch (e: Exception) {
@@ -51,10 +52,7 @@ interface MVVMBaseView {
         }
     }
 
-    private fun initViewModel(owner: LifecycleOwner, viewModel: MVVMBaseViewModel) {
-        viewModel.getRepositoryList().forEach {
-            owner.lifecycle.addObserver(it)
-        }
+    private fun initViewModelObserve(owner: LifecycleOwner, viewModel: MVVMBaseViewModel) {
 
         viewModel.loadingStateLiveData.observe(owner, object : Observer<LoadingState> {
             override fun onChanged(state: LoadingState?) {

@@ -2,6 +2,16 @@ package com.lazyee.klib.mvvm
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.lazyee.klib.annotation.Repository
+import com.lazyee.klib.http.ApiManager
+import com.lazyee.klib.http.IApiResult
+import com.lazyee.klib.typed.TCallback
+import com.lazyee.klib.typed.VoidCallback
+import com.lazyee.klib.util.LogUtils
+import kotlinx.coroutines.launch
+import okhttp3.ResponseBody
+import java.lang.reflect.InvocationTargetException
 
 /**
  * @Author leeorz
@@ -17,10 +27,10 @@ open class MVVMBaseViewModel :ViewModel() {
     val toastShortResIdLiveData = MutableLiveData<Int>()
     private val mRepositoryList = mutableListOf<MVVMBaseRepository>()
 
-    fun getRepositoryList():List<MVVMBaseRepository>{
+    fun findAllRepository():List<MVVMBaseRepository>{
         if(mRepositoryList.isEmpty()){
             javaClass.declaredFields.forEach { field ->
-                if (field.annotations.find { it is ViewModel } != null) {
+                if (field.annotations.find { it is Repository } != null) {
                     try {
                         field.isAccessible = true
                         val target: Any? = field.get(this)
@@ -34,7 +44,7 @@ open class MVVMBaseViewModel :ViewModel() {
             }
 
             javaClass.declaredMethods.forEach { method ->
-                if (method.annotations.find { it is ViewModel } != null) {
+                if (method.annotations.find { it is Repository } != null) {
                     try {
                         method.isAccessible = true
                         val target: Any? = method.invoke(this)
@@ -48,7 +58,6 @@ open class MVVMBaseViewModel :ViewModel() {
                 }
             }
         }
-
         return mRepositoryList
     }
 
@@ -91,4 +100,24 @@ open class MVVMBaseViewModel :ViewModel() {
     fun toastShort(resId:Int){
         toastShortResIdLiveData.postValue(resId)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        mRepositoryList.forEach { it.onCleared() }
+        mRepositoryList.clear()
+    }
+
+    /**
+     * 协程环境下请求网络接口
+     */
+    fun <T> request(block:suspend ()-> T,
+                   onSuccess:TCallback<T>? = null,
+                   onFailure:TCallback<T>? = null,
+                   onRequestFailure:TCallback<Throwable>? = null,
+                   onFinal:VoidCallback? = null){
+        viewModelScope.launch {
+            ApiManager.request(block,onSuccess,onFailure,onRequestFailure,onFinal)
+        }
+    }
+
 }

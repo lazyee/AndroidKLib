@@ -33,3 +33,17 @@ fun Window.hideKeyboard(){
 fun Window.showKeyboard(){
     setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE)
 }
+
+/**
+ * 设置屏幕常亮
+ */
+fun Window.keepScreenOn(){
+    addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+}
+
+/**
+ * 移除屏幕常亮
+ */
+fun Window.keepScreenOff(){
+    clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+}

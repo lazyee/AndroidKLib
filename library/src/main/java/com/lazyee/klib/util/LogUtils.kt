@@ -28,20 +28,39 @@ object LogUtils {
         log(LogLevel.D, getTag(tag), getMsg(any))
     }
 
+    fun d(any: Any?) {
+        log(LogLevel.D, getTag(null), getMsg(any))
+    }
+
     fun e(tag: String?, any: Any?) {
         log(LogLevel.E,getTag(tag), getMsg(any))
+    }
+
+    fun e(any: Any?) {
+        log(LogLevel.E, getTag(null), getMsg(any))
     }
 
     fun i(tag: String?, any: Any?) {
         log(LogLevel.I,getTag(tag), getMsg(any))
     }
 
+    fun i(any: Any?) {
+        log(LogLevel.I, getTag(null), getMsg(any))
+    }
+
     fun w(tag: String?,any: Any?){
         log(LogLevel.W,getTag(tag), getMsg(any))
     }
 
+    fun w(any: Any?) {
+        log(LogLevel.W, getTag(null), getMsg(any))
+    }
+
     fun v(tag: String?,any: Any?){
         log(LogLevel.V,getTag(tag), getMsg(any))
+    }
+    fun v(any: Any?) {
+        log(LogLevel.V, getTag(null), getMsg(any))
     }
 
     internal fun getTag(tag: String?):String{

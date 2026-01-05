@@ -1,6 +1,10 @@
 package com.lazyee.klib.extension
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.media.MediaMetadataRetriever
+import android.os.Looper
+import com.lazyee.klib.bean.ImageSize
 import com.lazyee.klib.listener.OnFileCopyListener
 import java.io.File
 import java.io.FileInputStream
@@ -26,24 +30,30 @@ fun File.getAudioDuration(): Long {
     }catch (e:Exception){
         return 0L
     }
+}
 
+/**
+ * 获取图片大小
+ */
+fun File.getImageSize(): ImageSize {
+    val options = BitmapFactory.Options()
+    options.inJustDecodeBounds = true
+    val bitmap = BitmapFactory.decodeFile(absolutePath)
+    return ImageSize(bitmap.width,bitmap.height)
 }
 
 /**
  * 复制文件，增加文件复制监听
  */
-fun File.copy(destFilePath:String, listener: OnFileCopyListener? = null){
+fun File.copy(destFilePath:String):Boolean {
     if(!exists()){
-        listener?.onCopyFailed("源文件不存在")
-        return
+        return false
     }
     if(!isFile){
-        listener?.onCopyFailed("源文件不是一个文件")
-        return
+        return false
     }
     if(!canRead()){
-        listener?.onCopyFailed("源文件不可读")
-        return
+        return false
     }
 
     val fis = FileInputStream(this)
@@ -55,14 +65,54 @@ fun File.copy(destFilePath:String, listener: OnFileCopyListener? = null){
     val buffer = ByteArray(8 * 1024)
     var copyProgress = 0L
     var byteRead = 0
-    listener?.onCopyStart()
     while (-1 != fis.read(buffer).also { byteRead = it }){
         copyProgress += byteRead
-        listener?.onCopyProgress(copyProgress,length())
         fos.write(buffer,0,byteRead)
     }
     fis.close()
     fos.flush()
     fos.close()
-    listener?.onCopyComplete()
+
+    return true
+}
+
+/**
+ * 复制文件，增加文件复制监听
+ * OnFileCopyListener 运行在子线程
+ */
+fun File.copy(destFilePath:String, listener: OnFileCopyListener){
+    if(!exists()){
+        listener.onCopyFailed("源文件不存在")
+        return
+    }
+    if(!isFile){
+        listener.onCopyFailed("源文件不是一个文件")
+        return
+    }
+    if(!canRead()){
+        listener.onCopyFailed("源文件不可读")
+        return
+    }
+    Thread{
+        val fis = FileInputStream(this)
+        val destFile = File(destFilePath)
+        if(!destFile.exists()){
+            destFile.createNewFile()
+        }
+        val fos = FileOutputStream(destFile)
+        val buffer = ByteArray(8 * 1024)
+        var copyProgress = 0L
+        var byteRead = 0
+        listener.onCopyStart()
+        while (-1 != fis.read(buffer).also { byteRead = it }){
+            copyProgress += byteRead
+            listener.onCopyProgress(copyProgress,length())
+            fos.write(buffer,0,byteRead)
+        }
+        fis.close()
+        fos.flush()
+        fos.close()
+
+        listener.onCopyComplete()
+    }.start()
 }

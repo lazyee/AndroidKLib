@@ -19,11 +19,13 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.text.TextUtils
+import android.util.Log
 import android.util.TypedValue
 import android.view.*
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -59,55 +61,74 @@ fun Context.getVersionName():String{
  * @param flag Int?
  * @param requestCode Int?
  */
-fun Context.goto(
-    clazz: Class<out Activity>? = null,
-    action: String? = null,
-    bundle: Bundle? = null,
-    flag: Int? = null,
-    requestCode: Int? = null
-) {
+fun Context.goto(clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null, requestCode: Int? = null) {
+    val intent = createIntent(this,clazz,action,bundle,flag)
+    intent?:return
+    if (requestCode == null) {
+        startActivity(intent)
+    } else {
+        if(this is Activity) {
+            startActivityForResult(intent, requestCode)
+        }
+    }
+}
+
+fun Fragment.goto(clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null, requestCode: Int? = null) {
+    val intent = createIntent(requireContext(), clazz, action, bundle, flag)
+    intent ?: return
+
+    if (requestCode == null) {
+        startActivity(intent)
+    } else {
+        startActivityForResult(intent, requestCode)
+    }
+}
+
+fun android.app.Fragment.goto(clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null, requestCode: Int? = null){
+    val intent = createIntent(activity,clazz,action,bundle,flag)
+    intent?:return
+    if (requestCode == null) {
+        startActivity(intent)
+    } else {
+        startActivityForResult(intent, requestCode)
+    }
+}
+
+private fun createIntent(context: Context, clazz: Class<out Activity>? = null, action: String? = null, bundle: Bundle? = null, flag: Int? = null): Intent? {
 
     var intent: Intent? = null
     if (clazz != null) {
-        intent = Intent(this, clazz)
+        intent = Intent(context, clazz)
     } else if (!TextUtils.isEmpty(action)) {
         intent = Intent(action)
     }
 
-    intent ?: return
+    intent ?: return null
 
     if (flag != null) intent.flags = flag
     if (bundle != null) intent.putExtras(bundle)
-
-    if (this is Activity) {
-        if (requestCode == null) {
-            startActivity(intent)
-        } else {
-            startActivityForResult(intent, requestCode)
-        }
-
-    } else if (this is Fragment) {
-        if (requestCode == null) {
-            startActivity(intent)
-        } else {
-            startActivityForResult(intent, requestCode)
-        }
-    } else if (this is android.app.Fragment) {
-        if (requestCode == null) {
-            startActivity(intent)
-        } else {
-            startActivityForResult(intent, requestCode)
-        }
-    } else {
-        throw Exception("不支持的Context类型")
-    }
-
+    return intent
 }
 
 /**
- * 跳转到系统消息弹窗设置页面
+ * 跳转通知设置界面,只是跳转，无返回结果
+ *
+ * 如果是使用registerForActivityResult的方式的话，需要在Activity或者Fragment中定义notificationLauncher方法
+ * 然后notificationLauncher.launch(getSystemNotificationSetting())
+ * private val notificationLauncher =
+ *     registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result->
+ *         if(checkNotificationEnabled()){
+ *         }
+ *     }
  */
 fun Context.gotoSystemNotificationSetting(){
+    startActivity(getSystemNotificationSetting())
+}
+
+/**
+ * 获取要跳转的系统通知的Intent
+ */
+fun Context.getSystemNotificationSetting(): Intent {
     val intent = Intent()
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
         intent.action = Settings.ACTION_APP_NOTIFICATION_SETTINGS
@@ -121,18 +142,21 @@ fun Context.gotoSystemNotificationSetting(){
         intent.addCategory(Intent.CATEGORY_DEFAULT)
         intent.data = Uri.parse("package:$packageName")
     }
-    startActivity(intent)
+    return intent
 }
 
 
-/**
- * @Author leeorz
- * @Date 2020/11/2-6:23 PM
- * @Description:Context类的拓展方法
- */
 
 fun Context.inflate(layoutId: Int): View {
     return LayoutInflater.from(this).inflate(layoutId, null)
+}
+
+fun Context.inflate(layoutId: Int,parent:ViewGroup): View {
+    return LayoutInflater.from(this).inflate(layoutId, parent)
+}
+
+fun Context.inflate(layoutId: Int, parent: ViewGroup, attachToRoot: Boolean): View {
+    return LayoutInflater.from(this).inflate(layoutId, parent, attachToRoot)
 }
 
 /**
@@ -226,8 +250,13 @@ fun Context.toastLong(msg: String) {
 }
 
 /**
+ * Android软键盘弹起交互的几种方案
+ * https://mp.weixin.qq.com/s/D3206Xn0breh9gKeV6y0lg
+ */
+
+/**
  * 设置键盘显示隐藏监听
- * activity softInputMode 为 adjustNothing的时候无法监听
+ * activity softInputMode 为 adjustNothing的时候无法监听（Android15中可以监听）
  */
 fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
     if (this !is Activity) return null
@@ -236,7 +265,7 @@ fun Context.addOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): 
 
 /**
  * 设置键盘显示隐藏监听
- * window softInputMode 为 adjustNothing的时候无法监听
+ * activity softInputMode 为 adjustNothing的时候无法监听（Android15中可以监听）
  */
 fun Window.addOnKeyBoardVisibleListener(listener:OnKeyboardVisibleListener?):ViewTreeObserver.OnGlobalLayoutListener?{
     fun getVisibleHeight(view:View):Int{
@@ -252,6 +281,9 @@ fun Window.addOnKeyBoardVisibleListener(listener:OnKeyboardVisibleListener?):Vie
 /**
  * 设置键盘显示隐藏监听
  * activity softInputMode 为 adjustNothing的时候使用
+ * ps:在android15中测试发现仔AdjustNothing模式下，直接使用addOnKeyBoardVisibleListener也可以实现键盘的监听
+ *    在Android15中发现键盘显示隐藏回调会触发多次，目前还不明确是否是AndroidAPI变化导致的，所以，至少在Android15中，无需再调用此方法
+ *    【重点】但是在其他版本中还需要观察
  */
 fun Context.addAdjustNothingModeOnKeyBoardVisibleListener(listener: OnKeyboardVisibleListener?): ViewTreeObserver.OnGlobalLayoutListener? {
     if (this !is Activity) return null
@@ -330,28 +362,25 @@ private fun createKeyboardGlobalLayoutListener(view:View,getVisibleHeight:(view:
     return object : ViewTreeObserver.OnGlobalLayoutListener {
         override fun onGlobalLayout() {
             val visibleHeight = getVisibleHeight(view)
-
-            if (decorViewVisibleHeight == 0) {
+            if (visibleHeight > decorViewVisibleHeight) {
                 decorViewVisibleHeight = visibleHeight
                 return
             }
 
             if (decorViewVisibleHeight == visibleHeight) {
+                listener?.onSoftKeyboardHide()
                 return
             }
 
             val keyboardHeight = decorViewVisibleHeight - visibleHeight
-            if (keyboardHeight > 200) {
-                AppConstants.SOFT_KEYBOARD_HEIGHT = keyboardHeight
-                listener?.onSoftKeyboardShow(keyboardHeight)
-                decorViewVisibleHeight = visibleHeight
-                return
-            }
+            listener?.onSoftKeyboardShow(keyboardHeight)
+//            decorViewVisibleHeight = visibleHeight
+//            return
 
-            if (visibleHeight - decorViewVisibleHeight > 200) {
-                listener?.onSoftKeyboardHide()
-                decorViewVisibleHeight = visibleHeight
-            }
+//            if (visibleHeight - decorViewVisibleHeight > 200) {
+//                listener?.onSoftKeyboardHide()
+//                decorViewVisibleHeight = visibleHeight
+//            }
         }
     }
 }
@@ -493,5 +522,24 @@ fun Context.isNetworkAvailable(): Boolean {
     val mConnectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val mNetworkInfo = mConnectivityManager.activeNetworkInfo
     return mNetworkInfo?.isAvailable?:false
+}
+
+/**
+ * 查询是否开启通知
+ */
+fun Context.checkNotificationEnabled(): Boolean {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        return notificationManager.areNotificationsEnabled()
+    }
+    return true
+}
+
+/**
+ * 关闭所有通知，一般是用在启动App的时候
+ */
+fun Context.cancelAllNotifications(){
+    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    notificationManager.cancelAll()
 }
 

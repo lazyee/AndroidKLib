@@ -6,6 +6,8 @@ import com.lazyee.klib.http.interceptor.ParamsProvider
 import com.lazyee.klib.http.interceptor.HttpParamsInterceptor
 import com.lazyee.klib.http.interceptor.ApiResultInterceptor
 import com.lazyee.klib.http.interceptor.ReceivedCookiesInterceptor
+import com.lazyee.klib.typed.TCallback
+import com.lazyee.klib.typed.VoidCallback
 import com.lazyee.klib.util.LogUtils
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -29,6 +31,7 @@ import java.security.SecureRandom
 import java.security.cert.CertificateException
 import java.security.cert.X509Certificate
 import javax.net.ssl.*
+import kotlin.coroutines.cancellation.CancellationException
 
 
 /**
@@ -82,6 +85,12 @@ class ApiManager private constructor(
                 task = RxJavaHttpTask(disposable)
                 addTask(tag, task)
             }
+
+//            override fun onNext(data: T & Any) {
+//                TODO("Not yet implemented")
+//                removeTask(tag, task)
+//                handleHttpResult(data, callback)
+//            }
 
             override fun onNext(data: T) {
                 removeTask(tag, task)
@@ -186,7 +195,7 @@ class ApiManager private constructor(
             return
         }
 
-        if (ApiCode.isSuccessful(result.getICode())) {
+        if (ApiCode.isSuccessful(result.code)) {
             callback?.onSuccess(result)
             return
         }
@@ -286,6 +295,35 @@ class ApiManager private constructor(
     }
 
     companion object {
+
+        /**
+         * 协程环境下请求网络接口
+         */
+        suspend fun <T> request(block:suspend () -> T,
+                                onSuccess:TCallback<T>? = null,
+                                onFailure:TCallback<T>? = null,
+                                onRequestFailure:TCallback<Throwable>? = null,
+                                onFinal:VoidCallback? = null){
+            try {
+                val result = block()
+                if(result is IApiResult<*>){
+                    if(ApiCode.isSuccessful(result)){
+                        onSuccess?.invoke(result)
+                    }else{
+                        onFailure?.invoke(result)
+                    }
+                }else{
+                    onSuccess?.invoke(result)
+                }
+            }catch (e: CancellationException){
+                onRequestFailure?.invoke(e)
+            } catch (e:Exception){
+                onRequestFailure?.invoke(e)
+            }
+
+            onFinal?.invoke()
+        }
+
         private val tasks: HashMap<Any, MutableList<HttpTask>> = HashMap()
 
         /**

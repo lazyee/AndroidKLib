@@ -2,8 +2,11 @@
 
 package com.lazyee.klib.extension
 
+import android.graphics.BitmapFactory
 import android.text.TextUtils
 import android.util.Base64
+import com.jeremyliao.liveeventbus.LiveEventBus
+import com.lazyee.klib.bean.ImageSize
 import com.lazyee.klib.util.DateUtils
 import com.lazyee.klib.util.LogUtils
 import kotlinx.coroutines.GlobalScope
@@ -290,4 +293,35 @@ private fun uniteBytes(src0: String, src1: String): Byte {
     b0 = (b0.toInt() shl 4).toByte()
     val b1 = java.lang.Byte.decode("0x$src1")
     return (b0.toInt() or b1.toInt()).toByte()
+}
+
+/**
+ * 获取图片大小
+ */
+fun String.getImageSize(): ImageSize {
+    val options = BitmapFactory.Options()
+    options.inJustDecodeBounds = true
+    val bitmap = BitmapFactory.decodeFile(this)
+    return ImageSize(bitmap.width,bitmap.height)
+}
+
+/**
+ * 匹配所有Text中所有的URL
+ */
+fun String.matchAllUrl(): List<TextMatchInfo> {
+    val urlPattern = Pattern.compile("(http)(s)?(://[0-9a-zA-Z.]+)\\.([a-zA-Z]+)(/[/0-9a-zA-Z?$#%&=.]+)?")
+    val matcher = urlPattern.matcher(this)
+    val matchList = mutableListOf<TextMatchInfo>()
+    while (matcher.find()) {
+        matchList.add(TextMatchInfo(matcher.start(),matcher.end(),matcher.group()))
+    }
+
+    return matchList
+}
+
+data class TextMatchInfo(val start:Int,val end:Int,val text:String)
+
+
+fun String.post(any:Any){
+    LiveEventBus.get<Any>(this).post(any)
 }

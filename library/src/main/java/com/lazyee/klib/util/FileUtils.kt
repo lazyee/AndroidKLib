@@ -4,13 +4,16 @@ import android.content.Context
 import android.os.StatFs
 import android.text.TextUtils
 import com.lazyee.klib.listener.OnFileDownloadListener
+import com.lazyee.klib.typed.TCallback
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -279,6 +282,141 @@ object FileUtils {
                     withContext(Dispatchers.Main){ onDownloadFailure(e) }
                 }
             }
+        }
+    }
+
+    fun readRemoteFile(fileUrl: String,callback:TCallback<String?>) {
+        CoroutineScope(Dispatchers.IO).launch {
+            if (TextUtils.isEmpty(fileUrl)) {
+                withContext(Dispatchers.Main) {
+                    callback.invoke(null)
+                }
+                return@launch
+            }
+            val url: URL
+            val connection: HttpURLConnection
+            try {
+                //统一资源
+                url = URL(fileUrl)
+                //打开链接
+                connection = url.openConnection() as HttpURLConnection
+                //设置链接超时
+                connection.connectTimeout = 4000
+                //设置允许得到服务器的输入流,默认为true可以不用设置
+                connection.doInput = true
+                //设置允许向服务器写入数据，一般get方法不会设置，大多用在post方法，默认为false
+                connection.doOutput = false
+                //设置请求方法
+                connection.requestMethod = "GET"
+                //设置请求的字符编码
+                connection.setRequestProperty("Charset", "utf-8")
+                //设置connection打开链接资源
+                connection.connect()
+
+                //得到链接的响应码 200为成功
+                val responseCode = connection.responseCode
+                if (responseCode != HttpURLConnection.HTTP_OK) {
+                    withContext(Dispatchers.Main) {
+                        callback.invoke(null)
+                    }
+                    return@launch
+                }
+
+                //得到服务器响应的输入流
+                val inputStream = connection.inputStream
+                //获取请求的内容总长度
+                val contentLength = connection.contentLength
+                val baos = ByteArrayOutputStream()
+                //创建缓冲输入流对象，相对于inputStream效率要高一些
+                val bfi = BufferedInputStream(inputStream)
+                //此处的len表示每次循环读取的内容长度
+                var len: Int
+                //已经读取的总长度
+                var total = 0
+                //bytes是用于存储每次读取出来的内容
+                val bytes = ByteArray(8 * 1024)
+                while (bfi.read(bytes).also { len = it } != -1) {
+                    //通过文件输出流写入从服务器中读取的数据
+                    baos.write(bytes, 0, len)
+                    //每次读取完了都将len累加在total里
+                    total += len
+                }
+                //关闭打开的流对象
+                inputStream.close()
+                bfi.close()
+                withContext(Dispatchers.Main) {
+                    callback.invoke(baos.toString())
+                }
+                baos.close()
+                return@launch
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    callback.invoke(null)
+                }
+                return@launch
+            }
+        }
+    }
+
+    suspend fun readRemoteFile(fileUrl: String): String? {
+        if (TextUtils.isEmpty(fileUrl)) {
+            return null
+        }
+        val url: URL
+        val connection: HttpURLConnection
+        try {
+            //统一资源
+            url = URL(fileUrl)
+            //打开链接
+            connection = url.openConnection() as HttpURLConnection
+            //设置链接超时
+            connection.connectTimeout = 4000
+            //设置允许得到服务器的输入流,默认为true可以不用设置
+            connection.doInput = true
+            //设置允许向服务器写入数据，一般get方法不会设置，大多用在post方法，默认为false
+            connection.doOutput = false
+            //设置请求方法
+            connection.requestMethod = "GET"
+            //设置请求的字符编码
+            connection.setRequestProperty("Charset", "utf-8")
+            //设置connection打开链接资源
+            connection.connect()
+
+            //得到链接的响应码 200为成功
+            val responseCode = connection.responseCode
+            if (responseCode != HttpURLConnection.HTTP_OK) {
+                return null
+            }
+
+            //得到服务器响应的输入流
+            val inputStream = connection.inputStream
+            //获取请求的内容总长度
+            val contentLength = connection.contentLength
+            val baos = ByteArrayOutputStream()
+            //创建缓冲输入流对象，相对于inputStream效率要高一些
+            val bfi = BufferedInputStream(inputStream)
+            //此处的len表示每次循环读取的内容长度
+            var len: Int
+            //已经读取的总长度
+            var total = 0
+            //bytes是用于存储每次读取出来的内容
+            val bytes = ByteArray(8 * 1024)
+            while (bfi.read(bytes).also { len = it } != -1) {
+                //通过文件输出流写入从服务器中读取的数据
+                baos.write(bytes, 0, len)
+                //每次读取完了都将len累加在total里
+                total += len
+            }
+            //关闭打开的流对象
+            inputStream.close()
+            bfi.close()
+            val result = baos.toString()
+            baos.close()
+            return result
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return null
         }
     }
 }

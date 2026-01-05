@@ -6,7 +6,7 @@ package com.lazyee.klib.http
  * @Description:请求结果
  */
 interface IApiResult<T> {
-    fun getICode():String
-    fun getIData():T?
-    fun getIMsg():String?
+    val code:String
+    val data:T?
+    val msg:String?
 }

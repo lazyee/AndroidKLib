@@ -17,12 +17,8 @@ open class ViewBindingFragment<VB:ViewBinding> :BaseFragment(){
 
     lateinit var mViewBinding:VB
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        mViewBinding = ViewBindingUtils.getViewBinding(javaClass,layoutInflater,container,false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        mViewBinding = ViewBindingUtils.getViewBinding(javaClass,inflater,container,false)
         return mViewBinding.root
     }
 

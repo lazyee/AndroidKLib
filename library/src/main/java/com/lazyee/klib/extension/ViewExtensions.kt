@@ -8,9 +8,12 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
+import android.widget.TableLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.setMargins
 import com.lazyee.klib.click.SingleClick
 import com.lazyee.klib.typed.OnSingleClick
+import com.lazyee.klib.util.LogUtils
 
 
 /**
@@ -151,6 +154,19 @@ fun View.setMargins(left: Int? = null, top: Int? = null, right:Int? = null, bott
         requestLayout()
         return
     }
+
+    //TableLayout
+    if(this.layoutParams is TableLayout.LayoutParams){
+        (this.layoutParams as TableLayout.LayoutParams).run {
+            this.setMargins(left?:this.leftMargin,
+                top?:this.topMargin,
+                right?:this.rightMargin,
+                bottom?:this.bottomMargin
+            )
+        }
+        requestLayout()
+        return
+    }
 }
 
 fun View.hideKeyboard(){
@@ -161,6 +177,12 @@ fun View.hideKeyboard(){
 
 fun View.showKeyboard(){
     if(context !is Activity)return
-    val inputMethodManager =context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+}
+
+fun View.showKeyboardForced(){
+    if(context !is Activity)return
+    val inputMethodManager =context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_FORCED)
 }
