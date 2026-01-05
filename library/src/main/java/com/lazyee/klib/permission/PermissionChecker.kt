@@ -19,10 +19,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import com.hjq.permissions.XXPermissions
-import com.lazyee.klib.R
 import com.lazyee.klib.typed.AllGrantedCallback
-import com.lazyee.klib.typed.GrantedCallback
 import com.lazyee.klib.typed.DeniedCallback
+import com.lazyee.klib.typed.GrantedCallback
 import com.lazyee.klib.typed.TCallback
 import com.lazyee.klib.util.AppUtils
 
@@ -36,23 +35,24 @@ import com.lazyee.klib.util.AppUtils
 class PermissionChecker {
     private var mActivity: FragmentActivity? = null
     private var mFragment: Fragment? = null
-    private var mContext:Context
-    private val mPermissions :MutableList<String> = mutableListOf()
+    private var mContext: Context
+    private val mPermissions: MutableList<String> = mutableListOf()
     private var mGrantedCallback: GrantedCallback? = null
-    private var mAllGrantedCallback:AllGrantedCallback? = null
-    private var mDeniedCallback :DeniedCallback? = null
+    private var mAllGrantedCallback: AllGrantedCallback? = null
+    private var mDeniedCallback: DeniedCallback? = null
 
-    private constructor(activity: FragmentActivity){
+    private constructor(activity: FragmentActivity) {
 
         mActivity = activity
         mContext = activity
     }
-    private constructor(fragment: Fragment){
+
+    private constructor(fragment: Fragment) {
         mFragment = fragment
         mContext = fragment.requireActivity()
     }
 
-    companion object{
+    companion object {
         fun with(activity: FragmentActivity): PermissionChecker {
             return PermissionChecker(activity)
         }
@@ -67,23 +67,23 @@ class PermissionChecker {
     /**
      * 打开权限设置界面，并且返回回调
      */
-    fun startPermissionActivity(callback:TCallback<ActivityResult>){
+    fun startPermissionActivity(callback: TCallback<ActivityResult>) {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
 
-        var packageName:String? = mActivity?.packageName
-        if(packageName == null){
-            packageName =  mFragment?.activity?.packageName
+        var packageName: String? = mActivity?.packageName
+        if (packageName == null) {
+            packageName = mFragment?.activity?.packageName
         }
 
-        val uri = Uri.fromParts("package",packageName,null)
+        val uri = Uri.fromParts("package", packageName, null)
         intent.data = uri
 
-        if(mActivity != null){
+        if (mActivity != null) {
             AppUtils.registerSimpleActivityResult(mActivity!!, intent, callback)
             return
         }
 
-        if(mFragment != null){
+        if (mFragment != null) {
             AppUtils.registerSimpleActivityResult(mFragment!!, intent, callback)
             return
         }
@@ -94,9 +94,9 @@ class PermissionChecker {
     /**
      * 判断一个或多个权限是否全部授予了
      */
-    fun isGranted(vararg permissions:String): Boolean {
+    fun isGranted(vararg permissions: String): Boolean {
         permissions.forEach {
-            if(ContextCompat.checkSelfPermission(mContext,it) == PackageManager.PERMISSION_DENIED){
+            if (ContextCompat.checkSelfPermission(mContext, it) == PackageManager.PERMISSION_DENIED) {
                 return false
             }
         }
@@ -106,16 +106,16 @@ class PermissionChecker {
     /**
      * 判断一个或多个权限是否全部拒绝了
      */
-    fun isDenied(vararg permissions:String):Boolean{
+    fun isDenied(vararg permissions: String): Boolean {
         permissions.forEach {
-            if(ContextCompat.checkSelfPermission(mContext,it) == PackageManager.PERMISSION_GRANTED){
+            if (ContextCompat.checkSelfPermission(mContext, it) == PackageManager.PERMISSION_GRANTED) {
                 return false
             }
         }
         return true
     }
 
-    fun permission(vararg permissions:String): PermissionChecker {
+    fun permission(vararg permissions: String): PermissionChecker {
         mPermissions.clear()
         mPermissions.addAll(permissions)
         return this
@@ -123,21 +123,21 @@ class PermissionChecker {
 
     fun manageExternalStoragePermission(): PermissionChecker {
         mPermissions.clear()
-        if(Build.VERSION.SDK_INT >= 30){
+        if (Build.VERSION.SDK_INT >= 30) {
             mPermissions.add(MANAGE_EXTERNAL_STORAGE)
-        }else{
+        } else {
             mPermissions.add(Manifest.permission.READ_EXTERNAL_STORAGE)
             mPermissions.add(Manifest.permission.WRITE_EXTERNAL_STORAGE)
         }
         return this
     }
 
-    fun onAllGranted(callback: AllGrantedCallback):PermissionChecker{
+    fun onAllGranted(callback: AllGrantedCallback): PermissionChecker {
         mAllGrantedCallback = callback
         return this
     }
 
-    fun onGranted(callback:GrantedCallback): PermissionChecker {
+    fun onGranted(callback: GrantedCallback): PermissionChecker {
         mGrantedCallback = callback
         return this
     }
@@ -147,68 +147,76 @@ class PermissionChecker {
         return this
     }
 
-    fun request(){
-        if(mActivity != null){
+    fun request() {
+        if (mActivity != null) {
             realRequest(mActivity!!.supportFragmentManager)
             return
         }
 
-        if(mFragment != null){
+        if (mFragment != null) {
             realRequest(mFragment!!.childFragmentManager)
             return
         }
     }
 
 
-    private fun realRequest(fragmentManager: FragmentManager){
+    private fun realRequest(fragmentManager: FragmentManager) {
         val tag = "PermissionFragment"
-        var targetFragment:Fragment? = fragmentManager.findFragmentByTag(tag)
+        var targetFragment: Fragment? = fragmentManager.findFragmentByTag(tag)
         val transaction = fragmentManager.beginTransaction()
         targetFragment?.run {
             transaction.remove(this)
         }
-        targetFragment = PermissionFragment(mPermissions,mAllGrantedCallback,mGrantedCallback,mDeniedCallback)
-        transaction.add(targetFragment,tag)
+        targetFragment =
+            PermissionFragment(mPermissions, mAllGrantedCallback, mGrantedCallback, mDeniedCallback)
+        transaction.add(targetFragment, tag)
         transaction.commitAllowingStateLoss()
     }
 
     /**
      * 必须设置为公开的class
      */
-    class PermissionFragment(private val permissions:MutableList<String>,
-                             private val allGrantedCallback: AllGrantedCallback? = null,
-                             private val grantedCallback: GrantedCallback? = null,
-                             private val deniedCallback: DeniedCallback? = null):Fragment(){
-        private val activityResultLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){ result->
-            parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
-            val grantedPermissionList = mutableListOf<PermissionStatus>()
-            val deniedPermissionList = mutableListOf<PermissionStatus>()
+    class PermissionFragment(
+        private val permissions: MutableList<String>,
+        private val allGrantedCallback: AllGrantedCallback? = null,
+        private val grantedCallback: GrantedCallback? = null,
+        private val deniedCallback: DeniedCallback? = null
+    ) : Fragment() {
+        private val activityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
+                parentFragmentManager.beginTransaction().remove(this).commitAllowingStateLoss()
+                val grantedPermissionList = mutableListOf<PermissionStatus>()
+                val deniedPermissionList = mutableListOf<PermissionStatus>()
 
-            for (key in result.keys) {
-                val permission = PermissionStatus(key)
-                permission.isGranted = result.getValue(key)
-                val doNotAskAgain = !ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(),key)
-                permission.doNotAskAgain = doNotAskAgain
+                for (key in result.keys) {
+                    val permission = PermissionStatus(key)
+                    permission.isGranted = result.getValue(key)
+                    val doNotAskAgain =
+                        !ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), key)
+                    permission.doNotAskAgain = doNotAskAgain
 
-                if(permission.isGranted){
-                    grantedPermissionList.add(permission)
-                }else{
-                    deniedPermissionList.add(permission)
+                    if (permission.isGranted) {
+                        grantedPermissionList.add(permission)
+                    } else {
+                        deniedPermissionList.add(permission)
+                    }
                 }
-            }
-            if(grantedPermissionList.isNotEmpty()){
-                grantedCallback?.invoke(deniedPermissionList.isEmpty(),grantedPermissionList.toTypedArray())
-            }
+                if (grantedPermissionList.isNotEmpty()) {
+                    grantedCallback?.invoke(
+                        deniedPermissionList.isEmpty(),
+                        grantedPermissionList.toTypedArray()
+                    )
+                }
 
-            if(deniedPermissionList.isNotEmpty()){
-                deniedCallback?.invoke(deniedPermissionList.toTypedArray())
-            }
+                if (deniedPermissionList.isNotEmpty()) {
+                    deniedCallback?.invoke(deniedPermissionList.toTypedArray())
+                }
 
-            if(deniedPermissionList.isEmpty()){
-                allGrantedCallback?.invoke()
-            }
+                if (deniedPermissionList.isEmpty()) {
+                    allGrantedCallback?.invoke()
+                }
 
-        }
+            }
 
         override fun onCreate(savedInstanceState: Bundle?) {
             super.onCreate(savedInstanceState)
@@ -221,7 +229,7 @@ class PermissionChecker {
             savedInstanceState: Bundle?
         ): View? {
             super.onCreateView(inflater, container, savedInstanceState)
-            return inflater.inflate(R.layout.layout_debug_config,null,false)
+            return View(context)
         }
     }
 }
