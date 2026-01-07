@@ -14,6 +14,7 @@ import android.graphics.Typeface
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -525,6 +526,70 @@ fun Context.isNetworkAvailable(): Boolean {
 }
 
 /**
+ * 判断蜂窝网络是否可用
+ */
+fun Context.isCellularNetworkAvailable(): Boolean {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ){
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val capabilities = manager?.getNetworkCapabilities(manager.activeNetwork) ?: return false
+        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR)
+    }
+    return false
+}
+
+/**
+ * 判断WiFi是否可用
+ */
+fun Context.isWifiNetworkAvailable(): Boolean {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ){
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val capabilities = manager?.getNetworkCapabilities(manager.activeNetwork) ?: return false
+        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_WIFI)
+    }
+    return false
+}
+
+/**
+ * 判断VPN是否连接
+ */
+fun Context.isVpnConnected(): Boolean {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ){
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val capabilities = manager?.getNetworkCapabilities(manager.activeNetwork) ?: return false
+        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_VPN)
+    }
+    return false
+}
+
+/**
+ * 判断以太网是否连接
+ */
+fun Context.isEthernetConnected(): Boolean {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ){
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val capabilities = manager?.getNetworkCapabilities(manager.activeNetwork) ?: return false
+        return capabilities.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+    }
+    return false
+}
+
+/**
+ * 判断是否真的可以上网
+ * NET_CAPABILITY_VALIDATED: 表示连接已验证成功（不仅仅是连接到路由器，而是可以访问 Internet）
+ */
+fun Context.isInternetAvailable(): Boolean {
+    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M ){
+        val manager = getSystemService(Context.CONNECTIVITY_SERVICE) as? ConnectivityManager
+        val capabilities = manager?.getNetworkCapabilities(manager.activeNetwork) ?: return false
+
+        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+                capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+    }
+    return false
+}
+
+
+/**
  * 查询是否开启通知
  */
 fun Context.checkNotificationEnabled(): Boolean {
@@ -542,4 +607,3 @@ fun Context.cancelAllNotifications(){
     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     notificationManager.cancelAll()
 }
-

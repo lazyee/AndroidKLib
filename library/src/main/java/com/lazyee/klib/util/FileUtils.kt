@@ -16,6 +16,8 @@ import java.io.FileOutputStream
 import java.lang.StringBuilder
 import java.net.HttpURLConnection
 import java.net.URL
+import java.text.DecimalFormat
+import java.text.NumberFormat
 
 /**
  * Author: leeorz
@@ -66,6 +68,19 @@ object FileUtils {
         }
 
         return blockSize * availableSize
+    }
+
+    /**
+     * 将字节数转换为格式化的字符串（如 KB, MB, GB）
+     * @param sizeBytes 字节大小
+     * @return 格式化后的字符串
+     */
+    fun formatFileSize(sizeBytes: Long): String {
+        if (sizeBytes <= 0) return "0 B"
+        val units = arrayOf("B", "KB", "MB", "GB", "TB")
+        val digitGroups = (Math.log10(sizeBytes.toDouble()) / Math.log10(1024.0)).toInt()
+        val format = DecimalFormat("#,##0.##")
+        return format.format(sizeBytes / Math.pow(1024.0, digitGroups.toDouble())) + " " + units[digitGroups]
     }
 
     /**
