@@ -1,7 +1,9 @@
 package com.lazyee.klib.base
 
 import android.app.Application
+import android.content.Context
 import com.lazyee.klib.app.AppManager
+import com.lazyee.klib.util.LanguageUtils
 import com.lazyee.klib.util.AppUtils
 
 /**
@@ -15,6 +17,11 @@ open class BaseApplication :Application(){
         super.onCreate()
         AppManager.register(this)
     }
+    override fun attachBaseContext(base: Context?) {
+        val context = LanguageUtils.attachBaseContext(base,LanguageUtils.getConfigLocale(base))
+        super.attachBaseContext(context)
+    }
+
 
     fun isMainProcess():Boolean = packageName == AppUtils.getCurrentProcessName(applicationContext)
 }

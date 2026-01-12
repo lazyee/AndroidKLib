@@ -18,6 +18,7 @@ import com.lazyee.klib.extension.toastLong
 import com.lazyee.klib.extension.toastShort
 import com.lazyee.klib.http.ApiManager
 import com.lazyee.klib.listener.OnKeyboardVisibleListener
+import com.lazyee.klib.util.LanguageUtils
 import com.lazyee.klib.mvvm.LoadingState
 import com.lazyee.klib.mvvm.MVVMBaseView
 
@@ -53,10 +54,11 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
         null
 
     override fun attachBaseContext(newBase: Context?) {
+        val context = LanguageUtils.attachBaseContext(newBase,LanguageUtils.getConfigLocale(newBase))
         if(isFollowSystemFontScale){
-            super.attachBaseContext(newBase)
+            super.attachBaseContext(context)
         }else{
-            super.attachBaseContext(getConfigurationContext(newBase))
+            super.attachBaseContext(getConfigurationContext(context))
         }
     }
 
