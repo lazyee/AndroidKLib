@@ -50,6 +50,13 @@ object LanguageUtils {
     }
 
 
+    /**
+     *  在Application和Activity中调用这个方法即可完成语言切换的持久化
+     *     override fun attachBaseContext(base: Context?) {
+     *         val context = LanguageUtils.attachBaseContext(base,LanguageUtils.getConfigLocale(base))
+     *         super.attachBaseContext(context)
+     *     }
+     */
     fun attachBaseContext(context: Context?, locale: Locale): Context? {
         context?:return context
         Locale.setDefault(locale)
