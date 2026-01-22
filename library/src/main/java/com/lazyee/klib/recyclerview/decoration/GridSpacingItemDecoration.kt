@@ -4,11 +4,9 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
-import android.util.Log
 import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlin.math.ceil
 
 /**
  * Author: leeorz
@@ -48,7 +46,12 @@ class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
          *
          */
         val spanCount = gridLayoutManager.spanCount
-        val column: Int = position % gridLayoutManager.spanCount
+        var totalSpanSizeOfPosition = 0
+        repeat(position){
+            totalSpanSizeOfPosition += gridLayoutManager.spanSizeLookup.getSpanSize(it)
+        }
+
+        val column: Int = totalSpanSizeOfPosition % gridLayoutManager.spanCount
         outRect.left = (column * horizontalSpacing / spanCount).toInt()
         outRect.right = (horizontalSpacing - (column + 1) * horizontalSpacing / spanCount).toInt()
 

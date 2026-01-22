@@ -9,6 +9,7 @@ import android.widget.FrameLayout
 import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TableLayout
+import androidx.annotation.ColorInt
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setMargins
 import com.lazyee.klib.click.SingleClick
@@ -57,8 +58,8 @@ fun View.setSingleClick(onSingleClick: OnSingleClick){
 
 fun View.setBackground(corner:Float,
                        borderWidth:Int? = null,
-                       borderColor:Int? = null,
-                       backgroundColor:Int){
+                       @ColorInt borderColor:Int? = null,
+                       @ColorInt backgroundColor: Int){
     setBackground(corner,corner,corner,corner,borderWidth,borderColor,backgroundColor)
 }
 
@@ -67,8 +68,8 @@ fun View.setBackground(topLeftCorner:Float = 0f,
                        bottomLeftCorner:Float = 0f,
                        bottomRightCorner:Float = 0f,
                        borderWidth:Int? = null,
-                       borderColor:Int? = null,
-                       backgroundColor:Int){
+                       @ColorInt borderColor:Int? = null,
+                       @ColorInt backgroundColor: Int){
     val drawable = GradientDrawable()
     drawable.cornerRadii = floatArrayOf(
         topLeftCorner, topLeftCorner,
