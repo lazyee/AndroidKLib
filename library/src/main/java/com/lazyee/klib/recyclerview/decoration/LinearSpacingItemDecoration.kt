@@ -32,22 +32,24 @@ class LinearSpacingItemDecoration : RecyclerView.ItemDecoration {
         state: RecyclerView.State
     ) {
         if (parent.layoutManager !is LinearLayoutManager) throw Exception("只支持LinearLayoutManager")
+        val position = parent.getChildAdapterPosition(view)
+        val itemCount = parent.adapter?.itemCount ?: 0
         val linearLayoutManager = parent.layoutManager as LinearLayoutManager
         if (linearLayoutManager.orientation == RecyclerView.VERTICAL) {
-            if (parent.getChildAdapterPosition(view) != 0) {
+            if (position != 0) {
                 outRect.top = top
             }
-            if (parent.getChildAdapterPosition(view) != parent.childCount - 1) {
+            if (position != itemCount - 1) {
                 outRect.bottom = bottom
             }
             outRect.left = left
             outRect.right = right
         } else {
-            if (parent.getChildAdapterPosition(view) != 0) {
+            if (position != 0) {
                 outRect.left = left
             }
 
-            if (parent.getChildAdapterPosition(view) != parent.childCount - 1) {
+            if (position != itemCount - 1) {
                 outRect.right = right
             }
             outRect.top = top
