@@ -63,7 +63,7 @@ class GridSpacingItemDecoration : RecyclerView.ItemDecoration{
     }
 
     private fun isLastLine(position:Int, layoutManager: GridLayoutManager, recyclerView: RecyclerView):Boolean{
-        var itemCount = recyclerView.adapter?.itemCount?:0
+        val itemCount = recyclerView.adapter?.itemCount?:0
         var lastLineCount = itemCount % layoutManager.spanCount
         if(lastLineCount == 0){
             lastLineCount = layoutManager.spanCount
