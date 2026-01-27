@@ -42,8 +42,8 @@ ext {
             rxjava2                   : "2.2.21",
             rxandroid                 : "2.1.1",
 
-            glide                     : "4.12.0",
-            glide_compiler            : "4.12.0",
+            glide                     : "4.16.0",
+            glide_compiler            : "4.16.0",
 
             immersionbar              : "3.2.2",
             xxpermissions             : "18.0",
