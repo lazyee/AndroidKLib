@@ -6,7 +6,8 @@ import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.lazyee.klib.annotation.observeLiveEvent
+import androidx.lifecycle.lifecycleScope
+import com.lazyee.klib.event.AppEventDispatcher
 import com.lazyee.klib.extension.toastLong
 import com.lazyee.klib.extension.toastShort
 import com.lazyee.klib.http.ApiManager
@@ -32,7 +33,7 @@ open class BaseFragment:Fragment(),MVVMBaseView {
         super.onViewCreated(view, savedInstanceState)
         isViewCreated = true
         initViewModel(this)
-        observeLiveEvent()
+        AppEventDispatcher.register(this, lifecycleScope)
     }
 
     /**

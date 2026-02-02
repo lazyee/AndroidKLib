@@ -7,8 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.viewbinding.ViewBinding
-import com.lazyee.klib.annotation.observeLiveEvent
+import com.lazyee.klib.event.AppEventDispatcher
 import com.lazyee.klib.util.ViewBindingUtils
 
 /**
@@ -33,7 +34,8 @@ open class ViewBindingDialogFragment<VB : ViewBinding> : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initView()
-        observeLiveEvent()
+        AppEventDispatcher.register(this, lifecycleScope)
+        initData()
     }
 
     open fun initView(){

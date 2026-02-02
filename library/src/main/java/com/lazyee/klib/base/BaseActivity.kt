@@ -10,7 +10,8 @@ import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.lazyee.klib.annotation.observeLiveEvent
+import androidx.lifecycle.lifecycleScope
+import com.lazyee.klib.event.AppEventDispatcher
 import com.lazyee.klib.extension.addAdjustNothingModeOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.addOnKeyBoardVisibleListener
 import com.lazyee.klib.extension.removeKeyBoardVisibleListener
@@ -72,7 +73,7 @@ open class  BaseActivity: AppCompatActivity(), MVVMBaseView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initViewModel(this)
-        observeLiveEvent()
+        AppEventDispatcher.register(this,lifecycleScope)
     }
 
     override fun onDestroy() {

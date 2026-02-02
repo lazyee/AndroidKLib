@@ -55,7 +55,6 @@ dependencies {
     api "androidx.work:work-runtime-ktx:${versions.work}"
 
     api "org.greenrobot:eventbus:${versions.event_bus}"
-    api "io.github.jeremyliao:live-event-bus-x:${versions.live_event_bus}"
 
     api "com.squareup.moshi:moshi-kotlin:${versions.moshi_kotlin}"
     api "com.squareup.retrofit2:retrofit:${versions.retrofit}"
@@ -79,6 +78,7 @@ dependencies {
 
     api "androidx.lifecycle:lifecycle-livedata-ktx:${versions.lifecycle}"
     api "androidx.lifecycle:lifecycle-viewmodel-ktx:${versions.lifecycle}"
+    api "androidx.lifecycle:lifecycle-runtime-ktx:${versions.lifecycle}"
 
     api "com.google.code.gson:gson:${versions.gson}"
     api "com.tencent:mmkv:${versions.mmkv}"

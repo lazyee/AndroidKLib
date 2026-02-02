@@ -28,7 +28,6 @@ ext {
             kotlinx_coroutines_android: "1.4.1",
 
 //            event_bus                 : "3.2.0",
-            live_event_bus            : "1.8.0",
 
             //squareup
             moshi_kotlin              : "1.12.0",
