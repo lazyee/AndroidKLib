@@ -1,5 +1,8 @@
 package com.lazyee.klib.event
 
+import android.content.Context
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.collect
@@ -22,6 +25,12 @@ object AppEventDispatcher {
                     }
                 }
             }
+        }
+    }
+
+    fun register(target: Any,context: Context){
+        if(context is LifecycleOwner){
+            register(target,context.lifecycleScope)
         }
     }
 }
